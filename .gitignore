@@ -1,2 +1,5 @@
-binaries/first_try/first
+binaries/simple_branch_01/first
 .vscode/.ropeproject/
+*obj-intel64*
+*.out
+*.log
