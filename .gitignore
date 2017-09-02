@@ -1,4 +1,4 @@
-binaries/simple_branch_01/first
+binaries/*/binary
 .vscode/.ropeproject/
 *obj-intel64*
 *.out
