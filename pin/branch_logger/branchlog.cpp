@@ -3,27 +3,47 @@
 #include "pin.H"
 
 FILE * trace;
+ADDRINT cur_branch;
+ADDRINT branch_target;
+bool was_branch;
+
 static std::unordered_map<ADDRINT, std::string> str_of_ins_at;
 
-VOID printbranch(ADDRINT addr)
+VOID printbranch(ADDRINT addr, ADDRINT target)
 {
   std::string ins_str = str_of_ins_at[addr];
-  fprintf(trace, "taken [%s] @ %zx\n", ins_str.c_str(), addr);
+  fprintf(trace, "[%s] - branching at %zx - target: %zx\n", ins_str.c_str(), addr, target);
+  cur_branch = addr;
+  branch_target = target;
+  was_branch = true;
 }
-VOID printjmp(ADDRINT addr)
+
+VOID printins(ADDRINT addr)
 {
   std::string ins_str = str_of_ins_at[addr];
-  fprintf(trace, "will branch [%s] @ %zx\n", ins_str.c_str(), addr);
+  if(was_branch)
+  {
+    if(branch_target == addr)
+      fprintf(trace, "branch %zx taken [%s] (%zx)\n", cur_branch, ins_str.c_str(), addr);
+    else
+      fprintf(trace, "branch %zx NOT taken [%s] (%zx)\n", cur_branch, ins_str.c_str(), addr);
+  }
+  else
+  {
+      fprintf(trace, "[%s] (%zx)\n", ins_str.c_str(), addr);
+  }
+  was_branch = false;
 }
 
 VOID Instruction(INS ins, VOID *v)
 {
-  if(INS_IsBranchOrCall(ins))
+  str_of_ins_at[INS_Address(ins)] = INS_Disassemble(ins);
+  if(INS_IsBranch(ins))
   {
-    str_of_ins_at[INS_Address(ins)] = INS_Disassemble(ins);
-    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)printjmp, IARG_ADDRINT, INS_Address(ins), IARG_END);
-    INS_InsertCall(ins, IPOINT_TAKEN_BRANCH, (AFUNPTR)printbranch, IARG_ADDRINT, INS_Address(ins), IARG_END);
+    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)printbranch, IARG_ADDRINT, INS_Address(ins), IARG_BRANCH_TARGET_ADDR, IARG_BRANCH_TAKEN, IARG_END);
   }
+  else
+    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)printins, IARG_ADDRINT, INS_Address(ins), IARG_END);
 }
 
 VOID Fini(INT32 code, VOID *v)
@@ -33,7 +53,7 @@ VOID Fini(INT32 code, VOID *v)
 
 INT32 Usage()
 {
-  PIN_ERROR( "This Pintool logs instructions\n" 
+  PIN_ERROR( "This Pintool logs instructions and its branch\n" 
             + KNOB_BASE::StringKnobSummary() + "\n");
   return -1;
 }
