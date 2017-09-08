@@ -7,8 +7,8 @@ int main(int argc, char** argv)
     if(argc > 1)
       sscanf(argv[1], "%d", &x);
     if(2 == x)
-        printf("search.\n");
+        printf("success.\n");
     else
-        printf("nope.\n");
+        printf("failure.\n");
     return 0;
 }
