@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/user/.virtualenvs/angr/bin/pypy",
+    "python.pythonPath": "/usr/bin/python3",
     "files.associations": {
         "*.tlh": "cpp"
     }
