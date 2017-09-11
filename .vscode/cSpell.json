@@ -8,6 +8,7 @@
     "words": [
         "CDLL",
         "IARG",
+        "SUCC",
         "angr",
         "insn",
         "insns",
