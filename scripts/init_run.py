@@ -23,12 +23,16 @@ def main(args):
     binary = args[0]
     successful = args[1]
     failure = args[2]
-    print("running " + binary + " with " + successful + " as arguments")
+
+    fnull = open(os.devnull, 'w')
+    print("running " + binary + " with " + successful +
+          " as arguments (using pintools to log branches)")
     subprocess.call([PIN_BIN, "-t", PIN_TOOL, "-o", SUCC_FILE, "--", binary]
-                    + successful.split())
-    print("running " + binary + " with " + failure + " as arguments")
+                    + successful.split(), stdout=fnull)
+    print("running " + binary + " with " + failure +
+          " as arguments (using pintools to log branches)")
     subprocess.call([PIN_BIN, "-t", PIN_TOOL, "-o", FAIL_FILE, "--", binary]
-                    + failure.split())
+                    + failure.split(), stdout=fnull)
 
     with open(SUCC_FILE, "r") as sf:
         with open(FAIL_FILE, "r") as ff:
@@ -57,14 +61,22 @@ def main(args):
         for e in list(itertools.combinations(to_modify, i)):
             mods += [list(e)]
 
+    print("FOUND: {} possible modifications".format(len(mods)))
+    succ_out = subprocess.check_output([binary] + successful.split())
+    found = False
     for mod in mods:
         shutil.copyfile(binary, TMP_EXEC)
         for e in mod:
-            print("modifying {} at {}".format(e[1], e[0]))
             modify_bin(e[1], e[0])
         shutil.copymode(binary, TMP_EXEC)
-        subprocess.call([TMP_EXEC] + failure.split())
-
+        output = subprocess.check_output([TMP_EXEC] + failure.split())
+        if succ_out == output:
+            print("SUCCESS: same output for: {}".format(mod))
+            found = True
+            break
+    
+    if not found:
+        print("FAILURE: no modification worked!")
     os.remove(TMP_EXEC)
     return 0
 
