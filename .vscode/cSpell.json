@@ -12,6 +12,8 @@
         "angr",
         "insn",
         "insns",
+        "jnbe",
+        "jnle",
         "simuvex"
     ],
     // flagWords - list of words to be always considered incorrect
