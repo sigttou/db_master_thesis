@@ -7,9 +7,12 @@ import subprocess
 import difflib
 import itertools
 import shutil
-import os
 import pprint
+import os
 import contextlib
+import capstone
+from capstone import CS_ARCH_X86, CS_MODE_64
+from bitstring import BitArray
 from parse import parse
 
 
@@ -19,17 +22,9 @@ SUCC_FILE = "success.out"
 FAIL_FILE = "failure.out"
 TMP_EXEC = "./temp.elf"
 TMP_LIB = "./mylib.so.6"
+DIAS = capstone.Cs(CS_ARCH_X86, CS_MODE_64)
 
 PP = pprint.PrettyPrinter()
-
-OP_LOOKUP = {
-    "jnz" : int("0x74", 16),
-    "jz" : int("0x75", 16),
-    "jle" : int("0x7F", 16),
-    "jnle" : int("0x7E", 16),
-    "jnbe" : int("0x76", 16),
-    "jbe" : int("0x77", 16)
-}
 
 
 def main(args):
@@ -95,15 +90,61 @@ def main(args):
     return 0
 
 
+def get_instr_from_addr(addr, file):
+    """
+        fetches a instruction from the given file
+        returns it as bitarray
+    """
+    with open(file, "rb") as f:
+        file_str = bytearray(f.read())
+        instr = file_str[addr]
+        # deal with 2 byte instructions:
+        if instr == 0xf:
+            instr = instr << 8
+            instr = instr + file_str[addr + 1]
+            instr = BitArray(hex=str(0x0000)) + BitArray(hex=str(hex(instr)))
+        else:
+            instr = BitArray(hex=str(hex(instr)))
+    return instr
+
+
+def get_possible_op_modifications(opcode):
+    """
+        Uses capstone to check if it's a valid opcode
+    """
+    results = []
+    pos_flips = [opcode.bytes]
+    for i in range(1, 9):
+        tmp = opcode.copy()
+        tmp[-i] = not tmp[-i]
+        pos_flips.append(tmp.bytes)
+
+    for e in pos_flips:
+        code = b"" + e + b"\x00"
+        if len(code) == 3:
+            code += b'\x00\x00\x00'
+        dias = [x for x in DIAS.disasm(code, 0x0)]
+        if dias:
+            inst = dias[0]
+            results.append((inst.mnemonic, e))
+
+    print(results)
+    return results
+
 def modify_bin(instr, addr, to_modify):
     """
         changes the given binary
     """
     addr = int(addr, 16)
-
-    new_op = OP_LOOKUP.get(instr)
+    opcode = get_instr_from_addr(addr, to_modify)
+    get_possible_op_modifications(opcode)
+    return
+    new_op = OP_LOOKUP["instructions"].get(instr)
     if not new_op:
         print("UNKNOWN OPCODE {}".format(instr))
+
+    PP.pprint(new_op["forms"])
+    new_op = int(new_op["forms"]["encodings"]["opcode"]["byte"], 16)
 
     with open(to_modify, "rb") as f:
         file_str = bytearray(f.read())
