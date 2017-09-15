@@ -10,6 +10,7 @@
         "IARG",
         "SUCC",
         "angr",
+        "fname",
         "insn",
         "insns",
         "jnbe",
