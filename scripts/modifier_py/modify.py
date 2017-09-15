@@ -37,6 +37,7 @@ def main(args):
     binary = os.path.abspath(args[0])
     fail_params = args[3]
     files, mods = get_mods(args[2])
+    files = set(files + [binary])
     with open(args[1]) as f:
         succ_info = json.load(f)
     check_mods(binary, succ_info, fail_params, files, mods)
@@ -47,10 +48,9 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
     """
         checks which modification generates the same output
     """
-    libs = [e for e in files if e != binary]
-    for f in files:
-        shutil.copy(f, TMPDIR + os.path.basename(f))
-        shutil.copymode(f, TMPDIR + os.path.basename(f))
+    preload = " ".join([TMPDIR + os.path.basename(e) for e in files if e != binary])
+    executable = TMPDIR + os.path.basename(binary)
+    cnt = 0
     for i in range(len(modifications)):
         for mods in itertools.combinations(modifications, i+1):
             to_modify = []
@@ -73,62 +73,53 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
                                     break
                     else:
                         to_modify.append(to_mod)
-            print()
-            PP.pprint(list(to_modify))
-            print()
-    exit(0)
-    # apply every possible modification 
-    mods = []
-    for entry in [m for m in modifications]:
-        entry_mods = modifications[entry]
-        for addr, op_len, mods in entry_mods:
-            for mod in mods:
+            for mod in to_modify:
+                cnt += 1
+                for f in files:
+                    shutil.copy(f, TMPDIR + os.path.basename(f))
+                    shutil.copymode(f, TMPDIR + os.path.basename(f))
+                for m_f, m_a, m_l, m_op in mod:
+                    tmpfile = TMPDIR + os.path.basename(m_f)
+                    modify_bin(tmpfile, m_a, m_l, m_op)
+
                 ret_dict = {}
                 ret_dict["stdout"] = ""
                 ret_dict["stderr"] = ""
                 ret_dict["ret"] = 0
-                tempfile = TMP_LIB
-                if entry == binary:
-                    tempfile = TMP_EXEC
-                modify_bin(entry, tempfile, addr, op_len, mod)
                 try:
-                    if entry == binary:
-                        ret_dict["stdout"] = subprocess.check_output([tempfile]
-                                                                     + fail_params.split()
-                                                                    ).decode("utf8")
-                    else:
-                        env = os.environ
-                        env["LD_PRELOAD"] = os.path.abspath(tempfile)
-                        ret_dict["stdout"] = subprocess.check_output([binary]
-                                                                     + fail_params.split(), env=env
-                                                                    ).decode("utf8")
+                    env = os.environ
+                    env["LD_PRELOAD"] = preload
+                    ret_dict["stdout"] = subprocess.check_output([executable]
+                                                                 + fail_params.split(), env=env
+                                                                ).decode("utf8")
                 except subprocess.CalledProcessError as e:
                     ret_dict["ret"] = e.returncode
                     ret_dict["stdout"] = e.stdout.decode("utf8")
                     ret_dict["stderr"] = e.stdout.decode("utf8")
+
                 if ret_dict == succ_info:
-                    print("Success for {} at {} in {}".format(mod[0], addr, entry))
+                    print("Success for {}".format(mod))
 
                 with contextlib.suppress(FileNotFoundError):
-                    shutil.rmtree(LIB_FOLDER + "*")
+                    shutil.rmtree(TMPDIR + "*")
+    print("Tried {} runs".format(cnt))
 
 
-def modify_bin(binfile, tmpfile, addr, op_len, mod):
+def modify_bin(filename, addr, op_len, mod):
     """
         modifies the given binary file and places it in the tmp
     """
     addr = int(addr, 16)
     instr = mod[1]
-    with open(binfile, "rb") as f:
+    with open(filename, "rb") as f:
         content = bytearray(f.read())
     if op_len == 16:
         content[addr] = instr[0]
         content[addr+1] = instr[1]
     else:
         content[addr] = int(instr.hex(), 16)
-    with open(tmpfile, "wb") as f:
+    with open(filename, "wb") as f:
         f.write(content)
-    shutil.copymode(binfile, tmpfile)
 
 
 def get_mods(file):
@@ -208,6 +199,6 @@ def get_possible_mods(opcode):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("<binary> <addr> needed")
+        print("<path_to_binary> <succ_outfile> <mod_instr> <fail_params> needed")
         exit()
     main(sys.argv[1:])
