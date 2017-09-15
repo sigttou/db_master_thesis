@@ -28,7 +28,6 @@ def main(args):
     binary = os.path.abspath(args[0])
     success_params = args[1]
     fail_params = args[2]
-
     pin_run(binary, success_params, PIN_TOOL, SUCC_PINOUT, SUCC_OUT)
     pin_run(binary, fail_params, PIN_TOOL, FAIL_PINOUT, os.devnull)
     gen_addrdiff_file(SUCC_PINOUT, FAIL_PINOUT, MOD_FILE)
@@ -52,11 +51,11 @@ def pin_run(binary, parameters, pin_tool, pinoutfile, outfile):
         stderr = e.stderr
         output = e.stdout
     if not output:
-        output = ""
+        output = b""
     ret_dict = {}
     ret_dict["ret"] = retval
     ret_dict["stdout"] = output.decode("utf8")
-    ret_dict["stderr"] = stderr.decode("utf8")
+    ret_dict["stderr"] = stderr.decode("utf8") if stderr else ""
     with open(outfile, "w") as json_f:
         json.dump(ret_dict, json_f)
 
