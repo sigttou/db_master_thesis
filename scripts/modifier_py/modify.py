@@ -58,6 +58,8 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
             for entry in mods:
                 fname, addr, op_len, ops = entry
                 tmp_mods.remove(entry)
+                if len(tmp_mods) != i:
+                    continue
                 for op in ops:
                     to_mod = [(fname, addr, op_len, op)]
                     if tmp_mods:
@@ -67,6 +69,8 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
                                 if len(m_ops) > j:
                                     to_mod.append((m_f, m_a, m_l, m_ops[j]))
                                     to_modify.append(to_mod)
+                                else:
+                                    break
                     else:
                         to_modify.append(to_mod)
             print()
