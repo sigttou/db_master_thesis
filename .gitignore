@@ -3,3 +3,4 @@ binaries/*/binary
 *obj-intel64*
 *.out
 *.log
+*tmpfiles*
