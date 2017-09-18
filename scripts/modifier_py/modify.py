@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """
     expects following input:
-    ./modify.py <path_to_binary> <succ_outfile> <mod_instr> <fail_params>
-    mod_inst may look like that:
-    {file} {address}
-    the succ_outfile includes a json with
+    ./modify.py <path_to_config>
+    the config may look like:
     {
-        "ret": <retval>,
-        "stdout": <stdout>,
-        "stderr": <stderr>
+        "binary": <path_to_binary>,
+        "mods": {
+            <filename>: [<addresses>]
+        },
+        "params": <params to test>,
+        "exp_out": {
+            "ret": <retval>,
+            "stdout": <stdout>,
+            "stderr": <stderr>
+        }
     }
 """
 import sys
@@ -22,7 +27,6 @@ from pprint import PrettyPrinter
 import capstone
 from capstone import CS_ARCH_X86, CS_MODE_64
 from bitstring import BitArray
-from parse import parse
 
 
 DIAS = capstone.Cs(CS_ARCH_X86, CS_MODE_64)
@@ -30,16 +34,15 @@ TMPDIR = "./tmpfiles/"
 PP = PrettyPrinter()
 
 
-def main(args):
+def main(config):
     """
         receives arguments and checks for possible modifications
     """
-    binary = os.path.abspath(args[0])
-    fail_params = args[3]
-    files, mods = get_mods(args[2])
+    binary = os.path.abspath(config["binary"])
+    fail_params = config["params"]
+    files, mods = get_mods(config["mods"])
     files = set(files + [binary])
-    with open(args[1]) as f:
-        succ_info = json.load(f)
+    succ_info = config["exp_out"]
     check_mods(binary, succ_info, fail_params, files, mods)
     return 0
 
@@ -51,6 +54,7 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
     preload = " ".join([TMPDIR + os.path.basename(e) for e in files if e != binary])
     executable = TMPDIR + os.path.basename(binary)
     cnt = 0
+
     for i in range(len(modifications)):
         for mods in itertools.combinations(modifications, i+1):
             to_modify = []
@@ -122,28 +126,22 @@ def modify_bin(filename, addr, op_len, mod):
         f.write(content)
 
 
-def get_mods(file):
+def get_mods(mod_dic):
     """
-        Loads a file in the format
-        <addr> <file>
+        Loads a dict in the format
         generates all possible modifications
-        returns a list containing:
         (<filename>, <addr>, (<opcode_name>, <len>, <bytes>))
     """
     ret = []
-    files = set()
-    with open(file) as f:
-        entries = f.readlines()
+    files = list(mod_dic.keys())
 
-    for e in entries:
-        result = parse("{addr} {path}", e)
-        path = result["path"]
-        files.add(path)
-        addr = result["addr"]
-        tmp_len, tmp_mods = get_mods_from_addr(path, int(addr, 16))
-        tmp_s = (path, addr, tmp_len, tmp_mods)
-        ret.append(tmp_s)
-    return list(files), ret
+    for e in mod_dic:
+        path = e
+        for addr in mod_dic[e]:
+            tmp_len, tmp_mods = get_mods_from_addr(path, int(addr, 16))
+            tmp_s = (path, addr, tmp_len, tmp_mods)
+            ret.append(tmp_s)
+    return files, ret
 
 
 def get_mods_from_addr(file, addr):
@@ -198,7 +196,9 @@ def get_possible_mods(opcode):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("<path_to_binary> <succ_outfile> <mod_instr> <fail_params> needed")
+    if len(sys.argv) != 2:
+        print("<path_to_config> needed")
         exit()
-    main(sys.argv[1:])
+    with open(sys.argv[1]) as conffile:
+        conf = json.load(conffile)
+    main(conf)

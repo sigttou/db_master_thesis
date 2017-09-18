@@ -2,10 +2,8 @@
 """
     expects following input:
     ./pin_run.py <binary> <succ_params> <fail_params>
-    if will generate following files:
-        mod_instr.out
-        succ.out
-        fail.out
+    will generate a config file which can be used with modify.py
+    config.out
 """
 import sys
 import os
@@ -17,9 +15,10 @@ from parse import parse
 SUCC_PINOUT = "succpin.out"
 FAIL_PINOUT = "failpin.out"
 SUCC_OUT = "succ.out"
-MOD_FILE = "mod_instr.out"
 PIN_BIN = "/home/user/.local/bin/pin"
 PIN_TOOL = "/home/user/MSC/db_master_thesis/pin/branch_logger/obj-intel64/branchlog.so"
+CONF_OUT_FILE = "config.out"
+CONF_OUT = {}
 
 def main(args):
     """
@@ -28,11 +27,15 @@ def main(args):
     binary = os.path.abspath(args[0])
     success_params = args[1]
     fail_params = args[2]
+    CONF_OUT["params"] = fail_params
+    CONF_OUT["binary"] = binary
     pin_run(binary, success_params, PIN_TOOL, SUCC_PINOUT, SUCC_OUT)
     pin_run(binary, fail_params, PIN_TOOL, FAIL_PINOUT, os.devnull)
-    gen_addrdiff_file(SUCC_PINOUT, FAIL_PINOUT, MOD_FILE)
-    os.remove(SUCC_PINOUT)
-    os.remove(FAIL_PINOUT)
+    CONF_OUT["mods"] = gen_addrdiff(SUCC_PINOUT, FAIL_PINOUT)
+    # os.remove(SUCC_PINOUT)
+    # os.remove(FAIL_PINOUT)
+    with open(CONF_OUT_FILE, "w") as f:
+        json.dump(CONF_OUT, f, sort_keys=True, indent=4, separators=(",", ": "))
     return 0
 
 
@@ -56,10 +59,11 @@ def pin_run(binary, parameters, pin_tool, pinoutfile, outfile):
     ret_dict["ret"] = retval
     ret_dict["stdout"] = output.decode("utf8")
     ret_dict["stderr"] = stderr.decode("utf8") if stderr else ""
-    with open(outfile, "w") as json_f:
-        json.dump(ret_dict, json_f)
+    if outfile == SUCC_OUT:
+        CONF_OUT["exp_out"] = ret_dict
 
-def gen_addrdiff_file(a_file, b_file, outfile):
+
+def gen_addrdiff(a_file, b_file):
     """
         generates an info file out of the differences between the files
     """
@@ -82,12 +86,15 @@ def gen_addrdiff_file(a_file, b_file, outfile):
                                         "target": result["target"],
                                         "cnt": 1
                                        }
-    with open(outfile, "w") as f:
-        for path in branches:
-            branch = branches[path]
-            for addr in branch:
-                if branch[addr]["cnt"] > 1:
-                    print("{} {}".format(addr, path), file=f)
+    ret = {}
+    for path in branches:
+        branch = branches[path]
+        for addr in branch:
+            if branch[addr]["cnt"] > 1:
+                if not ret.get(path):
+                    ret[path] = []
+                ret[path].append(addr)
+    return ret
 
 
 if __name__ == "__main__":
