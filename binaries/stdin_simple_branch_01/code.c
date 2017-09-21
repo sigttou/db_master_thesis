@@ -6,5 +6,7 @@ int main(void)
   scanf("%d", &x);
   if(x > 10)
     printf("success.\n");
+  else
+    printf("fail.\n");
   return 0;
 }
