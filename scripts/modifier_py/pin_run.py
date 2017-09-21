@@ -25,20 +25,21 @@ def main(args):
         receives arguments and checks for possible modifications
     """
     binary = os.path.abspath(args[0])
+    if not os.path.isfile(binary):
+        print("File not found")
+        exit()
     success_params = args[1]
     fail_params = args[2]
     succ_in = ""
     fail_in = ""
     if len(args) > 3 and args[3] == "-i":
         with open(args[4]) as f:
-            succ_in = f.read().decode("utf8")
+            succ_in = bytes(f.read(), encoding="utf8")
         with open(args[5]) as f:
-            fail_in = f.read().decode("utf8")
-    print(succ_in)
-    print(fail_in)
+            fail_in = bytes(f.read(), encoding="utf8")
     CONF_OUT["params"] = fail_params
     CONF_OUT["binary"] = binary
-    CONF_OUT["fail_in"] = fail_in
+    CONF_OUT["fail_in"] = fail_in.decode("utf8")
     pin_run(binary, success_params, PIN_TOOL, SUCC_PINOUT, SUCC_OUT, succ_in)
     pin_run(binary, fail_params, PIN_TOOL, FAIL_PINOUT, os.devnull, fail_in)
     CONF_OUT["mods"] = gen_addrdiff(SUCC_PINOUT, FAIL_PINOUT)
@@ -108,7 +109,7 @@ def gen_addrdiff(a_file, b_file):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4 and sys.argv[4] != "-i":
+    if len(sys.argv) < 4 or (len(sys.argv) != 4 and sys.argv[4] != "-i"):
         print("<binary> <succ_params> <fail_params>")
         print("<binary> <succ_params> <fail_params> -i <succ_stdinfile> <fail_stdinfile>")
         exit()

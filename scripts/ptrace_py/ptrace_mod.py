@@ -13,7 +13,8 @@
             "ret": <retval>,
             "stdout": <stdout>,
             "stderr": <stderr>
-        }
+        },
+        "fail_in": <stdin>,
     }
 """
 import sys
@@ -41,14 +42,13 @@ def main(config):
     """
     binary = os.path.abspath(config["binary"])
     fail_params = config["params"]
-    files, mods = get_mods(config["mods"])
-    files = set(files + [binary])
+    _, mods = get_mods(config["mods"])
     succ_info = config["exp_out"]
-    check_mods(binary, succ_info, fail_params, files, mods)
+    check_mods(binary, succ_info, fail_params, mods, config["fail_in"])
     return 0
 
 
-def check_mods(binary, succ_info, fail_params, files, modifications):
+def check_mods(binary, succ_info, fail_params, modifications, stdin):
     """
         checks which modification generates the same output
     """
@@ -84,7 +84,9 @@ def check_mods(binary, succ_info, fail_params, files, modifications):
             for mod in to_modify:
                 cnt += 1
                 tmp_out = (TemporaryFile(dir="/dev/shm"), TemporaryFile(dir="/dev/shm"))
-                pid = createChild(arguments, True, None, tmp_out[0].fileno(), tmp_out[1].fileno())
+                pid = createChild(arguments, True, None,
+                                  tmp_out[0].fileno(), tmp_out[1].fileno(),
+                                  bytes(stdin, encoding="utf8"))
                 process = dbg.addProcess(pid, True)
                 out_lookup[process] = tmp_out
                 mod_lookup[process] = mod

@@ -2,5 +2,6 @@ binaries/*/binary
 .vscode/.ropeproject/
 *obj-intel64*
 *.out
+*.in
 *.log
 *tmpfiles*
