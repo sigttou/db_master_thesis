@@ -47,15 +47,15 @@ VOID Instruction(INS ins, VOID *v)
 
 VOID Fini(INT32 code, VOID *v)
 {
-  for(auto it : memory_accesses)
-  {
-    std::string img = str_of_img_at[it.second];
-    fprintf(trace, "%p - %s\n", it.first, img.data());
-  }
   for(auto it : instructions)
   {
     std::string img = str_of_img_at[it.second];
-    fprintf(trace, "0x%zx - %s\n", it.first, img.data());
+    fprintf(trace, "0x%zx - %s\n", it.first - it.second, img.data());
+  }
+  for(auto it : memory_accesses)
+  {
+    std::string img = str_of_img_at[it.second];
+    fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)it.second, img.data());
   }
   fclose(trace);
 }

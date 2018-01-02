@@ -2,5 +2,8 @@
     "python.pythonPath": "/usr/bin/python3",
     "files.associations": {
         "*.tlh": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "itertools"
+    ]
 }
