@@ -7,6 +7,11 @@ fi
 
 cd $1
 sudo chown root:root *; sudo chmod +x * ; sudo chmod u+s * ;
+cnt=0
 for i in *; do
-  timeout 0.1 ./$i -i 2>&1; 
+  if ! (($cnt % 10)); then
+    echo $cnt
+  fi
+  timeout 0.1 ./$i echo win 2>&1 | grep win
+  cnt=$((cnt+1))
 done
