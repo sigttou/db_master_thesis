@@ -12,6 +12,6 @@ for i in *; do
   if ! (($cnt % 10)); then
     echo $cnt
   fi
-  timeout 0.1 ./$i echo win 2>&1 | grep win
+  timeout -s 9 0.1 ./$i echo win 2>&1 | grep win
   cnt=$((cnt+1))
 done
