@@ -26,27 +26,27 @@ def main(args):
 
     for l in lines[lower_l:upper_l]:
         output = parse("{addr} - {file}", l)
-        bin_args = [None] * 3
-        bin_args[2] = output["addr"]
-        bin_args[1] = output["file"]
-        bin_args[0] = args[0]
-        modify(bin_args)
 
-def modify(args):
+        bin_args = [None, None]
+        bin_args[0] = args[0]
+        bin_args[1] = output["addr"]
+
+        with open(output["file"], 'rb') as f:
+            f_storage = bytearray(f.read())
+        modify(bin_args, f_storage, basename(output["file"]))
+
+def modify(args, f_storage, name):
     """
         args[0] ... dir to be placed at
-        args[1] ... binary to change
-        args[2] ... addr to flip
+        args[1] ... addr to flip
     """
-    addr = int(args[2], 16)
-    file = args[1]
     outdir = args[0]
-    with open(file, 'rb') as f:
-        f_storage = bytearray(f.read())
-        if addr > len(f_storage):
-            return 1
+    addr = int(args[1], 16)
+    if addr > len(f_storage):
+        return 1
+
     for index in range(0, 8):
-        out = outdir + basename(file) + '_' + str(hex(addr)) + '_' + str(index)
+        out = outdir + name + '_' + str(hex(addr)) + '_' + str(index)
         with open(out, 'wb') as f:
             tmp = f_storage[addr]
             f_storage[addr] ^= 1 << index
