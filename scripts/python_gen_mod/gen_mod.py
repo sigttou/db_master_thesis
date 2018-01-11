@@ -18,12 +18,11 @@ def main(args):
         lines = f.readlines()
 
     lower_l = 0
-    upper_l = -1
+    upper_l = None
 
     if len(args) == 4:
         lower_l = int(args[2])
         upper_l = int(args[3])
-
     for l in lines[lower_l:upper_l]:
         output = parse("{addr} - {file}", l)
 
