@@ -13,7 +13,7 @@ static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
   "o", "branchlog.out", "specify output file name");
 
-VOID RecordMemRead(VOID* ip, VOID* addr, ADDRINT base)
+VOID RecordMemAcc(VOID* ip, VOID* addr, ADDRINT base)
 {
   memory_accesses.insert(std::make_pair(addr, base));
 }
@@ -36,7 +36,7 @@ VOID Instruction(INS ins, VOID *v)
   for (UINT32 memOp = 0; memOp < memOperands; memOp++)
   {
     INS_InsertPredicatedCall(
-      ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
+      ins, IPOINT_BEFORE, (AFUNPTR)RecordMemAcc,
       IARG_INST_PTR,
       IARG_MEMORYOP_EA, memOp,
       IARG_ADDRINT, base,
