@@ -7,6 +7,7 @@
 FILE * trace;
 
 static std::unordered_map<ADDRINT, std::string> str_of_img_at;
+static std::unordered_map<ADDRINT, ADDRINT> img_offsets;
 static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
 
@@ -28,8 +29,13 @@ VOID Instruction(INS ins, VOID *v)
   ADDRINT ins_addr = INS_Address(ins);
   IMG img = IMG_FindByAddress(ins_addr);
   ADDRINT base = 0x0;
+  ADDRINT offset = 0x0;
   if(IMG_Valid(img))
-      base = IMG_LowAddress(img);
+  {
+    base = IMG_LowAddress(img);
+    offset = IMG_LoadOffset(img);
+  }
+  img_offsets[base] = offset;
   instructions.insert(std::make_pair(ins_addr, base));
 
   UINT32 memOperands = INS_MemoryOperandCount(ins);
@@ -50,12 +56,14 @@ VOID Fini(INT32 code, VOID *v)
   for(auto it : instructions)
   {
     std::string img = str_of_img_at[it.second];
-    fprintf(trace, "0x%zx - %s\n", it.first - it.second, img.data());
+    ADDRINT offset = img_offsets[it.second];
+    fprintf(trace, "0x%zx - %s\n", it.first - offset, img.data());
   }
   for(auto it : memory_accesses)
   {
     std::string img = str_of_img_at[it.second];
-    fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)it.second, img.data());
+    ADDRINT offset = img_offsets[it.second];
+    fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset, img.data());
   }
   fclose(trace);
 }
