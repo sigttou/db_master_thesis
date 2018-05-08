@@ -5,3 +5,4 @@ binaries/*/binary
 *.in
 *.log
 *tmpfiles*
+libs/*/preload.so
