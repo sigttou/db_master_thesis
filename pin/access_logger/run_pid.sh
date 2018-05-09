@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-ROOT=/home/user/build/pin
+ROOT=/opt/pin/pin
 tmp=`ls | grep cpp`
 NAME=${tmp%.cpp}
-out=$(basename $2).out
+out=$(basename $1).out
 echo $out
-echo $1
-make PIN_ROOT=$ROOT obj-intel64/$NAME.so && /home/user/.local/bin/pin -xyzzy -mesgon log_win -pid $1 -t obj-intel64/$NAME.so -o $out
+echo $2
+make PIN_ROOT=$ROOT obj-intel64/$NAME.so 
+$ROOT/pin -xyzzy -mesgon log_win -pid $2 -t obj-intel64/$NAME.so -o $out
