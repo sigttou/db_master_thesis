@@ -9,6 +9,10 @@ __attribute__((constructor)) void init(void)
 {
   //if(!strcmp(__progname, "sudo"))
   if(strstr(__progname, "2msc"))
-    sleep(5);
+  {
+    size_t i = 0;
+    while(i++ < 4000000000);
+  }
+
     //raise(SIGTSTP);
 }
