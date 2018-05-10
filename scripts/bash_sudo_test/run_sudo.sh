@@ -11,10 +11,10 @@ if [ "$#" -ne 1 ]; then
 fi
 
 cd $1
-sudo chown root:root *; sudo chmod +x * ; sudo chmod u+s * ;
+sudo -- sh -c "chown root:root *; chmod +x * ; chmod u+s *"
 cnt=0
 for i in *; do
-  if ! (($cnt % 10)); then
+  if ! (($cnt % 100)); then
     echo $cnt
   fi
   task "$i" &
