@@ -2,25 +2,47 @@
 \chapter{General}\label{sec:general}
 
 This chapter describes term, techniques, tools and programs used for this 
-thesis. It provides a general overview and makes it easier to understand the 
-details of the work in other chapters. 
+thesis. It provides a general overview to make it easier to understand the 
+details of the work in the following chapters.
 
 \section{ELF - Executable and Linkable Format}
 
 The ELF format is an object file format. It is used to describe a program in a 
 way to execute it on a processor without applying changes to the binary content. 
-The assembler and linker create the elf files. For our work, we need to look at 
+The assembler and linker create the ELF files. For our work, we need to look at 
 ELF sections containing actual code to run or data which might change the 
 execution path of a binary. 
 
-\subsection{Sections and Segments}
+\subsection{Structure of an ELF file}
 
-There are two views of an ELF binary, one as the so called linking view and one 
-is the 
+There are two views of an ELF binary, the so called linking view and the the 
+execution view. Those views are also called section and segment view. They 
+share the same ELF header but serve different purposes for the operating system.
 
 \subsubsection{Sections}
 
-\subsection{Segments}
+Sections describe the binary for the linking view, it contains instructions, 
+data, symbol table, relocation information. Sections reserved for the system 
+start with a dot, there might be other sections in the binary but those are not 
+relevant for us. Sections that contribute to the program's memory image are 
+initialized data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, 
+.rodata1}) and executable instructions (\texttt{.text}). 
+
+\subsubsection{Segments}
+
+Segments describe the virtual memory layout of a loaded binary. The so called 
+process image contains segments with \texttt{text}, \texttt{data}, 
+\texttt{stack} and others. When loading the image into memory references inside 
+the ELF file need to be resolved and loaded into the memory too. After 
+successfully building up the process image and its dependencies the program can 
+be executed.
+
+\subsection{Storing ELF files in Memory}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \section{Analysis and Testing of ELFs}
 
