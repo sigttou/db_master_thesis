@@ -37,6 +37,8 @@ worker () {
   rmdir $run_chroot$modified_inside
 }
 
+echo "Preparing chroots"
+
 for i in $(seq $num_runs);
 do
   tmp_chroot=$chroots_path$i
@@ -44,10 +46,13 @@ do
   mkdir -p $tmp_flips
   find $path_to_flips -maxdepth 1 -type f | head -n $flips_per_run | xargs -i mv "{}" $tmp_flips/
   cp -R $chroot_skeleton $tmp_chroot
+  echo "Generated chroot $i ..."
   worker $tmp_chroot $tmp_flips &
 done
 
 wait
+
+echo "Looking for successfull flips..."
 
 for i in $chroots_path* ; do 
   if [ -f $i$log_file ]; then
