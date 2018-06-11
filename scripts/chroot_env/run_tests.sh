@@ -14,6 +14,9 @@ cmd_file=$1
 path_to_flips=$2
 file_to_replace=$3
 num_runs=$4
+flips_per_run=$(find $path_to_flips -maxdepth 1 -type f | wc -l)
+flips_per_run=$(expr $flips_per_run + $num_runs - 1)
+flips_per_run=$(expr $flips_per_run / $num_runs)
 
 if [ "$#" -ne 4 ]; then
   echo "Illegal number of parameters"
@@ -23,10 +26,11 @@ fi
 
 worker () {
   local run_chroot=$1
+  local run_flips=$2
   cp $cmd_file $run_chroot/ || { echo 'cp failed' ; exit 1; }
   if [ ! -e "$run_chroot$modified_inside" ]; then
     mkdir -p $run_chroot$modified_inside || { echo 'mkdir failed' ; exit 1; }
-    mount --bind $path_to_flips $run_chroot$modified_inside || { echo 'mount failed' ; exit 1; }
+    mount --bind $run_flips $run_chroot$modified_inside || { echo 'mount failed' ; exit 1; }
   fi
   echo -e "./$cmd_file $modified_inside/ $file_to_replace $log_file" | chroot $run_chroot
   umount $run_chroot$modified_inside
@@ -36,8 +40,11 @@ worker () {
 for i in $(seq $num_runs);
 do
   tmp_chroot=$chroots_path$i
-  echo cp -R $chroot_skeleton $tmp_chroot
-  worker $tmp_chroot
+  tmp_flips=$path_to_flips$i
+  mkdir -p $tmp_flips
+  find $path_to_flips -maxdepth 1 -type f | head -n $flips_per_run | xargs -i mv "{}" $tmp_flips/
+  cp -R $chroot_skeleton $tmp_chroot
+  worker $tmp_chroot $tmp_flips
 done
 
 wait
