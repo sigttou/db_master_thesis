@@ -44,7 +44,7 @@ do
   mkdir -p $tmp_flips
   find $path_to_flips -maxdepth 1 -type f | head -n $flips_per_run | xargs -i mv "{}" $tmp_flips/
   cp -R $chroot_skeleton $tmp_chroot
-  worker $tmp_chroot $tmp_flips
+  worker $tmp_chroot $tmp_flips &
 done
 
 wait
