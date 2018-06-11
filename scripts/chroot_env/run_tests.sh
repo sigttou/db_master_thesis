@@ -13,9 +13,13 @@ worker () {
   local run_path=$2
   local run_file=$3
   cp $cmd_file $run_chroot/ || { echo 'cp failed' ; exit 1; }
-  mkdir -p $run_chroot$modified_inside || { echo 'mkdir failed' ; exit 1; }
-  mount --bind $run_path $run_chroot$modified_inside || { echo 'mount failed' ; exit 1; }
-  echo -e "./$cmd_file $modified_inside/ $run_file $log_file" | chroot $run_chroot
+  if [ ! -e "$run_chroot$modified_inside" ]; then
+    mkdir -p $run_chroot$modified_inside || { echo 'mkdir failed' ; exit 1; }
+    mount --bind $run_path $run_chroot$modified_inside || { echo 'mount failed' ; exit 1; }
+  fi
+  # echo -e "./$cmd_file $modified_inside/ $run_file $log_file" | chroot $run_chroot
+  umount $run_chroot$modified_inside
+  rmdir $run_chroot$modified_inside
 }
 
 if [ "$#" -ne 3 ]; then
@@ -29,7 +33,11 @@ for i in $1* ; do worker "$i" "$2" "$3" & done
 wait
 
 for i in $1* ; do 
-  cat $i$log_file 
+  if [ -f $i$log_file ]; then
+    cat $i$log_file 
+  else
+    echo "No successfull flip at $i"
+  fi
 done
 
 echo DONE!
