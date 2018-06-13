@@ -5,9 +5,15 @@
 # $3 = file to replace with a flipped file
 # $4 = number of parallel runs
 
+if [ "$#" -ne 4 ]; then
+  echo "Illegal number of parameters"
+  echo "./run_tests.sh <file_to_exec> <modified_files> <file_to_replace> <number_of_parallel_runs>"
+  exit 1
+fi
+
 modified_inside="/media/flips"
 log_file="/tmp/succ.file"
-chroot_skeleton="/var/chroot/zesty_templ/"
+chroot_skeleton="/var/chroot/zesty_templ"
 chroots_path="/media/ramdisk/chroot/"
 cmd_file=$1
 path_to_flips=$2
@@ -16,12 +22,6 @@ num_runs=$4
 flips_per_run=$(find $path_to_flips -maxdepth 1 -type f | wc -l)
 flips_per_run=$(expr $flips_per_run + $num_runs - 1)
 flips_per_run=$(expr $flips_per_run / $num_runs)
-
-if [ "$#" -ne 4 ]; then
-  echo "Illegal number of parameters"
-  echo "./run_tests.sh <file_to_exec> <modified_files> <file_to_replace> <number_of_parallel_runs>"
-  exit 1
-fi
 
 worker () {
   local run_chroot=$1
