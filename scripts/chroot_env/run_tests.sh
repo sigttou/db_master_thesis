@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-# $1 = path to skeleton chroot
-# $2 = folder to place chroots
-# $3 = folder to modified files
-# $4 = file to be replaced
-# $5 = number of parallel runs
+# $1 = script or file to exec in chroot
+# $2 = dir with flipped files
+# $3 = file to replace with a flipped file
+# $4 = number of parallel runs
 
 modified_inside="/media/flips"
 log_file="/tmp/succ.file"
