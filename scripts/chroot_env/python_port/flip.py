@@ -59,16 +59,23 @@ def prepare_chroots(config):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         sub_cr_flip_folder = sub_chroot + config["CR_flip_folder"]
 
-        print("mkdir -p " + sub_flip_folder)
-        print("find " + config["folder_with_flips"] + " -maxdepth 1 -type f | head -n " +
-              str(flips_per_worker) + ' | xargs -i mv "{}" ' + sub_flip_folder + "/")
-        print("cp -R " + config["chroot_template"] + " " + sub_chroot)
-        print("cp " + config["CR_exec_file"] + " " + sub_chroot + "/")
+        os.makedirs(sub_flip_folder, exist_ok=True)
+        flips = [os.path.join(config["folder_with_flips"], f) for f in
+                 os.listdir(config["folder_with_flips"]) if os.path.isfile(os.path.join(
+                                                                           config["folder_with_flips"], f))]
+        flips = flips[:flips_per_worker]
+        if not flips:
+            print("No flips left to move! - Run: " + str(i))
+            break
+        os.system("mv " + " ".join(flips) + " " + sub_flip_folder)
+
+        if not os.path.isdir(sub_chroot):
+            os.system("cp -R " + config["chroot_template"] + " " + sub_chroot)
+        os.system("cp " + config["CR_exec_file"] + " " + sub_chroot + "/")
 
         if not os.path.isdir(sub_cr_flip_folder):
-            print("mkdir -p " + sub_cr_flip_folder)
-        if not os.path.ismount(sub_cr_flip_folder):
-            print("mount --bind " + sub_flip_folder + " " + sub_cr_flip_folder)
+            os.makedirs(sub_cr_flip_folder, exist_ok=True)
+            os.system("mount --bind " + sub_flip_folder + " " + sub_cr_flip_folder)
 
     return
 
@@ -83,9 +90,9 @@ def start_workers(config):
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
         command += config["CR_flip_folder"] + " " + config["file_flipped"] + " " + config["CR_log_file"]
 
-        print(command)
-        cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command])
-        print(cmd.command_line)
+        cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
+        cmd.start()
+        workers.append(cmd)
 
     return workers
 
@@ -114,10 +121,11 @@ def clean_chroots(config):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         sub_cr_flip_folder = sub_chroot + config["CR_flip_folder"]
 
-        if os.path.ismount(sub_cr_flip_folder):
-            print("umount " + sub_cr_flip_folder)
         if os.path.isdir(sub_cr_flip_folder):
-            print("rmdir " + sub_cr_flip_folder)
+            os.system("umount " + sub_cr_flip_folder)
+            os.system("rmdir " + sub_cr_flip_folder)
+        if os.path.isdir(sub_chroot):
+            os.system("rm -rf sub_chroot")
 
     return
 
@@ -130,8 +138,8 @@ def main(config_path):
 
     workers = start_workers(config)
     print("Started workers, waiting for them")
-    for p in workers:
-        p.wait()
+    for w in workers:
+        w.wait()
 
     check_results(config)
     print("Checking done, cleaning up")
