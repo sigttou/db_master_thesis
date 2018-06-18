@@ -13,7 +13,6 @@ CONFIG_KEYS = [
         "chroot_template",
         "tmp_chroot_folder",
         "folder_with_flips",
-        "file_flipped",
         "num_of_parallel_checks",
         "CR_exec_file",
         "CR_flip_folder",
@@ -33,14 +32,14 @@ def load_config(config_path):
             config = json.load(f)
     except IOError:
         print("Could not open config file!")
-        sys.exit(-2)
+        sys.exit(-1)
     except json.JSONDecodeError:
         print("Config file is not valid json!")
-        sys.exit(-3)
+        sys.exit(-1)
 
     if not set(CONFIG_KEYS) == set(config.keys()):
         print("Config entries do not match needed ones")
-        sys.exit(-4)
+        sys.exit(-1)
 
     return config
 
@@ -50,6 +49,7 @@ def instrument(config):
     Run given binary and report results
     """
     executor.execute(config["instrumenter_call"], silent=True)
+
     return
 
 
@@ -84,7 +84,7 @@ def generate_flips(config):
             entries = f.readlines()
     except FileNotFoundError:
         print("Flips file not found! Possible failed instrumenting!")
-        sys.exit(-5)
+        sys.exit(-1)
 
     todel = []
     for e in entries:
@@ -122,7 +122,7 @@ def prepare_chroots(config):
                                config["num_of_parallel_checks"])
     except FileNotFoundError:
         print("Directory " + config["folder_with_flips"] + " with flips does not exist")
-        sys.exit(-5)
+        sys.exit(-1)
 
     for i in range(config["num_of_parallel_checks"]):
         sub_flip_folder = os.path.join(config["folder_with_flips"], str(i))
@@ -150,7 +150,7 @@ def prepare_chroots(config):
     return
 
 
-def start_workers(config):
+def start_workers(config, file_flipped):
     """
     Creates a subprocess for each chroot to run the given commandfile
     """
@@ -158,7 +158,7 @@ def start_workers(config):
     for i in range(config["num_of_parallel_checks"]):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
-        command += config["CR_flip_folder"] + " " + config["file_flipped"] + " " + config["CR_log_file"]
+        command += config["CR_flip_folder"] + " " + file_flipped + " " + config["CR_log_file"]
 
         cmd = executor.chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
         cmd.start()
@@ -167,7 +167,7 @@ def start_workers(config):
     return workers
 
 
-def check_results(config):
+def check_results(config, logfile):
     """
     Checks all chroots for successfull bitflips
     """
@@ -175,10 +175,9 @@ def check_results(config):
         sub_log_file = os.path.join(config["tmp_chroot_folder"], str(i)) + config["CR_log_file"]
         try:
             f = open(sub_log_file)
-            print("OK: Success in " + sub_log_file)
-            print(f.read())
+            print(f.read(), file=open(logfile, "wa"))
         except FileNotFoundError:
-            print("ERR: No success in " + sub_log_file)
+            continue
 
     return
 
@@ -202,25 +201,29 @@ def clean_chroots(config):
 
 def main(config_path):
     config = load_config(config_path)
-    config["logfile"] = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
+    logfile = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
     print("Successfully loaded config")
-    # instrument(config)
+    instrument(config)
     print("Instrumented binary")
 
-    while(generate_flips(config)):
+    while(True):
+        file_flipped = generate_flips(config)
+        if(not file_flipped):
+            break
+        print("Flips generated for " + file_flipped)
         prepare_chroots(config)
         print("Successfully prepared chroots")
 
-        workers = start_workers(config)
+        workers = start_workers(config, file_flipped)
         print("Started workers, waiting for them")
         for w in workers:
             w.wait()
 
-        check_results(config)
+        check_results(config, logfile)
         print("Checking done, cleaning up")
         clean_chroots(config)
 
-    print("DONE - check " + config["logfile"] + " for results")
+    print("DONE - check " + logfile + " for results")
 
     return 0
 
