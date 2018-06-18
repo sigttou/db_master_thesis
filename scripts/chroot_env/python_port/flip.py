@@ -150,7 +150,6 @@ def prepare_chroots(config):
                                                                            config["folder_with_flips"], f))]
         flips = flips[:flips_per_worker]
         if not flips:
-            print("No flips left to move! - Run: " + str(i))
             break
         os.system("mv " + " ".join(flips) + " " + sub_flip_folder)
 
