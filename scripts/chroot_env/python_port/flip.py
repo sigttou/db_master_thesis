@@ -251,4 +251,7 @@ if __name__ == '__main__':
         print("Illegal number of parameters")
         print("./flips.py <config>")
         sys.exit(-1)
+    if os.geteuid():
+        print("This needs to be run as root, sorry!")
+        sys.exit(-1)
     main(sys.argv[1])
