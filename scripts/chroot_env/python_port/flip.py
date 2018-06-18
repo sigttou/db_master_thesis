@@ -3,9 +3,13 @@
 import sys
 import json
 import os
-from executor import chroot
+import time
+import executor
+import parse
 
 CONFIG_KEYS = [
+        "instrumenter_call",
+        "instrumenter_outfile",
         "chroot_template",
         "tmp_chroot_folder",
         "folder_with_flips",
@@ -39,6 +43,72 @@ def load_config(config_path):
         sys.exit(-4)
 
     return config
+
+
+def instrument(config):
+    """
+    Run given binary and report results
+    """
+    executor.execute(config["instrumenter_call"], silent=True)
+    return
+
+
+def generate_flips(config):
+    """
+    Generates flips and returns "file_flipped" or None if finished
+    """
+    def modify(addr, flip_dir, toflip_bin, filename):
+        """
+        Taken from scripts/python_gen_mod/gen_mod.py
+        """
+        addr = int(addr, 16)
+        if(addr > len(toflip_bin)):
+            return
+        for i in range(8):
+            out = flip_dir + filename + "_" + str(hex(addr)) + "_" + str(i)
+            try:
+                with open(out, "wb") as f:
+                    tmp = toflip_bin[addr]
+                    toflip_bin[addr] ^= 1 << i
+                    f.write(toflip_bin)
+                    toflip_bin[addr] = tmp
+            except OSError:
+                print("Failed in writing modified binary")
+                sys.exit(-1)
+
+        return
+
+    file_flipped = ""
+    try:
+        with open(config["instrumenter_outfile"], 'r') as f:
+            entries = f.readlines()
+    except FileNotFoundError:
+        print("Flips file not found! Possible failed instrumenting!")
+        sys.exit(-5)
+
+    todel = []
+    for e in entries:
+        entry = parse.parse("{addr} - {file}", e)
+        file_flipped = entry["file"] if not file_flipped else file_flipped
+        if(not file_flipped == entry["file"]):
+            break
+
+        fs_stats = os.statvfs(config["folder_with_flips"])
+        blocks_needed = int((8 * os.path.getsize(entry["file"])) / fs_stats.f_bsize) + 1
+        if(blocks_needed > fs_stats.f_bavail):
+            break
+
+        with open(entry["file"], "rb") as f:
+            bin_content = bytearray(f.read())
+        modify(entry["addr"], config["folder_with_flips"], bin_content, os.path.basename(entry["file"]))
+        todel.append(e)
+
+    entries = [e for e in entries if e not in todel]
+
+    with open(config["instrumenter_outfile"], 'w') as f:
+        f.writelines(entries)
+
+    return file_flipped
 
 
 def prepare_chroots(config):
@@ -90,7 +160,7 @@ def start_workers(config):
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
         command += config["CR_flip_folder"] + " " + config["file_flipped"] + " " + config["CR_log_file"]
 
-        cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
+        cmd = executor.chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
         cmd.start()
         workers.append(cmd)
 
@@ -132,19 +202,25 @@ def clean_chroots(config):
 
 def main(config_path):
     config = load_config(config_path)
+    config["logfile"] = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
     print("Successfully loaded config")
-    prepare_chroots(config)
-    print("Successfully prepared chroots")
+    # instrument(config)
+    print("Instrumented binary")
 
-    workers = start_workers(config)
-    print("Started workers, waiting for them")
-    for w in workers:
-        w.wait()
+    while(generate_flips(config)):
+        prepare_chroots(config)
+        print("Successfully prepared chroots")
 
-    check_results(config)
-    print("Checking done, cleaning up")
-    clean_chroots(config)
-    print("DONE")
+        workers = start_workers(config)
+        print("Started workers, waiting for them")
+        for w in workers:
+            w.wait()
+
+        check_results(config)
+        print("Checking done, cleaning up")
+        clean_chroots(config)
+
+    print("DONE - check " + config["logfile"] + " for results")
 
     return 0
 

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
     generates binaries to given folder with all bit flips for given address
+
+    ++ See chroot_env/python_port for a current version + automation of the whole testing process ++
 """
 
 import sys
 from os.path import basename
 from parse import parse
+
 
 def main(args):
     """
@@ -34,6 +37,7 @@ def main(args):
             f_storage = bytearray(f.read())
         modify(bin_args, f_storage, basename(output["file"]))
 
+
 def modify(args, f_storage, name):
     """
         args[0] ... dir to be placed at
@@ -52,6 +56,7 @@ def modify(args, f_storage, name):
             f.write(f_storage)
             f_storage[addr] = tmp
     return 0
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
