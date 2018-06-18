@@ -128,6 +128,7 @@ def prepare_chroots(config):
         print("Directory " + config["folder_with_flips"] + " with flips does not exist")
         sys.exit(-1)
 
+    os.makedirs(config["folder_with_flips"], exist_ok=True)
     for i in range(config["num_of_parallel_checks"]):
         sub_flip_folder = os.path.join(config["folder_with_flips"], str(i))
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
@@ -199,6 +200,8 @@ def clean_chroots(config):
             os.system("rmdir " + sub_cr_flip_folder)
         if os.path.isdir(sub_chroot):
             os.system("rm -rf sub_chroot")
+
+    shutil.rmtree(config["folder_with_flips"])
 
     return
 
