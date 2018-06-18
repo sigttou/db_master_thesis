@@ -4,6 +4,7 @@ import sys
 import json
 import os
 import time
+import shutil
 from executor import execute, chroot
 import parse
 
@@ -90,6 +91,8 @@ def generate_flips(config):
         print("Flips file not found! Possible failed instrumenting!")
         sys.exit(-1)
 
+    os.makedirs(config["folder_with_flips"], exist_ok=True)
+
     todel = []
     for e in entries:
         entry = parse.parse("{addr} - {file}", e)
@@ -98,7 +101,15 @@ def generate_flips(config):
             break
 
         fs_stats = os.statvfs(config["folder_with_flips"])
-        blocks_needed = int((8 * os.path.getsize(entry["file"])) / fs_stats.f_bsize) + 1
+        try:
+            blocks_needed = int((8 * os.path.getsize(entry["file"])) / fs_stats.f_bsize) + 1
+        except FileNotFoundError:
+            # file is something not exiting, try next entry
+            todel.append(e)
+            print(entry["file"] + " was not found, skipping it!")
+            file_flipped = ""
+            continue
+
         if(blocks_needed > fs_stats.f_bavail):
             break
 
@@ -128,7 +139,6 @@ def prepare_chroots(config):
         print("Directory " + config["folder_with_flips"] + " with flips does not exist")
         sys.exit(-1)
 
-    os.makedirs(config["folder_with_flips"], exist_ok=True)
     for i in range(config["num_of_parallel_checks"]):
         sub_flip_folder = os.path.join(config["folder_with_flips"], str(i))
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
@@ -180,6 +190,7 @@ def check_results(config, logfile):
         sub_log_file = os.path.join(config["tmp_chroot_folder"], str(i)) + config["CR_log_file"]
         try:
             f = open(sub_log_file)
+            print("FOUND SOMETHING - see " + logfile + " for result!")
             print(f.read(), file=open(logfile, "wa"))
         except FileNotFoundError:
             continue
