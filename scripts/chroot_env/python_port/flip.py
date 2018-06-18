@@ -4,7 +4,7 @@ import sys
 import json
 import os
 import time
-import executor
+from executor import execute, chroot
 import parse
 
 CONFIG_KEYS = [
@@ -41,6 +41,10 @@ def load_config(config_path):
         print("Config entries do not match needed ones")
         sys.exit(-1)
 
+    if config["num_of_parallel_checks"] <= 0:
+        print("Num of parallel runs need to be larger than 0")
+        sys.exit(-1)
+
     return config
 
 
@@ -48,7 +52,7 @@ def instrument(config):
     """
     Run given binary and report results
     """
-    executor.execute(config["instrumenter_call"], silent=True)
+    execute(config["instrumenter_call"], silent=True)
 
     return
 
@@ -160,7 +164,7 @@ def start_workers(config, file_flipped):
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
         command += config["CR_flip_folder"] + " " + file_flipped + " " + config["CR_log_file"]
 
-        cmd = executor.chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
+        cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
         cmd.start()
         workers.append(cmd)
 
