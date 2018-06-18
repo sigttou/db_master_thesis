@@ -14,7 +14,7 @@ __attribute__((constructor)) void init(void)
   if(!strcmp(__progname, "msc_test"))
   {
     size_t i = 0;
-    while(i++ < 6000000000);
+    while(i++ < 2000000000);
   }
 
     //raise(SIGTSTP);
