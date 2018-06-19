@@ -17,7 +17,7 @@ sleep 2
 curl -u user:wrong http://localhost/protected/
 
 sudo chroot /var/chroot/bionic_templ/ apachectl stop
-while kill -0 `pgrep msc_test` 2> /dev/null; do sleep 1; done;
+while kill -0 `pgrep apache2` 2> /dev/null; do sleep 1; done;
 
 cat msc_test_*.out > msc_test.out
 rm msc_test_*.out
