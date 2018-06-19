@@ -14,7 +14,7 @@ done
 cd $old_path
 
 sleep 2
-curl -u user:wrong http://localhost/protected/
+curl -u user:wrong http://localhost/protected/ &> /dev/null
 
 sudo chroot /var/chroot/bionic_templ/ apachectl stop
 while kill -0 `pgrep apache2` 2> /dev/null; do sleep 1; done;
