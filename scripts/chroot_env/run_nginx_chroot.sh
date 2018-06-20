@@ -13,4 +13,5 @@ for i in `ls $1` ; do
     echo "SUCCESS: $i" >> $3
   fi
   nginx -s stop
+  while netstat -ln | grep ":$portnum " &> /dev/null; do sleep 1 ; done
 done
