@@ -126,6 +126,20 @@ def generate_flips(config):
     return file_flipped
 
 
+def create_chroots(config):
+    """
+    Copies everything needed for chroot, gurantees that there will be enough space for flips
+    """
+    for i in range(config["num_of_parallel_checks"]):
+        sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
+        if not os.path.isdir(sub_chroot):
+            os.system("cp -R " + config["chroot_template"] + " " + sub_chroot)
+        os.system("cp " + config["CR_exec_file"] + " " + sub_chroot + "/")
+        os.system("echo " + str(i) + " > " + sub_chroot + "/etc/chrootnum")
+
+    return
+
+
 def prepare_chroots(config):
     """
     Copies template chroot to some tmp folder and splits up flips to be tested by each chroot worker
@@ -152,10 +166,6 @@ def prepare_chroots(config):
         if not flips:
             break
         os.system("mv " + " ".join(flips) + " " + sub_flip_folder)
-
-        if not os.path.isdir(sub_chroot):
-            os.system("cp -R " + config["chroot_template"] + " " + sub_chroot)
-        os.system("cp " + config["CR_exec_file"] + " " + sub_chroot + "/")
 
         if not os.path.isdir(sub_cr_flip_folder):
             os.makedirs(sub_cr_flip_folder, exist_ok=True)
@@ -209,7 +219,7 @@ def clean_chroots(config):
             os.system("umount " + sub_cr_flip_folder)
             os.system("rmdir " + sub_cr_flip_folder)
         if os.path.isdir(sub_chroot):
-            os.system("rm -rf sub_chroot")
+            os.system("rm -rf " + sub_chroot)
 
     shutil.rmtree(config["folder_with_flips"])
 
@@ -220,13 +230,18 @@ def main(config_path):
     config = load_config(config_path)
     logfile = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
     print("Successfully loaded config")
+
     instrument(config)
     print("Instrumented binary")
 
     while(True):
+        create_chroots(config)
+        print("Successfully created chroots")
         file_flipped = generate_flips(config)
         if(not file_flipped):
+            clean_chroots(config)
             break
+
         print("Flips generated for " + file_flipped)
         prepare_chroots(config)
         print("Successfully prepared chroots")
