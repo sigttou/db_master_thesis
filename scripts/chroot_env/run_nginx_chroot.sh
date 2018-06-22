@@ -11,7 +11,7 @@ for i in `ls $1` ; do
   nginx -c /etc/nginx/simple_nginx.conf &
 
   # waiting for server to be started
-  while ! curl --silent localhost | grep running &> /dev/null ; do sleep 1 ; done
+  while ! curl --silent localhost:$portnum | grep running &> /dev/null ; do sleep 1 ; done
 
   if curl --silent -u user:wrong localhost:$portnum/protected/ | grep WIN &> /dev/null; then 
     echo "SUCCESS: $i" >> $3
