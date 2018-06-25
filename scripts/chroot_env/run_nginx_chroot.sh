@@ -13,6 +13,10 @@ fi
 portnum=8`cat /etc/chrootnum`
 cnt=0
 for i in `ls $1` ; do
+  cnt=$[${cnt}+1]
+  if ! expr $(($cnt % 10)) &> /dev/null ; then
+    echo "run $cnt"
+  fi
   while ! cp $1$i $2; do kill -9 $nginxpid &> /dev/null ; done
   sed -i s/80/$portnum/g /etc/nginx/simple_nginx.conf
   nginx -c /etc/nginx/simple_nginx.conf &> /dev/null &
@@ -20,7 +24,7 @@ for i in `ls $1` ; do
 
   # waiting for server to be started
   retry=0
-  maxRetries=5
+  maxRetries=2
   until [ ${retry} -ge ${maxRetries} ]
   do
     echo GET / | netcat localhost $portnum | grep running &> /dev/null
@@ -28,15 +32,9 @@ for i in `ls $1` ; do
     sleep 1
   done
 
-  if [ ${retry} -ge ${maxRetries} ]; then
-    continue
-  fi
-
   if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | netcat -q 0 localhost 80 | grep WIN &> /dev/null; then
     echo "SUCCESS: $i" >> $3
   fi
   nginx -s stop &> /dev/null
-
-  while netstat -ln | grep ":$portnum " &> /dev/null; do sleep 1 ; done
   kill -9 $nginxpid &> /dev/null
 done
