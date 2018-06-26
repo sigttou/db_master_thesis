@@ -27,12 +27,12 @@ for i in `ls $1` ; do
   maxRetries=2
   until [ ${retry} -ge ${maxRetries} ]
   do
-    echo GET / | netcat localhost $portnum | grep running &> /dev/null
+    echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
     retry=$[${retry}+1]
     sleep 1
   done
 
-  if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | netcat -q 0 localhost 80 | grep WIN &> /dev/null; then
+  if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
     echo "SUCCESS: $i" >> $3
   fi
   nginx -s stop &> /dev/null
