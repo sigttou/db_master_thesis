@@ -22,10 +22,10 @@ share the same ELF header but serve different purposes for the operating system.
 \subsubsection{Sections}
 
 Sections describe the binary for the linking view, it contains instructions, 
-data, symbol table, relocation information. Sections reserved for the system 
+data, symbol table and relocation information. Sections reserved for the system 
 start with a dot, there might be other sections in the binary but those are not 
-relevant for us. Sections that contribute to the program's memory image are 
-initialized data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, 
+relevant for this work. Sections that contribute to the program's memory image 
+are initialized data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, 
 .rodata1}) and executable instructions (\texttt{.text}). 
 
 \subsubsection{Segments}
@@ -37,12 +37,20 @@ the ELF file need to be resolved and loaded into the memory too. After
 successfully building up the process image and its dependencies the program can 
 be executed.
 
-\subsection{Storing ELF files in Memory}
+\subsection{Loading ELF files into Memory}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+As we focus on GNU/Linux operating systems we will look at how ELF files shall 
+be handled by UNIX System V Release 4 based operating systems in order to 
+create running programs.
+These operating systems use no physical addresses for execution and the 
+operating system is free to change position of sections in the virtual address 
+space. Therefore the ELF format only contains a base address per section and 
+offsets to that address. During the loading step the operating system is free 
+to change the base address in the programs virtual address space but keep the 
+offsets. For our work we therefore need to be able to track back the position 
+of sections from the virtual address space to the ELF file and vice versa.
+
+\subsubsection{Dynamic Linking}
 
 \section{Analysis and Testing of ELFs}
 
