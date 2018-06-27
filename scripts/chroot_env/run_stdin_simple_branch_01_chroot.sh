@@ -17,6 +17,7 @@ for i in `ls $1` ; do
     echo "run $cnt"
   fi
   cp $1$i $2
+  chmod +x /usr/bin/stdin_simple_branch_01
   if echo 1 | timeout -s 9 2 /usr/bin/stdin_simple_branch_01 | grep success &> /dev/null; then
     echo "SUCCESS: $i" >> $3
   fi
