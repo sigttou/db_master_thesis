@@ -182,7 +182,7 @@ def start_workers(config, file_flipped):
     for i in range(config["num_of_parallel_checks"]):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
-        command += config["CR_flip_folder"] + " " + file_flipped + " " + config["CR_log_file"]
+        command += os.path.abspath(config["CR_flip_folder"]) + "/ " + file_flipped + " " + config["CR_log_file"]
 
         cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
         cmd.start()
@@ -200,7 +200,7 @@ def check_results(config, logfile):
         try:
             f = open(sub_log_file)
             print("FOUND SOMETHING - see " + logfile + " for result!")
-            print(f.read(), file=open(logfile, "wa"))
+            print(f.read(), file=open(logfile, "a"))
         except FileNotFoundError:
             continue
 
