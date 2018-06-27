@@ -6,6 +6,7 @@ import os
 import time
 import shutil
 from executor import execute, chroot
+import executor
 import parse
 
 CONFIG_KEYS = [
@@ -249,7 +250,10 @@ def main(config_path):
         workers = start_workers(config, file_flipped)
         print("Started workers, waiting for them")
         for w in workers:
-            w.wait()
+            try:
+                w.wait()
+            except executor.ExternalCommandFailed:
+                continue
 
         check_results(config, logfile)
         print("Checking done, cleaning up")
