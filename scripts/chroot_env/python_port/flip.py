@@ -256,6 +256,7 @@ def main(config_path):
         clean_chroots(config)
 
     print("DONE - check " + logfile + " for results")
+    os.system("rm " + config["instrumenter_outfile"])
 
     return 0
 
