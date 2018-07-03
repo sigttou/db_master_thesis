@@ -8,6 +8,8 @@ FILE * trace;
 
 static std::unordered_map<ADDRINT, std::string> str_of_img_at;
 static std::unordered_map<ADDRINT, ADDRINT> img_offsets;
+static std::unordered_map<std::string, std::unordered_map<std::string, std::pair<ADDRINT, ADDRINT>>> section_areas;
+static std::unordered_map<std::string, std::unordered_map<std::string, ADDRINT>> section_offsets;
 static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
 
@@ -21,6 +23,14 @@ VOID RecordMemAcc(VOID* ip, VOID* addr, ADDRINT base)
 
 VOID ImageLoad(IMG img, VOID *v)
 {
+  for(SEC sec = IMG_SecHead(img); SEC_Valid(sec); sec = SEC_Next(sec))
+  {
+    if(SEC_Mapped(sec))
+    {
+      section_areas[IMG_Name(img)][SEC_Name(sec)] = std::make_pair(SEC_Address(sec) - IMG_LoadOffset(img), SEC_Address(sec) - IMG_LoadOffset(img) + SEC_Size(sec));
+      section_offsets[IMG_Name(img)][SEC_Name(sec)] = (size_t)SEC_Data(sec) - IMG_StartAddress(img);
+    }
+  }
   str_of_img_at[IMG_LowAddress(img)] = IMG_Name(img);
 }
 
@@ -61,9 +71,20 @@ VOID Fini(INT32 code, VOID *v)
   }
   for(auto it : memory_accesses)
   {
+    bool is_set = false;
     std::string img = str_of_img_at[it.second];
     ADDRINT offset = img_offsets[it.second];
-    fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset, img.data());
+    for(auto sec_it : section_areas[img])
+    {
+        if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
+        {
+          fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first], img.data());
+          is_set = true;
+          break;
+        }
+    }
+    if(!is_set)
+      fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset, img.data());
   }
   fclose(trace);
 }
