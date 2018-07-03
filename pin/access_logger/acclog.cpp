@@ -65,9 +65,20 @@ VOID Fini(INT32 code, VOID *v)
 {
   for(auto it : instructions)
   {
+    bool is_set = false;
     std::string img = str_of_img_at[it.second];
     ADDRINT offset = img_offsets[it.second];
-    fprintf(trace, "0x%zx - %s\n", it.first - offset, img.data());
+    for(auto sec_it : section_areas[img])
+    {
+        if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
+        {
+          fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first], img.data());
+          is_set = true;
+          break;
+        }
+    }
+    if(!is_set)
+      fprintf(trace, "0x%zx - %s\n", it.first - offset, img.data());
   }
   for(auto it : memory_accesses)
   {
