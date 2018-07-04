@@ -47,6 +47,11 @@ def load_config(config_path):
         print("Num of parallel runs need to be larger than 0")
         sys.exit(-1)
 
+    if not os.path.exists(config["tmp_chroot_folder"]):
+        os.makedirs(config["tmp_chroot_folder"])
+    if not os.path.exists(config["folder_with_flips"]):
+        os.makedirs(config["folder_with_flips"])
+
     return config
 
 
