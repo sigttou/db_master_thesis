@@ -3,10 +3,11 @@
 # $1 path to modified files
 # $2 file to be replaced
 # $3 file to log to
+# $4 folder to save successfull files to
 
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 4 ]; then
   echo "Illegal number of parameters"
-  echo "./run <mod_files> <to_replace> <logfile>"
+  echo "./run <mod_files> <to_replace> <logfile> <logfolder>"
   exit
 fi
 
@@ -34,6 +35,7 @@ for i in `ls $1` ; do
 
   if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
     echo "SUCCESS: $i" >> $3
+    cp $1$i $4$i
   fi
   timeout -s 9 2 nginx -s stop &> /dev/null
   kill -9 $nginxpid &> /dev/null
