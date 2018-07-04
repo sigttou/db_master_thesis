@@ -9,10 +9,9 @@ while(1):
             cmd = " ".join(p.cmdline())
             if("sudo -S whoami" in cmd and "grep" not in cmd and "timeout" not in cmd):
                 age = datetime.datetime.now() - datetime.datetime.fromtimestamp(p.create_time())
-                if(age.seconds):
+                if(age.seconds > 5):
                     print(cmd + " " + str(p.pid) + " " + str(age.seconds))
-                    if(age.seconds > 5):
-                        p.kill()
+                    p.kill()
         except psutil.NoSuchProcess:
             continue
     time.sleep(2)
