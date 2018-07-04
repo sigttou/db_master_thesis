@@ -19,6 +19,7 @@ CONFIG_KEYS = [
         "CR_exec_file",
         "CR_flip_folder",
         "CR_log_file",
+        "CR_success_folder",
         ]
 
 
@@ -189,6 +190,7 @@ def start_workers(config, file_flipped):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         command = "./" + os.path.basename(config["CR_exec_file"]) + " "
         command += os.path.abspath(config["CR_flip_folder"]) + "/ " + file_flipped + " " + config["CR_log_file"]
+        command += " " + config["CR_success_folder"]
 
         cmd = chroot.ChangeRootCommand(chroot=sub_chroot, command=[command], async=True, silent=True)
         cmd.start()
@@ -197,19 +199,22 @@ def start_workers(config, file_flipped):
     return workers
 
 
-def check_results(config, logfile):
+def check_results(config, logfile, logfolder):
     """
     Checks all chroots for successfull bitflips
     """
     for i in range(config["num_of_parallel_checks"]):
         sub_log_file = os.path.join(config["tmp_chroot_folder"], str(i)) + config["CR_log_file"]
+        sub_succ_folder = os.path.join(config["tmp_chroot_folder"], str(i)) + config["CR_success_folder"]
         try:
             f = open(sub_log_file)
             print("FOUND SOMETHING - see " + logfile + " for result!")
             print(f.read(), file=open(logfile, "a"))
+            if not os.path.exists(logfolder):
+                os.makedirs(logfolder)
+            os.system("cp " + sub_succ_folder + "*" + " " + logfolder + "/")
         except FileNotFoundError:
             continue
-
     return
 
 
@@ -235,6 +240,7 @@ def clean_chroots(config):
 def main(config_path):
     config = load_config(config_path)
     logfile = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
+    logfolder = time.strftime("%Y%m%d-%H%M%S") + "-flips"
     print("Successfully loaded config")
 
     instrument(config)
@@ -260,7 +266,7 @@ def main(config_path):
             except executor.ExternalCommandFailed:
                 continue
 
-        check_results(config, logfile)
+        check_results(config, logfile, logfolder)
         print("Checking done, cleaning up")
         clean_chroots(config)
 
