@@ -10,6 +10,7 @@ static std::unordered_map<ADDRINT, std::string> str_of_img_at;
 static std::unordered_map<ADDRINT, ADDRINT> img_offsets;
 static std::unordered_map<std::string, std::unordered_map<std::string, std::pair<ADDRINT, ADDRINT>>> section_areas;
 static std::unordered_map<std::string, std::unordered_map<std::string, ADDRINT>> section_offsets;
+static std::unordered_map<std::string, std::set<ADDRINT>> to_print;
 static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
 
@@ -72,13 +73,13 @@ VOID Fini(INT32 code, VOID *v)
     {
         if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
         {
-          fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first], img.data());
+          to_print[img.data()].insert((size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first]);
           is_set = true;
           break;
         }
     }
     if(!is_set)
-      fprintf(trace, "0x%zx - %s\n", it.first - offset, img.data());
+      to_print[img.data()].insert(it.first - offset);
   }
   for(auto it : memory_accesses)
   {
@@ -89,14 +90,21 @@ VOID Fini(INT32 code, VOID *v)
     {
         if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
         {
-          fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first], img.data());
+          to_print[img.data()].insert((size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first]);
           is_set = true;
           break;
         }
     }
     if(!is_set)
-      fprintf(trace, "0x%zx - %s\n", (size_t)it.first - (size_t)offset, img.data());
+      to_print[img.data()].insert((size_t)it.first - (size_t)offset);
   }
+
+  for(auto it : to_print)
+  {
+    for(auto addr : it.second)
+      fprintf(trace, "0x%zx - %s\n", addr, it.first.c_str());
+  }
+
   fclose(trace);
 }
 
