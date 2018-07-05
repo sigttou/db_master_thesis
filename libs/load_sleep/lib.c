@@ -12,6 +12,6 @@ __attribute__((constructor)) void init(void)
   if(!strcmp(__progname, "msc_test"))
   {
     size_t i = 0;
-    while(i++ < 400000000);
+    while(i++ < 600000000);
   }
 }
