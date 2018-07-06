@@ -13,3 +13,5 @@ cd $pin_path
 ./run_pid.sh $old_path/msc_test.out `pgrep msc_test`
 cd $old_path
 while kill -0 `pgrep msc_test` 2> /dev/null; do sleep 1; done;
+
+sed -i s+/tmp/msc_test+/usr/bin/sudo+g $old_path/msc_test.out
