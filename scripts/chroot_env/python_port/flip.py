@@ -172,7 +172,8 @@ def prepare_chroots(config):
         flips = flips[:flips_per_worker]
         if not flips:
             break
-        os.system("mv " + " ".join(flips) + " " + sub_flip_folder)
+        for subflips in [flips[i:i + 100] for i in range(0, len(flips), 100)]:
+            os.system("mv " + " ".join(subflips) + " " + sub_flip_folder)
 
         if not os.path.isdir(sub_cr_flip_folder):
             os.makedirs(sub_cr_flip_folder, exist_ok=True)
