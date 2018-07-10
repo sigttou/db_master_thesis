@@ -10,7 +10,10 @@ while(1):
             if("sudo -S whoami" in cmd or "id -u" in cmd or "grep root" in cmd or "grep win" in cmd):
                 age = datetime.datetime.now() - datetime.datetime.fromtimestamp(p.create_time())
                 if(age.seconds > 3):
-                    print(cmd + " " + str(p.pid) + " " + str(age.seconds))
+                    try:
+                        print(cmd + " " + str(p.pid) + " " + str(age.seconds))
+                    except UnicodeEncodeError:
+                        continue
                     p.kill()
         except psutil.NoSuchProcess:
             continue
