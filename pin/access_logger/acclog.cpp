@@ -13,6 +13,7 @@ static std::unordered_map<std::string, std::unordered_map<std::string, ADDRINT>>
 static std::unordered_map<std::string, std::set<ADDRINT>> to_print;
 static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
+static std::set<std::pair<ADDRINT, ADDRINT>> branches;
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
   "o", "branchlog.out", "specify output file name");
@@ -47,7 +48,12 @@ VOID Instruction(INS ins, VOID *v)
     offset = IMG_LoadOffset(img);
   }
   img_offsets[base] = offset;
-  instructions.insert(std::make_pair(ins_addr, base));
+
+  for(size_t i = 0; i < INS_Size(ins); i++)
+    instructions.insert(std::make_pair(ins_addr + i, base));
+
+  if(INS_IsBranch(ins))
+      branches.insert(std::make_pair(ins_addr, base));
 
   UINT32 memOperands = INS_MemoryOperandCount(ins);
   for (UINT32 memOp = 0; memOp < memOperands; memOp++)
@@ -101,6 +107,8 @@ VOID Fini(INT32 code, VOID *v)
 
   for(auto it : to_print)
   {
+    if(it.first.find("preload.so") != std::string::npos)
+      continue;
     for(auto addr : it.second)
       fprintf(trace, "0x%zx - %s\n", addr, it.first.c_str());
   }
