@@ -14,5 +14,6 @@ cd $pin_path
 while kill -0 `pgrep msc_test` 2> /dev/null; do sleep 1; done;
 
 ../../scripts/elf_structure_flips/add_structures.py $old_path/msc_test.out
+sort -t "-" -k2 -o $old_path/msc_test.out $old_path/msc_test.out
 sed -i s+/tmp/msc_test+/usr/bin/sudo+g $old_path/msc_test.out
 cd $old_path
