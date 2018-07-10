@@ -271,7 +271,12 @@ def main(config_path):
         print("Checking done, cleaning up")
         clean_chroots(config)
 
-    print("DONE - check " + logfile + " for results")
+    if os.path.exists(logfile):
+        os.system("sed -i '/^\s*$/d' " + logfile)
+        os.system("sort -o " + logfile + " " + logfile)
+        print("DONE - check " + logfile + " for results")
+    else:
+        print("DONE - Nothing found!")
     os.system("rm " + config["instrumenter_outfile"])
 
     return 0
