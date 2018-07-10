@@ -73,7 +73,6 @@ VOID Fini(INT32 code, VOID *v)
 {
   for(auto it : accesses)
   {
-    bool is_set = false;
     std::string img = str_of_img_at[it.second];
     ADDRINT offset = img_offsets[it.second];
     for(auto sec_it : section_areas[img])
@@ -81,12 +80,12 @@ VOID Fini(INT32 code, VOID *v)
         if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
         {
           to_print[img.data()].insert((size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first]);
-          is_set = true;
-          break;
+          goto PRINT_ADDED;
         }
     }
-    if(!is_set)
-      to_print[img.data()].insert(it.first - offset);
+
+    to_print[img.data()].insert(it.first - offset);
+PRINT_ADDED:;
   }
 
   for(auto it : to_print)
