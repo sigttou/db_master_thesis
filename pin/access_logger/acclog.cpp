@@ -12,7 +12,7 @@ static std::unordered_map<std::string, std::unordered_map<std::string, std::pair
 static std::unordered_map<std::string, std::unordered_map<std::string, ADDRINT>> section_offsets;
 static std::unordered_map<std::string, std::set<ADDRINT>> to_print;
 static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
-static std::set<std::pair<ADDRINT, ADDRINT>> instructions;
+static std::set<std::pair<ADDRINT, ADDRINT>> accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> branches;
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
@@ -21,6 +21,7 @@ KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
 VOID RecordMemAcc(VOID* ip, VOID* addr, ADDRINT base)
 {
   memory_accesses.insert(std::make_pair(addr, base));
+  accesses.insert(std::make_pair((size_t)addr, base));
 }
 
 VOID ImageLoad(IMG img, VOID *v)
@@ -50,7 +51,7 @@ VOID Instruction(INS ins, VOID *v)
   img_offsets[base] = offset;
 
   for(size_t i = 0; i < INS_Size(ins); i++)
-    instructions.insert(std::make_pair(ins_addr + i, base));
+    accesses.insert(std::make_pair(ins_addr + i, base));
 
   if(INS_IsBranch(ins))
       branches.insert(std::make_pair(ins_addr, base));
@@ -70,7 +71,7 @@ VOID Instruction(INS ins, VOID *v)
 
 VOID Fini(INT32 code, VOID *v)
 {
-  for(auto it : instructions)
+  for(auto it : accesses)
   {
     bool is_set = false;
     std::string img = str_of_img_at[it.second];
@@ -86,23 +87,6 @@ VOID Fini(INT32 code, VOID *v)
     }
     if(!is_set)
       to_print[img.data()].insert(it.first - offset);
-  }
-  for(auto it : memory_accesses)
-  {
-    bool is_set = false;
-    std::string img = str_of_img_at[it.second];
-    ADDRINT offset = img_offsets[it.second];
-    for(auto sec_it : section_areas[img])
-    {
-        if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
-        {
-          to_print[img.data()].insert((size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first]);
-          is_set = true;
-          break;
-        }
-    }
-    if(!is_set)
-      to_print[img.data()].insert((size_t)it.first - (size_t)offset);
   }
 
   for(auto it : to_print)
