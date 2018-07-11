@@ -130,6 +130,10 @@ def generate_flips(config):
     with open(config["instrumenter_outfile"], 'w') as f:
         f.writelines(entries)
 
+    cur_test_path = os.path.join(config["tmp_chroot_folder"], str(0), "cur_test")
+    with open(cur_test_path, "w") as f:
+        f.write(file_flipped + "\n")
+
     return file_flipped
 
 
@@ -216,6 +220,7 @@ def check_results(config, logfile, logfolder):
             os.system("cp " + sub_succ_folder + "*" + " " + logfolder + "/")
         except FileNotFoundError:
             continue
+
     return
 
 
@@ -244,20 +249,30 @@ def main(config_path):
     logfolder = time.strftime("%Y%m%d-%H%M%S") + "-flips"
     print("Successfully loaded config")
 
-    instrument(config)
-    print("Instrumented binary")
+    cur_test_path = os.path.join(config["tmp_chroot_folder"], str(0), "cur_test")
+    to_cont = os.path.exists(cur_test_path)
+
+    if not to_cont:
+        instrument(config)
+        print("Instrumented binary")
 
     while(True):
-        create_chroots(config)
-        print("Successfully created chroots")
-        file_flipped = generate_flips(config)
-        if(not file_flipped):
-            clean_chroots(config)
-            break
+        if not to_cont:
+            create_chroots(config)
+            print("Successfully created chroots")
+            file_flipped = generate_flips(config)
+            if(not file_flipped):
+                clean_chroots(config)
+                break
+            print("Flips generated for " + file_flipped)
 
-        print("Flips generated for " + file_flipped)
-        prepare_chroots(config)
-        print("Successfully prepared chroots")
+            prepare_chroots(config)
+            print("Successfully prepared chroots")
+        else:
+            with open(cur_test_path, "r") as f:
+                file_flipped = f.readline().strip()
+            to_cont = False
+            print("Successfully loaded continue state")
 
         workers = start_workers(config, file_flipped)
         print("Started workers, waiting for them")
