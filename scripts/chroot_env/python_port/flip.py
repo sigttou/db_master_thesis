@@ -244,6 +244,7 @@ def clean_chroots(config):
 
 
 def main(config_path):
+    start_time = time.time()
     config = load_config(config_path)
     logfile = time.strftime("%Y%m%d-%H%M%S") + "-run_test"
     logfolder = time.strftime("%Y%m%d-%H%M%S") + "-flips"
@@ -294,6 +295,9 @@ def main(config_path):
         print("DONE - Nothing found!")
     os.system("rm " + config["instrumenter_outfile"])
 
+    hours, seconds = divmod(int(time.time() - start_time), 3600)
+    minutes, seconds = divmod(seconds, 60)
+    print("Runtime: " + str(hours) + " hours " + str(minutes) + " minutes " + str(seconds) + " seconds")
     return 0
 
 
