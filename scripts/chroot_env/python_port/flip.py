@@ -110,6 +110,7 @@ def generate_flips(config):
         fs_stats = os.statvfs(config["folder_with_flips"])
         try:
             blocks_needed = int((8 * os.path.getsize(entry["file"])) / fs_stats.f_bsize) + 1
+            blocks_needed += 1000
         except FileNotFoundError:
             # file is something not exiting, try next entry
             todel.append(e)
