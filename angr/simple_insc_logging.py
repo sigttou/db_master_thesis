@@ -7,6 +7,7 @@ import pprint
 
 INSTRUCTIONS = ["JNE", "JE", "LOOP"]
 
+
 def main(proj):
     """
         Initializes the project
@@ -25,6 +26,7 @@ def main(proj):
         state = successor.successors[0]
 
     pp.pprint(instructions)
+
 
 def check_ins(state, instructions):
     """
