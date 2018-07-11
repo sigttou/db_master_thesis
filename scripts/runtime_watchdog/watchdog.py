@@ -7,7 +7,7 @@ while(1):
     for p in psutil.process_iter():
         try:
             cmd = " ".join(p.cmdline())
-            if("sudo -S whoami" in cmd or "id -u" in cmd or "grep root" in cmd or "grep win" in cmd):
+            if("sudo -S" in cmd or "id -u" in cmd or "grep root" in cmd or "grep win" in cmd):
                 age = datetime.datetime.now() - datetime.datetime.fromtimestamp(p.create_time())
                 if(age.seconds > 3):
                     try:
