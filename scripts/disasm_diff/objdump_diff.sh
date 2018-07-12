@@ -13,6 +13,6 @@ a=$(objdump -D tmp_file)
 cp $2 tmp_file
 b=$(objdump -D tmp_file)
 
-diff -U4 --color  <(echo "$a") <(echo "$b")
+diff -U4 --color <(echo "$a") <(echo "$b")
 
 rm tmp_file
