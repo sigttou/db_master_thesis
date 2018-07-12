@@ -8,20 +8,37 @@ FILE * trace;
 
 static std::unordered_map<ADDRINT, std::string> str_of_img_at;
 static std::unordered_map<ADDRINT, ADDRINT> img_offsets;
-static std::unordered_map<std::string, std::unordered_map<std::string, std::pair<ADDRINT, ADDRINT>>> section_areas;
-static std::unordered_map<std::string, std::unordered_map<std::string, ADDRINT>> section_offsets;
+static std::unordered_map<std::string,
+                          std::unordered_map<std::string,
+                                             std::pair<ADDRINT,
+                                                       ADDRINT>>> sec_areas;
+static std::unordered_map<std::string,
+                          std::unordered_map<std::string,
+                                             ADDRINT>> section_offsets;
 static std::unordered_map<std::string, std::set<ADDRINT>> to_print;
-static std::set<std::pair<VOID*, ADDRINT>> memory_accesses;
+static std::set<std::pair<ADDRINT, ADDRINT>> mem_r_accs;
+static std::set<std::pair<ADDRINT, ADDRINT>> mem_w_accs;
 static std::set<std::pair<ADDRINT, ADDRINT>> accesses;
 static std::set<std::pair<ADDRINT, ADDRINT>> branches;
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool",
   "o", "branchlog.out", "specify output file name");
 
-VOID RecordMemAcc(VOID* ip, VOID* addr, ADDRINT base)
+VOID RecordMemRead(VOID* ip, VOID* addr, ADDRINT base, size_t len)
 {
-  memory_accesses.insert(std::make_pair(addr, base));
-  accesses.insert(std::make_pair((size_t)addr, base));
+  for(size_t i = 0; i < len ; i++)
+  {
+    auto to_insert = std::make_pair((size_t)addr + i, base);
+    mem_r_accs.insert(to_insert);
+    if(mem_w_accs.find(to_insert) == mem_w_accs.end())
+      accesses.insert(to_insert);
+  }
+}
+
+VOID RecordMemWrite(VOID* ip, VOID* addr, ADDRINT base, size_t len)
+{
+  for(size_t i = 0; i < len ; i++)
+    mem_w_accs.insert(std::make_pair((size_t)addr + i, base));
 }
 
 VOID ImageLoad(IMG img, VOID *v)
@@ -30,8 +47,11 @@ VOID ImageLoad(IMG img, VOID *v)
   {
     if(SEC_Mapped(sec))
     {
-      section_areas[IMG_Name(img)][SEC_Name(sec)] = std::make_pair(SEC_Address(sec) - IMG_LoadOffset(img), SEC_Address(sec) - IMG_LoadOffset(img) + SEC_Size(sec));
-      section_offsets[IMG_Name(img)][SEC_Name(sec)] = (size_t)SEC_Data(sec) - IMG_StartAddress(img);
+      sec_areas[IMG_Name(img)][SEC_Name(sec)] =
+        std::make_pair(SEC_Address(sec) - IMG_LoadOffset(img),
+                       SEC_Address(sec) - IMG_LoadOffset(img) + SEC_Size(sec));
+      section_offsets[IMG_Name(img)][SEC_Name(sec)] =
+        (size_t)SEC_Data(sec) - IMG_StartAddress(img);
     }
   }
   str_of_img_at[IMG_LowAddress(img)] = IMG_Name(img);
@@ -59,12 +79,26 @@ VOID Instruction(INS ins, VOID *v)
   UINT32 memOperands = INS_MemoryOperandCount(ins);
   for (UINT32 memOp = 0; memOp < memOperands; memOp++)
   {
-    INS_InsertPredicatedCall(
-      ins, IPOINT_BEFORE, (AFUNPTR)RecordMemAcc,
-      IARG_INST_PTR,
-      IARG_MEMORYOP_EA, memOp,
-      IARG_ADDRINT, base,
-      IARG_END);
+    if(INS_MemoryOperandIsRead(ins, memOp))
+    {
+      INS_InsertPredicatedCall(
+        ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
+        IARG_INST_PTR,
+        IARG_MEMORYREAD_EA,
+        IARG_ADDRINT, base,
+        IARG_MEMORYREAD_SIZE,
+        IARG_END);
+    }
+    if(INS_MemoryOperandIsWritten(ins, memOp))
+    {
+      INS_InsertPredicatedCall(
+        ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
+        IARG_INST_PTR,
+        IARG_MEMORYWRITE_EA,
+        IARG_ADDRINT, base,
+        IARG_MEMORYWRITE_SIZE,
+        IARG_END);
+    }
   }
 
 }
@@ -75,15 +109,18 @@ VOID Fini(INT32 code, VOID *v)
   {
     std::string img = str_of_img_at[it.second];
     ADDRINT offset = img_offsets[it.second];
-    for(auto sec_it : section_areas[img])
+    for(auto sec_it : sec_areas[img])
     {
-        if((size_t)it.first - offset >= sec_it.second.first && (size_t)it.first - offset <= sec_it.second.second)
+        if((size_t)it.first - offset >= sec_it.second.first &&
+           (size_t)it.first - offset <= sec_it.second.second)
         {
-          to_print[img.data()].insert((size_t)it.first - (size_t)offset - sec_it.second.first + section_offsets[img][sec_it.first]);
+          to_print[img.data()].insert((size_t)it.first -
+                                      (size_t)offset -
+                                      sec_it.second.first +
+                                      section_offsets[img][sec_it.first]);
           goto PRINT_ADDED;
         }
     }
-
     to_print[img.data()].insert(it.first - offset);
 PRINT_ADDED:;
   }
