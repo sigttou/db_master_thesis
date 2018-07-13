@@ -3,7 +3,6 @@
 
 set -e
 function finish {
-  echo "done"
   rm -f tmp_file
   rm -f a_diff.tmp
   rm -f b_diff.tmp
@@ -21,4 +20,4 @@ objdump -D tmp_file > a_diff.tmp
 cp $2 tmp_file
 objdump -D tmp_file > b_diff.tmp
 
-diff -U4 --color a_diff.tmp b_diff.tmp
+diff -U4 --color a_diff.tmp b_diff.tmp || exit 0
