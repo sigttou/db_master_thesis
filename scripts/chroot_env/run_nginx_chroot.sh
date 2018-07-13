@@ -34,7 +34,7 @@ for i in `ls $1` ; do
   done
 
   if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
-    echo "SUCCESS: $i" >> $3
+    echo "SUCCESS: $i - $2" >> $3
     cp $1$i $4$i
   fi
   timeout -s 9 2 nginx -s stop &> /dev/null
