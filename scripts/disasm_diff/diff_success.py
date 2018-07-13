@@ -10,10 +10,13 @@ def main(succ_file, mods_folder):
         content = f.readlines()
     for l in [x.strip() for x in content]:
         entry = parse.parse("SUCCESS: {modfile} - {dest}", l)
-        with open(entry["modfile"] + ".diff", "w") as f:
-            cmd = "./objdump_diff.sh " + os.path.join(mods_folder, entry["modfile"]) + " " + entry["dest"]
+        cmd = "./objdump_diff.sh " + os.path.join(mods_folder, entry["modfile"]) + " " + entry["dest"]
+        outfile = entry["modfile"] + ".diff"
+        with open(outfile, "w") as f:
             p = subprocess.Popen(cmd, shell=True, stdout=f)
-            p.wait()
+        p.wait()
+        if p.returncode:
+            os.remove(outfile)
     return
 
 
