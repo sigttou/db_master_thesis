@@ -9,7 +9,6 @@ sleep 2
 
 cd $pin_path
 ./run_pid.sh $old_path/msc_test.out `pgrep nginx` &
-cd $old_path
 
 sleep 2
 curl -u user:wrong http://localhost/protected/ &> /dev/null
@@ -17,5 +16,8 @@ curl -u user:wrong http://localhost/protected/ &> /dev/null
 nginx -s stop
 
 sleep 1
-
 while kill -0 `pgrep nginx` 2> /dev/null; do sleep 1; done;
+
+../../scripts/elf_structure_flips/add_structures.py $old_path/msc_test.out
+sort -t "-" -k2 -o $old_path/msc_test.out $old_path/msc_test.out
+cd $old_path
