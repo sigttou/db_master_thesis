@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/busybox sh
 
 # $1 path to modified files
 # $2 file to be replaced
@@ -13,25 +13,16 @@ fi
 
 portnum=8`cat /etc/chrootnum`
 sed -i s/80/$portnum/g /etc/nginx/simple_nginx.conf
-cnt=0
 for i in `ls $1` ; do
-  cnt=$[${cnt}+1]
-  if ! expr $(($cnt % 10)) &> /dev/null ; then
-    echo "run $cnt"
-  fi
   while ! cp $1$i $2; do kill -9 $nginxpid &> /dev/null ; done
   nginx -c /etc/nginx/simple_nginx.conf &> /dev/null &
   nginxpid=$!
 
   # waiting for server to be started
-  retry=0
-  maxRetries=2
-  until [ ${retry} -ge ${maxRetries} ]
-  do
-    echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
-    retry=$[${retry}+1]
-    sleep 1
-  done
+  sleep 1
+  echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
+  sleep 1
+  echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
 
   if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
     echo "SUCCESS: $i - $2" >> $3
