@@ -6,6 +6,14 @@
     - Galois/Counter Mode, see https://tools.ietf.org/html/rfc5288 and https://en.wikipedia.org/wiki/Galois/Counter_Mode for more details.
     - Counter must somehow be stored in an SSL Object - https://www.openssl.org/docs/man1.0.2/ssl/SSL_new.html
       - There is `unsigned char read_iv[EVP_MAX_IV_LENGTH];` and `unsigned char write_iv[EVP_MAX_IV_LENGTH];` in the ssl_struct
-        - EVP_MAX_IV_LENGTH is 16 (bytes)
+        - EVP_MAX_IV_LENGTH is 16
+        - The SSL obj itself is 824 bytes, so 32 of these are "nonces"
       - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
-    
+  - results with fork:
+    - each forked process takes about 5440 bytes in memory
+    - of those, something about 824 are for SSL structs
+    - The childs turn into Zombies shortly after fullfilling their requests.
+  - results with threads:
+    - Larger Virtual memory used, RES memory only increasing slowly (pages!)
+    - Uses less RES memory than processes, might have a higher percentage of useable flips
+  - What is flip worthy inside the SSL structure?
