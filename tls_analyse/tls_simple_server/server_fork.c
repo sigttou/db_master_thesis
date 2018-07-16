@@ -19,6 +19,7 @@
 #include <arpa/inet.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <signal.h>
 
 int create_socket(int port)
 {
@@ -94,6 +95,7 @@ void configure_context(SSL_CTX *ctx)
 
 int main(int argc, char **argv)
 {
+    sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
     int sock;
     SSL_CTX *ctx;
 
@@ -127,11 +129,11 @@ int main(int argc, char **argv)
               ERR_print_errors_fp(stderr);
           }
           else {
-            int cnt = 0;
-            while(cnt < 100)
+            int run = 1;
+            while(run)
             {
-              cnt++;
-              SSL_write(ssl, reply, strlen(reply));
+              if(SSL_write(ssl, reply, strlen(reply)) < 0)
+                run = 0;
               sleep(1);
             }
           }

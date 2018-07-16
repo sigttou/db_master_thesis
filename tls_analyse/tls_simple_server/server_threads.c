@@ -20,6 +20,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <pthread.h>
+#include <signal.h>
 
 typedef struct{
   SSL* ssl_;
@@ -109,21 +110,22 @@ void* connection_thread(void *arg)
     ERR_print_errors_fp(stderr);
   else
   {
-    int cnt = 0;
-    while(cnt < 100)
+    int run = 1;
+    while(run)
     {
-      cnt++;
-      SSL_write(ssl, reply, strlen(reply));
+      if(SSL_write(ssl, reply, strlen(reply)) < 0)
+        run = 0;
       sleep(1);
     }
   }
   SSL_free(ssl);
   close(client);
-  pthread_exit(-1);
+  pthread_exit(NULL);
 }
 
 int main(int argc, char **argv)
 {
+    sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
     int sock;
     SSL_CTX *ctx;
 
@@ -139,7 +141,6 @@ int main(int argc, char **argv)
         struct sockaddr_in addr;
         uint len = sizeof(addr);
         SSL *ssl;
-        // printf("A SSL obj is: %zu bytes\n", sizeof(SSL));
 
         int client = accept(sock, (struct sockaddr*)&addr, &len);
         if (client < 0) {
