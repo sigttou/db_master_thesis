@@ -96,6 +96,7 @@ void configure_context(SSL_CTX *ctx)
 int main(int argc, char **argv)
 {
     sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
+    signal(SIGCHLD, SIG_IGN);
     int sock;
     SSL_CTX *ctx;
 
