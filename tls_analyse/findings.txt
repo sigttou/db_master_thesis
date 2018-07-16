@@ -1,0 +1,11 @@
+- Source code from: https://github.com/openssl/openssl
+- Documentation: https://www.openssl.org/docs/
+
+- Looking at tls_simple_server:
+  - connection allows AES256GCM counter to be used.
+    - Galois/Counter Mode, see https://tools.ietf.org/html/rfc5288 and https://en.wikipedia.org/wiki/Galois/Counter_Mode for more details.
+    - Counter must somehow be stored in an SSL Object - https://www.openssl.org/docs/man1.0.2/ssl/SSL_new.html
+      - There is `unsigned char read_iv[EVP_MAX_IV_LENGTH];` and `unsigned char write_iv[EVP_MAX_IV_LENGTH];` in the ssl_struct
+        - EVP_MAX_IV_LENGTH is 16 (bytes)
+      - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
+    
