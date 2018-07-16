@@ -4,12 +4,12 @@
  * Create cert and key with:
  * openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout key.pem -out cert.pem
  * To compile use:
- * $ gcc server.c -o server -lssl -lcrypto
+ * $ gcc server_threads.c -o server_threads -lssl -lcrypto -lpthread
  * To connect use:
- * $ ./server &
+ * $ ./server_threads &
  * $ ncat --ssl-ciphers ECDHE-RSA-AES256-GCM-SHA384 --ssl localhost 4433
  * Or:
- * $ ./server &
+ * $ ./server_threads &
  * $ openssl s_client -connect localhost:4433
 */
 
@@ -19,6 +19,12 @@
 #include <arpa/inet.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <pthread.h>
+
+typedef struct{
+  SSL* ssl_;
+  int client_;
+} t_arg;
 
 int create_socket(int port)
 {
@@ -92,6 +98,30 @@ void configure_context(SSL_CTX *ctx)
     }
 }
 
+void* connection_thread(void *arg)
+{
+  SSL* ssl = ((t_arg*)arg)->ssl_;
+  int client = ((t_arg*)arg)->client_;
+
+  const char reply[] = "test\n";
+
+  if (SSL_accept(ssl) <= 0)
+    ERR_print_errors_fp(stderr);
+  else
+  {
+    int cnt = 0;
+    while(cnt < 100)
+    {
+      cnt++;
+      SSL_write(ssl, reply, strlen(reply));
+      sleep(1);
+    }
+  }
+  SSL_free(ssl);
+  close(client);
+  pthread_exit(-1);
+}
+
 int main(int argc, char **argv)
 {
     int sock;
@@ -109,7 +139,7 @@ int main(int argc, char **argv)
         struct sockaddr_in addr;
         uint len = sizeof(addr);
         SSL *ssl;
-        const char reply[] = "test\n";
+        // printf("A SSL obj is: %zu bytes\n", sizeof(SSL));
 
         int client = accept(sock, (struct sockaddr*)&addr, &len);
         if (client < 0) {
@@ -120,24 +150,11 @@ int main(int argc, char **argv)
         ssl = SSL_new(ctx);
         SSL_set_fd(ssl, client);
 
-        if(!fork())
-        {
-          if (SSL_accept(ssl) <= 0) {
-              ERR_print_errors_fp(stderr);
-          }
-          else {
-            int cnt = 0;
-            while(cnt < 100)
-            {
-              cnt++;
-              SSL_write(ssl, reply, strlen(reply));
-              sleep(1);
-            }
-          }
-          SSL_free(ssl);
-          close(client);
-          exit(0);
-        }
+        pthread_t t;
+        t_arg arg;
+        arg.ssl_ = ssl;
+        arg.client_ = client;
+        pthread_create(&t, NULL, &connection_thread, &arg);
     }
 
     close(sock);
