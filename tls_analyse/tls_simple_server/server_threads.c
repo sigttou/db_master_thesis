@@ -27,6 +27,8 @@ typedef struct{
   int client_;
 } t_arg;
 
+SSL* SSLTOFLIP;
+
 int create_socket(int port)
 {
     int s;
@@ -75,9 +77,9 @@ SSL_CTX *create_context()
 
     ctx = SSL_CTX_new(method);
     if (!ctx) {
-	perror("Unable to create SSL context");
-	ERR_print_errors_fp(stderr);
-	exit(EXIT_FAILURE);
+	    perror("Unable to create SSL context");
+	    ERR_print_errors_fp(stderr);
+	    exit(EXIT_FAILURE);
     }
 
     return ctx;
@@ -113,6 +115,7 @@ void* connection_thread(void *arg)
   else
   {
     int run = 1;
+    SSLTOFLIP = ssl;
     while(run)
     {
       if(SSL_write(ssl, reply, strlen(reply)) < 0)
@@ -125,8 +128,29 @@ void* connection_thread(void *arg)
   pthread_exit(NULL);
 }
 
+void toggle_rand_bit(void* memory, size_t bytes)
+{
+  if(!memory)
+    return;
+  size_t byte_pos = rand() % bytes;
+  char* byte = (char*)(memory + byte_pos);
+  *byte ^= 1UL << (rand() % 8);
+}
+
+void* flipping_thread(void __attribute__((__unused__)) *arg)
+{
+  while(1)
+  {
+    getchar();
+    printf("Flipping bit in %p\n", SSLTOFLIP);
+    toggle_rand_bit(SSLTOFLIP->read_iv, 16);
+  }
+}
+
+
 int main(int argc, char **argv)
 {
+    srand(time(NULL));
     sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
     int sock;
     SSL_CTX *ctx;
@@ -138,6 +162,8 @@ int main(int argc, char **argv)
 
     sock = create_socket(4433);
 
+    pthread_t t;
+    pthread_create(&t, NULL, &flipping_thread, NULL);
     /* Handle connections */
     while(1) {
         struct sockaddr_in addr;
