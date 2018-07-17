@@ -171,6 +171,9 @@ int main(int argc, char **argv)
     sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
     int sock;
     SSL_CTX *ctx;
+    printf("SSL %lu bytes\n", sizeof(SSL));
+    printf("SSL_CTX %lu bytes\n", sizeof(SSL_CTX));
+    printf("EVP_CIPHER_CTX %lu bytes\n", sizeof(EVP_CIPHER_CTX));
 
     init_openssl();
     ctx = create_context();
