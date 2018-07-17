@@ -23,7 +23,7 @@
 #include <signal.h>
 
 typedef struct{
-  SSL* ssl_;
+  SSL_CTX* ctx_;
   int client_;
 } t_arg;
 
@@ -101,8 +101,10 @@ void configure_context(SSL_CTX *ctx)
 
 void* connection_thread(void *arg)
 {
-  SSL* ssl = ((t_arg*)arg)->ssl_;
+  SSL_CTX* ctx = ((t_arg*)arg)->ctx_;
+  SSL* ssl = SSL_new(ctx);
   int client = ((t_arg*)arg)->client_;
+  SSL_set_fd(ssl, client);
 
   const char reply[] = "test\n";
 
@@ -140,7 +142,6 @@ int main(int argc, char **argv)
     while(1) {
         struct sockaddr_in addr;
         uint len = sizeof(addr);
-        SSL *ssl;
 
         int client = accept(sock, (struct sockaddr*)&addr, &len);
         if (client < 0) {
@@ -148,12 +149,9 @@ int main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
 
-        ssl = SSL_new(ctx);
-        SSL_set_fd(ssl, client);
-
         pthread_t t;
         t_arg arg;
-        arg.ssl_ = ssl;
+        arg.ctx_ = ctx;
         arg.client_ = client;
         pthread_create(&t, NULL, &connection_thread, &arg);
     }
