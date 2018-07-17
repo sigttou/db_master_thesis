@@ -5,11 +5,15 @@
   - connection allows AES256GCM counter to be used.
     - Galois/Counter Mode, see https://tools.ietf.org/html/rfc5288 and https://en.wikipedia.org/wiki/Galois/Counter_Mode for more details.
     - Counter must somehow be stored in an SSL Object - https://www.openssl.org/docs/man1.0.2/ssl/SSL_new.html
-      - There is `unsigned char read_iv[EVP_MAX_IV_LENGTH];` and `unsigned char write_iv[EVP_MAX_IV_LENGTH];` in the ssl_struct
         - Is is for current openssl (with TLS1.3 - not to be found in openssl 1.1.0g!)
-        - EVP_MAX_IV_LENGTH is 16
-        - The SSL obj itself is 824 bytes, so 32 of these are "nonces"
-      - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
+          - There is `unsigned char read_iv[EVP_MAX_IV_LENGTH];` and `unsigned char write_iv[EVP_MAX_IV_LENGTH];` in the ssl_struct
+          - EVP_MAX_IV_LENGTH is 16
+          - The SSL obj itself is 824 bytes, so 32 of these are "nonces"
+          - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
+        - For openssl 1.1.0g and AESGCM
+          - There is still iv available in EVP_AES_GCM_CTX (openssl/crypto/evp/e_aes.c)
+          - Which is generated from a ssl_ctx struct via EVP_C_DATA (openssl/crypto/include/internal/evp_int.h)
+            - basically returns just ctx->cipher_data (openssl/crypto/evp/evp_lib.c)
   - results with fork:
     - each forked process takes about 5440 bytes in memory
     - of those, something about 824 are for SSL structs
