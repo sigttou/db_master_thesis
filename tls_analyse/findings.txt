@@ -19,6 +19,8 @@
           - the 'EVP_CIPHER_CTX' is 'evp_cipher_ctx_st' and contains IVs (openssl/crypto/evp/evp_locl.h)
             - which is in the 'ssl_st' as 'enc_read_ctx' and 'enc_write_ctx'.
           - Those 'iv' entries are used on each sent and break the connection.
+          - There might be usable flips in 'SSL_SESSION' too (openssl/ssl/ssl_locl.h)
+            - Like 'session_id[SSL_MAX_SSL_SESSION_ID_LENGTH]'
   - results with fork:
     - each forked process takes about 5440 bytes in memory
     - of those, something about 824 are for SSL structs
