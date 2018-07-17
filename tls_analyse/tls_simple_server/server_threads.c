@@ -128,13 +128,12 @@ void* connection_thread(void *arg)
   pthread_exit(NULL);
 }
 
-void toggle_rand_bit(void* memory, size_t bytes)
+void toggle_bit(void* memory, size_t byte_pos, size_t bit)
 {
   if(!memory)
     return;
-  size_t byte_pos = rand() % bytes;
   char* byte = (char*)(memory + byte_pos);
-  *byte ^= 1UL << (rand() % 8);
+  *byte ^= 1UL << bit;
 }
 
 void* flipping_thread(void __attribute__((__unused__)) *arg)
@@ -142,8 +141,10 @@ void* flipping_thread(void __attribute__((__unused__)) *arg)
   while(1)
   {
     getchar();
-    printf("Flipping bit in %p\n", SSLTOFLIP);
-    toggle_rand_bit(SSLTOFLIP->read_iv, 16);
+    size_t byte_pos = rand() % sizeof(SSL);
+    size_t bit = rand() % 8;
+    printf("Flipping %zd bit in %zd byte in %p\n", bit, byte_pos, SSLTOFLIP);
+    toggle_bit(SSLTOFLIP, byte_pos, bit);
   }
 }
 
