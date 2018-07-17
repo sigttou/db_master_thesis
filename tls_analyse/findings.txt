@@ -6,6 +6,7 @@
     - Galois/Counter Mode, see https://tools.ietf.org/html/rfc5288 and https://en.wikipedia.org/wiki/Galois/Counter_Mode for more details.
     - Counter must somehow be stored in an SSL Object - https://www.openssl.org/docs/man1.0.2/ssl/SSL_new.html
       - There is `unsigned char read_iv[EVP_MAX_IV_LENGTH];` and `unsigned char write_iv[EVP_MAX_IV_LENGTH];` in the ssl_struct
+        - Is is for current openssl (with TLS1.3 - not to be found in openssl 1.1.0g!)
         - EVP_MAX_IV_LENGTH is 16
         - The SSL obj itself is 824 bytes, so 32 of these are "nonces"
       - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
