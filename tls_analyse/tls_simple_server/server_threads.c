@@ -28,6 +28,7 @@ typedef struct{
 } t_arg;
 
 SSL* SSLTOFLIP;
+SSL_CTX* CTXTOFLIP;
 
 int create_socket(int port)
 {
@@ -116,6 +117,7 @@ void* connection_thread(void *arg)
   {
     int run = 1;
     SSLTOFLIP = ssl;
+    CTXTOFLIP = ctx;
     while(run)
     {
       if(SSL_write(ssl, reply, strlen(reply)) < 0)
@@ -141,10 +143,16 @@ void* flipping_thread(void __attribute__((__unused__)) *arg)
   while(1)
   {
     getchar();
+    /*
     size_t byte_pos = rand() % sizeof(SSL);
     size_t bit = rand() % 8;
     printf("Flipping %zd bit in %zd byte in %p\n", bit, byte_pos, SSLTOFLIP);
     toggle_bit(SSLTOFLIP, byte_pos, bit);
+    */
+    size_t byte_pos = rand() % sizeof(SSL_CTX);
+    size_t bit = rand() % 8;
+    printf("Flipping %zd bit in %zd byte in %p\n", bit, byte_pos, CTXTOFLIP);
+    toggle_bit(CTXTOFLIP, byte_pos, bit);
   }
 }
 
