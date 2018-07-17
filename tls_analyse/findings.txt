@@ -12,13 +12,18 @@
           - These IVs are used and changed in `ssl/tls13_enc.c` and are part of an SSL connection.
         - For openssl 1.1.0g and AESGCM - ECDHE-RSA-AES256-GCM-SHA384
           - There is still iv available in EVP_AES_GCM_CTX (openssl/crypto/evp/e_aes.c)
-          - Which is generated from a ssl_ctx struct via EVP_C_DATA (openssl/crypto/include/internal/evp_int.h)
-            - basically returns just ctx->cipher_data (openssl/crypto/evp/evp_lib.c)
-          - the 'SSL_CTX* session_ctx' is just the initial ctx, and does not matter later on.
-          - the 'SSL_CTX* ctx' is the same ptr.
-          - the 'EVP_CIPHER_CTX' is 'evp_cipher_ctx_st' and contains IVs (openssl/crypto/evp/evp_locl.h)
-            - which is in the 'ssl_st' as 'enc_read_ctx' and 'enc_write_ctx'.
-          - Those 'iv' entries are used on each sent and break the connection.
+            - Which is generated from a ssl_ctx struct via EVP_C_DATA (openssl/crypto/include/internal/evp_int.h)
+              - basically returns just ctx->cipher_data (openssl/crypto/evp/evp_lib.c)
+            - the 'SSL_CTX* session_ctx' is just the initial ctx, and does not matter later on.
+            - the 'SSL_CTX* ctx' is the same ptr.
+            - the 'EVP_CIPHER_CTX' is 'evp_cipher_ctx_st' and contains IVs (openssl/crypto/evp/evp_locl.h)
+              - which is in the 'ssl_st' as 'enc_read_ctx' and 'enc_write_ctx'.
+            - Those 'iv' entries are used on each sent and break the connection.
+            - A reuse of 'iv' makes it possible to reuse an entire session.
+            - Working IVs take 32 bytes worth to flip
+            - SSL + SSL_CTX + 2*EVP_CIPHER_CTX is 1960 bytes
+            - A flip in an IV has a probablility of less than 1.5%
+              - The attack is possible, but not practical.
           - There might be usable flips in 'SSL_SESSION' too (openssl/ssl/ssl_locl.h)
             - Like 'session_id[SSL_MAX_SSL_SESSION_ID_LENGTH]'
   - results with fork:
