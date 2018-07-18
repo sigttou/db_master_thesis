@@ -103,10 +103,20 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \section{Rowhammer}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Technology is steadily changing, with vendors of computer parts being forced to
+produce cheaper and hardware every year. For DRAM this resulted in less quality
+management and proper checks on possible bitflips which allowed smaller chipsets
+into production. These chips provide less space to store loads, which represents
+data, and little energy to be used to store the loads. Years after vendors
+introduced this increased densities in DRAM to the market researchers like
+<TODO: REFERENCE ROWHAMMER> found a critical bug in the chip design. With the
+little space and energy stored it was possible to use charges of memory rows to
+leak data to nearby rows, which made it possible to even change bits of other
+rows with particular crafted memory access patterns like shown by
+<TODO: REFERENCE ROWHAMMER>.
+
+This behaviour and bug then caused researchers to dig deeper into the
+possibilities, and several attacks were found based on the Rowhammer bug.
 
 \subsection{Types of Rowhammer Attacks}
 
