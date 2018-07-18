@@ -18,6 +18,10 @@ nginx -s stop
 sleep 1
 while kill -0 `pgrep nginx` 2> /dev/null; do sleep 1; done;
 
-../../scripts/elf_structure_flips/add_structures.py $old_path/msc_test.out
+# ../../scripts/elf_structure_flips/add_structures.py $old_path/msc_test.out
+grep -v libc $old_path/msc_test.out > tmp.out
+grep -v libpthread tmp.out > $old_path/msc_test.out
+grep -v libnss $old_path/msc_test.out > tmp.out
+mv tmp.out $old_path/msc_test.out
 sort -t "-" -k2 -o $old_path/msc_test.out $old_path/msc_test.out
 cd $old_path
