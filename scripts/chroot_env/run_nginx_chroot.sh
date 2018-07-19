@@ -28,4 +28,5 @@ for i in `ls $1` ; do
   fi
   timeout -s 9 2 nginx -s stop &> /dev/null
   kill -9 $nginxpid &> /dev/null
+  true > /var/log/nginx/error.log
 done
