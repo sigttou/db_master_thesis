@@ -21,8 +21,6 @@ for i in `ls $1` ; do
   # waiting for server to be started
   sleep 1
   echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
-  sleep 1
-  echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
 
   if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
     echo "SUCCESS: $i - $2" >> $3
