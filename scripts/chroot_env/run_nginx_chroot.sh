@@ -22,7 +22,7 @@ for i in `ls $1` ; do
   sleep 1
   echo GET / | timeout -s 9 2 netcat localhost $portnum | grep running &> /dev/null
 
-  if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 0 localhost $portnum | grep WIN &> /dev/null; then
+  if echo -e "GET /protected/ HTTP/1.1\nHost: localhost \nAuthorization: Basic $(echo -n 'user:wrong' | base64 )\n" | timeout -s 9 2 netcat -q 2 localhost $portnum | grep WIN &> /dev/null; then
     echo "SUCCESS: $i - $2" >> $3
     cp $1$i $4$i
   fi
