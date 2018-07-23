@@ -1,17 +1,18 @@
 %%%%%% General %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{General}\label{sec:general}
 
-This chapter describes term, techniques, tools and programs used for this 
-thesis. It provides a general overview to make it easier to understand the 
-details of the work in the following chapters.
+This chapter describes terms, techniques, tools and programs used during the
+work for this thesis. It provides a general overview to make it easier to
+understand the details of the work in the following chapters.
 
 \section{ELF - Executable and Linkable Format}
 
-The ELF format is an object file format. It is used to describe a program in a 
-way to execute it on a processor without applying changes to the binary content. 
-The assembler and linker create the ELF files. For our work, we need to look at 
-ELF sections containing actual code to run or data which might change the 
-execution path of a binary. 
+The ELF format is an object file format. It is used to describe a program in a
+way to execute it on a processor without applying changes to the binary itself.
+The assembler and linker create the ELF files. The ELF
+specification~\cite{elfspec} is followed by most modern Unix like operating
+systems, therefore we need to understand the layout of the executable files
+before introducing bitflips to it.
 
 \subsection{Structure of an ELF file}
 
@@ -21,12 +22,12 @@ share the same ELF header but serve different purposes for the operating system.
 
 \subsubsection{Sections}
 
-Sections describe the binary for the linking view, it contains instructions, 
-data, symbol table and relocation information. Sections reserved for the system 
-start with a dot, there might be other sections in the binary but those are not 
-relevant for this work. Sections that contribute to the program's memory image 
-are initialized data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, 
-.rodata1}) and executable instructions (\texttt{.text}). 
+Sections describe the binary for the linking view, it contains instructions,
+data, symbol table and relocation information. Sections reserved for the system
+start with a dot, there might be additional sections defined by the user.
+Sections that are directly loaded into the program's memory image are
+initialized data (\texttt{.data, .data1}), read-only data (\texttt{.rodata,
+.rodata1}) and executable instructions (\texttt{.text}).
 
 \subsubsection{Segments}
 
@@ -47,10 +48,18 @@ operating system is free to change position of sections in the virtual address
 space. Therefore the ELF format only contains a base address per section and 
 offsets to that address. During the loading step the operating system is free 
 to change the base address in the programs virtual address space but keep the 
-offsets. For our work we therefore need to be able to track back the position 
-of sections from the virtual address space to the ELF file and vice versa.
+offsets.
 
 \subsubsection{Dynamic Linking}
+
+In modern operating systems it is very common to have multiple functions used
+by different programs. These functions can be provided as libraries. When
+deploying a program developers usually need to make sure all needed libraries
+are already provided or ship their software with those included. When depending
+on libraries by the system, the loader will make sure shared libraries are
+loaded into memory at the desired entry point. It usually reads the needed
+library from the ELF file and then checks the library paths provided by the
+system if the library is available to be loaded.
 
 \section{Analysis and Testing of ELFs}
 
