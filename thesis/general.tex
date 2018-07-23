@@ -52,14 +52,14 @@ offsets.
 
 \subsubsection{Dynamic Linking}
 
-In modern operating systems it is widespread to have multiple functions used
-by different programs. So-called shared libraries can be used to provide such 
-functions. When deploying programs, developers usually need to make sure all 
-needed libraries are already provided or ship their software with those 
-included. When depending on libraries by the system, the loader will move 
-the shared libraries into memory at the desired entry point. It 
-usually reads the needed library from the ELF file and then checks the library 
-paths provided by the system if the library is available to be loaded.
+In modern operating systems it is widespread to have multiple functions used by
+different programs. So-called shared libraries can be used to provide such
+functions. When deploying programs, developers usually need to make sure all
+libraries exist on the target platform or ship their software with those
+included. When depending on libraries by the system, the loader will move the
+shared libraries into memory at the desired entry point. It usually reads the
+needed library from the ELF file and then checks the library paths provided by
+the system if the library is available to be loaded.
 
 \section{Analysis and Testing of Executables}
 
@@ -78,10 +78,17 @@ used to test binaries on their own with just a little configuration.
 Fuzzing is a technology to be used to test programs with just a little knowledge
 about the binary to test. It is a technique to detect erroneous responses of a
 program by providing different inputs. Tools applying this technique are called
-fuzzers. Fuzzers try to reach corner cases in programs without knowing exactlyg
+fuzzers. Fuzzers try to reach corner cases in programs without knowing exactly
 which exist and detect undefined behaviour or crashes of software.
 
 \todo{link deeper fuzzying technologies}
+
+\subsubsection{ELF Code Fuzzing}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \subsection{Instrumentation}
 
@@ -90,7 +97,7 @@ tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
 no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
-\subsubsection{ELF Code Fuzzing}
+\subsubsection{Intel Pin Tool}
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
