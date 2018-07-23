@@ -52,16 +52,28 @@ offsets.
 
 \subsubsection{Dynamic Linking}
 
-In modern operating systems it is very common to have multiple functions used
-by different programs. These functions can be provided as libraries. When
-deploying a program developers usually need to make sure all needed libraries
-are already provided or ship their software with those included. When depending
-on libraries by the system, the loader will make sure shared libraries are
-loaded into memory at the desired entry point. It usually reads the needed
-library from the ELF file and then checks the library paths provided by the
-system if the library is available to be loaded.
+In modern operating systems it is widespread to have multiple functions used
+by different programs. So-called shared libraries can be used to provide such 
+functions. When deploying programs, developers usually need to make sure all 
+needed libraries are already provided or ship their software with those 
+included. When depending on libraries by the system, the loader will move 
+the shared libraries into memory at the desired entry point. It 
+usually reads the needed library from the ELF file and then checks the library 
+paths provided by the system if the library is available to be loaded.
 
-\section{Analysis and Testing of ELFs}
+\section{Analysis and Testing of Executables}
+
+Testing is a large part of software development in general. There are a lot of
+different approaches and styles of testing. Usually, testing was to apply input
+to a program and check if the code operates as expected. With increasing amount
+of code and an increasing number of bugs found, the style of testing changed
+over the years. On the one hand, developers nowadays provide unit tests inside
+their code to test their functions and make sure they work as desired. On the
+other hand, sometimes the source code is not available to a tester, or it is way
+too much effort to write testing code. Therefore there are tools which can be
+used to test binaries on their own with just a little configuration.
+
+\subsection{Fuzzing}
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
@@ -69,13 +81,6 @@ vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
 no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \subsection{Instrumentation}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-\subsection{Fuzzing}
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
