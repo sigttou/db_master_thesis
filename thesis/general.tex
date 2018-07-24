@@ -76,12 +76,25 @@ used to test binaries on their own with just a little configuration.
 \subsection{Fuzzing}
 
 Fuzzing is a technology to be used to test programs with just a little knowledge
-about the binary to test. It is a technique to detect erroneous responses of a
-program by providing different inputs. Tools applying this technique are called
-fuzzers. Fuzzers try to reach corner cases in programs without knowing exactly
-which exist and detect undefined behaviour or crashes of software.
+about the binary to test. Fuzzing is a black box testing approach. Testers do
+not need access to the source code. It is a technique to detect erroneous
+responses of a program by providing different randomised inputs. Tools applying
+this technique are called fuzzers. Fuzzers try to reach corner cases in programs
+without knowing exactly which exist and detect undefined behaviour or crashes of
+software. Generally, fuzzers give an overall view on the robustness of software,
+they are cheap to apply and can find bugs usual white box tests would miss.
 
-\todo{link deeper fuzzying technologies}
+Usually fuzzing is quite easy, as just random input is used to apply it. Over
+the years the technology improved and different fuzzers evolved. Whereas for
+simple programs just testing common input mistakes, like negative numbers,
+newlines, end of file characters, format strings or just very long strings might
+be enough, advanced software needs better ways of fuzzing. For example, network
+protocols, file systems or image formats have a very complex structure which
+makes it hard to find possible crashes by random data input. Therefore this kind
+of fuzzers generate inputs from given examples and apply small changes to them.
+Also, more advanced fuzzers exist which directly interact with the target,
+allowing to track execution paths per input and therefore even create even more
+test cases automatically.
 
 \subsubsection{ELF Code Fuzzing}
 
