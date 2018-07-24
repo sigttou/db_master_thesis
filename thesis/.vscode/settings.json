@@ -2,4 +2,7 @@
     "cSpell.words": [
         "Bitflip"
     ]
+    "editor.rulers": [
+        80
+    ]
 }
