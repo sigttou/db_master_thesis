@@ -100,19 +100,39 @@ test cases automatically.
 
 \subsection{Instrumentation}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Instrumentation usually comes down to adding new code automatically to already
+existing one. Developers usually use Instrumentation as a tool for debugging or
+performance measures by adding calls to timing functions or information logging
+to the code. Information from instrumentation could be something like what
+functions are called how often, what execution branches are taken, how long does
+a subroutine take, what memory is accessed and many more. It usually also allows
+the developer to change the runtime environment of a program, like change return
+values or skip instruction calls.
+
+There are two different styles of instrumentation one is source instrumentation,
+and one is binary instrumentation. So-called instrumenter-calls are either added
+pre-compilation to the source of the program or later directly added to the
+binary context of the program. The first style might bring the advantage that it
+is easier to apply and the structure of the program is better known, so calls
+for performance checks over functions are done by adding timer calls at the
+entry and exit points. However, binary instrumentation also has its perks. Users
+do not need the source of the program for this. Recompilation of the program is
+not needed if the code for the instrumentation changes. With enough debug
+information in the binary the instrumentation information might not differ much
+from the source code one. With binary instrumentation, it is also possible to
+change and read register values before and after CPU instructions are called.
+
+\todo{reference different Instrumentation techniques}
+
 
 \subsubsection{Intel Pin}
 
-Pin~\cite{pintool} is a proprietary, dynamic instrumentation framework developed and released
-by Intel, who supply it for free. The framework provides a large number of API
-calls which abstracts most of the work done and gives easy access to binary
-analysis. As the framework is dynamic, the source of the to be analysed program
-is not needed nor does it need to be recompiled for changes in the
-instrumentation tool. Pin allows to log and modify the runtime of a program,
+Pin~\cite{pintool} is a proprietary, dynamic, binary instrumentation framework
+developed and released by Intel, who supply it for free. The framework provides
+a large number of API calls which abstracts most of the work done and gives easy
+access to binary analysis. As the framework is dynamic, the source of the to be
+analysed program is not needed nor does it need to be recompiled for changes in
+the instrumentation tool. Pin allows to log and modify the runtime of a program,
 whereas it is no problem to log register values or change those before or after
 desired instruction calls or even inject code to be run before given calls.
 
