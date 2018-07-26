@@ -98,6 +98,25 @@ test cases automatically.
 
 \todo{link fuzzing technologies}
 
+\subsection{Symbolic Execution}
+
+As fuzzing only provides a pseudorandom input to a program to test it, it might
+not catch all possible execution paths of a program. Therefore scientists
+developed a technique to test all possible paths by simplifying the program.
+This technique is called symbolic execution. It makes use of the possible
+simplification of inputs where they use a symbol with less possible states
+instead. The possible symbolic inputs then run through the program in
+combination with a constraint solver to report possible violations of the
+program's specification. The solver can also be used to find possible paths to
+reach a pre-defined goal inside the binary.
+
+One of the most famous symbolic analysis frameworks is angr~\cite{angrpaper}.
+Besides the symbolic execution of binaries, it also allows various other
+symbolic analysis methods such as control-flow graph recovery, automatic exploit
+generation or automatic binary hardening.
+
+\todo{add some symbolic execution methods}
+
 \subsection{Instrumentation}
 
 Instrumentation usually comes down to adding new code automatically to already
@@ -134,13 +153,6 @@ analysed program is not needed nor does it need to be recompiled for changes in
 the instrumentation tool. Pin allows to log and modify the runtime of a program,
 whereas it is no problem to log register values or change those before or after
 desired instruction calls or even inject code to be run before given calls.
-
-\subsection{Symbolic Execution}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \section{Transport Layer Security}
 
@@ -199,9 +211,9 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 In cryptography, the uniqueness of nonces is usually seen as given. Therefore,
 Joux~\cite{NISTGCMcomment} calls his attack against GCM "a forbidden attack".
-Hanno Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce reuse still is
-in real-world application and why clear definitions for nonces in protocols are
-needed.
+Hanno Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce reuse still
+is in real-world application and why clear definitions for nonces in protocols
+are needed.
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
