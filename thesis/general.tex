@@ -159,18 +159,26 @@ connection holds the following properties:
 
 As TLS is just a collection of protocols, the parties have to agree on which one
 they use for each part of the connection, which happens during the TLS
-handshake. A common name for a TLS connection protocol is
+handshake. A common TLS connection protocol is
 \texttt{ECDHE-RSA-AES256-GCM-HMAC-SHA1}, which contains all three protocols used
 for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
 \texttt{AES256-GCM} is the  symmetric cypher and \texttt{HMAC-SHA1} checks data
 integrity.
 
-\subsection{Nonce Misuse Attacks}
+\todo{reference TLS standard}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+\subsection{Cryptographic Nonces}
+
+In the early days of encrypted communication replay-attacks were a common
+problem.~\todo{reference replay-attack paper} To resolve this issue newer
+protocols introduced so-called nonces. Cryptographic nonces are one-time
+pseudorandom numbers used for each packet sent. They are combined with the key
+so that the encryption differs for each packet. This technique makes
+replay-attacks harder. In most cases, nonce reuse is a problem for the protocol
+and results in breakage of the encryption of future or past packages. Hence,
+most protocol standards define a nonce as a pseudorandom or unpredicted
+value~\cite{noncegeneral}. It is also possible to use the nonce can as a counter
+which has a random start value and increases for each packet sent.
 
 \subsubsection{AES-GCM Nonce Reuse Attack}
 
