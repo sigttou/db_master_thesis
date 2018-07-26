@@ -159,7 +159,7 @@ connection holds the following properties:
   \item Symmetric cryptography is used to provide a private connection between
   the parties. The parties have to agree on how they exchange the key for the
   symmetric encryption.
-  \item The so-called message authentication code prevents undetected alteration
+  \item The message authentication code prevents undetected alteration
   or losses during communication, which makes TLS connections reliable.
 \end{itemize}
 
@@ -186,7 +186,22 @@ most protocol standards define a nonce as a pseudorandom or unpredicted
 value~\cite{noncegeneral}. It is also possible to use the nonce can as a counter
 which has a random start value and increases for each packet sent.
 
-\subsubsection{AES-GCM Nonce Reuse Attack}
+\subsection{AES-GCM}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\todo{reference AES-GCM NIST standard}
+
+\subsection{AES-GCM Nonce Reuse Attack}
+
+In cryptography, the uniqueness of nonces is usually seen as given. Therefore,
+Joux~\cite{NISTGCMcomment} calls his attack against GCM "a forbidden attack".
+Hanno Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce reuse still is
+in real-world application and why clear definitions for nonces in protocols are
+needed.
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
