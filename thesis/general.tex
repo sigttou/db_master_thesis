@@ -200,12 +200,22 @@ which has a random start value and increases for each packet sent.
 
 \subsection{AES-GCM}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Galois Counter Mode (GCM) in combination with AES provides encryption and
+simultaneously performs message authentication~\cite{gcm, gcmnist}.
 
-\todo{reference AES-GCM NIST standard}
+GCM uses a random initialisation vector together with a counter for each block
+of plaintext. This combination can is the nonce for the GCM-AES cypher. AES is
+then used to encrypt this nonce, and the plaintext is XORed to the result, which
+gives the corresponding ciphertext.
+
+The message authentication code provides authentication for the sent ciphertext.
+In GCM the MAC is called TAG. The TAG consists of an initial hash, represented
+by an encrypted zero, XORed by each ciphertext block. To prevent stripping of
+blocks also the length of the plaintext is in the hash. In the end, this hash is
+XORed with the encrypted nonce for the counter value zero. These steps form the
+GCM TAG.
+
+We refer to the NIST standard for more details~\cite{gcmnist}.
 
 \subsection{AES-GCM Nonce Reuse Attack}
 
