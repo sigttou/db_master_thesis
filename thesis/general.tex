@@ -138,10 +138,32 @@ desired instruction calls or even inject code to be run before given calls.
 
 \section{Transport Layer Security}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Transport Layer Security (TLS) is used to describe a collection of cryptographic
+protocols. It is a standard proposed by the Internet Engineering Task Force
+(IETF). The IETF regularly updates the collection by adding new protocols and
+removing old, now seen as insecure, ones.
+
+TLS provides a secure connection between a server and its clients. The
+connection holds the following properties:
+\begin{itemize}
+  \item Public-key cryptography is used to provide authenticated identities.
+  That is usually just needed for clients to make sure they communicate with the
+  correct server. To proof the identity of a server, protocols make use of TLS
+  certificates, which provide the client with the public key.
+  \item Symmetric cryptography is used to provide a private connection between
+  the parties. The parties have to agree on how they exchange the key for the
+  symmetric encryption.
+  \item The so-called message authentication code prevents undetected alteration
+  or losses during communication, which makes TLS connections reliable.
+\end{itemize}
+
+As TLS is just a collection of protocols, the parties have to agree on which one
+they use for each part of the connection, which happens during the TLS
+handshake. A common name for a TLS connection protocol is
+\texttt{ECDHE-RSA-AES256-GCM-HMAC-SHA1}, which contains all three protocols used
+for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
+\texttt{AES256-GCM} is the  symmetric cypher and \texttt{HMAC-SHA1} checks data
+integrity.
 
 \subsection{Nonce Misuse Attacks}
 
