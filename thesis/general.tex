@@ -73,6 +73,26 @@ other hand, sometimes the source code is not available to a tester, or it is way
 too much effort to write testing code. Therefore there are tools which can be
 used to test binaries on their own with just a little configuration.
 
+\section{CPU Instructions}
+
+Computers execute programs by iterating over machine code, which is a list of
+Instructions. An instruction consists of an operation code (opcode), telling the
+processor what to do, and parameters for the opcode, on which the processor
+operates on. ~\todo{add figure showing an instruction} Instructions can either
+operate on registers or memory locations directly.
+
+Available instructions and their design are depending on the architecture used.
+The most common instruction set architectures (ISA) are Intel x86 mostly
+referred as \texttt{x86_64} or \texttt{AMD64} and ARM ISA which is used by most
+mobile processors.
+
+The length of an opcode is usually one byte, whereas in \texttt{x86_64} also
+opcodes with the length of two or three bytes exist. The length of the
+instruction then depends on the opcode and the number and length of arguments.
+
+\todo{reference Intel manual}
+\todo{add more instruction details}
+
 \subsection{Fuzzing}
 
 Fuzzing is a technology to be used to test programs with just a little knowledge
