@@ -79,7 +79,6 @@ opcodes with the length of two or three bytes exist. The length of the
 instruction then depends on the opcode and the number and length of arguments.
 
 \todo{reference Intel manual}
-\todo{add more instruction details}
 
 \section{Analysis and Testing of Executables}
 
@@ -235,6 +234,8 @@ blocks also the length of the plaintext is in the hash. In the end, this hash is
 XORed with the encrypted nonce for the counter value zero. These steps form the
 GCM TAG.
 
+\todo{add GCM formulas}
+
 We refer to the NIST standard for more details~\cite{gcmnist}.
 
 \subsection{AES-GCM Nonce Reuse Attack}
@@ -249,6 +250,9 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
 no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\todo{describe attack and show simple proof with formulas}
+\todo{refer to Hanno's paper again for pratical attack exploits}
 
 \section{Rowhammer}
 
