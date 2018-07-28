@@ -198,12 +198,22 @@ management system in the background and given the correct permissions the user
 does not need to know the other user's password to execute commands as the
 target user.
 
-\subsubsection{\texttt{setuid} Binary Property}
+\subsection{\texttt{setuid} Binary Property}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+\texttt{setuid} stands for "set user identity"~\todo{reference setuid manpage}.
+It allows an executable to change its user ID on execution. A bit in the fire
+permissions represents the \texttt{setuid} property. This property allows a user
+to run a program with the permissions of the file's owner. Tools like
+\texttt{su} and \texttt{sudo} need this as they require the permission to change
+the current context. It is also practical to allow normal users the usage of
+tools like \texttt{ping} or \texttt{ip}, without allowing them the usage of
+\texttt{sudo}.
+
+Whereas the \texttt{setuid} property might seem practical, it also brings
+security risks. A bug allowing code execution in such a program allows an
+attacker to execute that code with the permission of another user. Therefore,
+the number of \texttt{setuid} binaries should be low and programs having that
+property should be well audited.
 
 \section{Webserver}
 
