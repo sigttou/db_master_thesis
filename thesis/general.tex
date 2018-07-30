@@ -279,19 +279,126 @@ which has a random start value and increases for each packet sent.
 Galois Counter Mode (GCM) in combination with AES provides encryption and
 simultaneously performs message authentication~\cite{gcm, gcmnist}.
 
-GCM uses a random initialisation vector together with a counter for each block
-of plaintext. This combination can is the nonce for the GCM-AES cypher. AES is
-then used to encrypt this nonce, and the plaintext is XORed to the result, which
-gives the corresponding ciphertext.
+The schematic of AES-GCM can be seen in figure~\ref{fig:aesgcm}. Whereas we use
+close to the same notation as Hanno Böck~\etal in their
+paper~\cite{gcmnonceattack}:
 
-The message authentication code provides authentication for the sent ciphertext.
-In GCM the MAC is called TAG. The TAG consists of an initial hash, represented
-by an encrypted zero, XORed by each ciphertext block. To prevent stripping of
-blocks also the length of the plaintext is in the hash. In the end, this hash is
-XORed with the encrypted nonce for the counter value zero. These steps form the
-GCM TAG.
+\begin{itemize}
+  \item[$CNT_i$] The $i$-th counter block, computed using concatenation of the
+$IV$ and the counter value $cnt$, $cnt = (i+1) \mod{2^{32}}$, to achieve 128
+bits. $J_0 = IV \parallel 0 ^{31} \parallel 1$. With $IV$ being the 
+initialisation vector with a size of 96 bits.
+  \item[$E_k$] AES encryption with symmetric key $k$.
+  \item[$a \oplus b$] XOR operation bewteen $a$ and $b$.
+  \item[$P_i$] The $i$-th plaintext block.
+  \item[$C_i$] The $i$-th ciphertext block.
+  \item[$mult_H$] Multiplication $H \cdot X$ in Galois Field GF($2^{128}$), 
+with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
+  \item[$A$] Authenticated data.
+  \item[$len(X)$] Bit-length of $X$.
+  \item[$a \parallel b$] Concatenation of $a$ and $b$.
+  \item[$TAG$] Authentication tag.
+\end{itemize}
 
-\todo{add GCM formulas}
+\tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm, 
+text centered, draw=black]
+\tikzstyle{function} = [rectangle, rounded corners, minimum width=2cm, 
+minimum height=0.8cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzset{XOR/.style={draw,circle,append after command={
+        [shorten >=\pgflinewidth, shorten <=\pgflinewidth,]
+        (\tikzlastnode.north) edge (\tikzlastnode.south)
+        (\tikzlastnode.east) edge (\tikzlastnode.west)
+        }
+    }
+}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \node (cnt0) [block]  {$CNT_0$};
+    \node (cnt1) [block, right of=cnt0, xshift=3cm]  {$CNT_1$};
+    \node (cnt2) [block, right of=cnt1, xshift=3cm]  {$CNT_2$};
+    \node (enc0) [function, below of=cnt0, yshift=-0.5cm] {$E_k$};
+    \node (enc1) [function, below of=cnt1, yshift=-0.5cm] {$E_k$};
+    \node (enc2) [function, below of=cnt2, yshift=-0.5cm] {$E_k$};
+    \node (xor11) [XOR, below of=enc1, scale=2, yshift=-0.5cm] {};
+    \node (xor12) [XOR, below of=enc2, scale=2, yshift=-0.5cm] {};
+    \node (pt1) [block, left of=xor11, xshift=-1cm] {$P_1$};
+    \node (pt2) [block, left of=xor12, xshift=-1cm] {$P_2$};
+    \node (ct1) [block, below of=xor11, yshift=-0.5cm] {$C_1$};
+    \node (ct2) [block, below of=xor12, yshift=-0.5cm] {$C_2$};
+    \node (xor21) [XOR, below of=ct1, scale=2, yshift=-0.25cm] {};
+    \node (xor22) [XOR, below of=ct2, scale=2, yshift=-0.25cm] {};
+    \node (mult1) [function, left of=xor21, xshift=-1.5cm] {$mult_H$};
+    \node (mult2) [function, right of=xor21, xshift=1cm] {$mult_H$};
+    \node (mult3) [function, below of=xor22, yshift=-0.5cm] {$mult_H$};
+    \node (auth) [block, below of=mult1, yshift=-0.5cm] {$A$};
+    \node (xor31) [XOR, below of=mult3, scale=2, yshift=-0.25cm] {};
+    \node (len) [block, left of=xor31, xshift=-1cm] {$len(A) || len(C)$};
+    \node (mult4) [function, below of=xor31, yshift=-0.5cm] {$mult_H$};
+    \node (xor41) [XOR, below of=mult4, scale=2, yshift=-0.25cm] {};
+    \node (tag) [block, right of=xor41, xshift=1cm] {$TAG$};
+    
+    \draw [arrow] (cnt0) -- (cnt1);
+    \draw [arrow] (cnt1) -- (cnt2);
+    \draw [arrow] (cnt0) -- (enc0);
+    \draw [arrow] (cnt1) -- (enc1);
+    \draw [arrow] (cnt2) -- (enc2);
+    \draw [arrow] (enc0) |- (xor41);
+    \draw [arrow] (enc1) -- (xor11);
+    \draw [arrow] (enc2) -- (xor12);
+    \draw [arrow] (pt1) -- (xor11);
+    \draw [arrow] (pt2) -- (xor12);
+    \draw [arrow] (xor11) -- (ct1);
+    \draw [arrow] (xor12) -- (ct2);
+    \draw [arrow] (ct1) -- (xor21);
+    \draw [arrow] (ct2) -- (xor22);
+    \draw [arrow] (mult1) -- (xor21);
+    \draw [arrow] (auth) -- (mult1);
+    \draw [arrow] (xor21) -- (mult2);
+    \draw [arrow] (mult2) -- (xor22);
+    \draw [arrow] (xor22) -- (mult3);
+    \draw [arrow] (mult3) -- (xor31);
+    \draw [arrow] (len) -- (xor31);
+    \draw [arrow] (xor31) -- (mult4);
+    \draw [arrow] (mult4) -- (xor41);
+    \draw [arrow] (xor41) -- (tag);
+  \end{tikzpicture}
+  \caption{Semantics of AES-GCM} \label{fig:aesgcm}
+\end{figure}
+
+The encryption for AES-GCM works according to the following steps:
+
+\begin{enumerate}
+  \item The initialization $IV$ of 96 bits is generated.
+  \item The counters $CNT_i$ of 128 bits are generated by $CNT_i = IV \parallel
+cnt$, where $cnt = (i + 1) \bmod{2^{32}}$, for $i \in\{0 .. n\}$ and $n$
+represents the number of plaintext blocks.
+  \item The ciphertexts $C_i$ are generated by encrypting the counter values
+$CNT_i$ and XORing it to the plaintext $P_i$, as $C_i = P_i \oplus E_k(CNT_i)$.
+\end{enumerate}
+
+To get the authentication tag $TAG$ the so-called $GHASH$ function,
+$GHASH(H, A, C) = X_{m+n+1}$, is applied. Where, $H$ is the hash key, computed
+by encrypting 128 zero bits with the AES block cipher, $C$ is the ciphertext
+and $A$ being non-encrypted but authenticated data. Figure~\ref{fig:aesgcm}
+shows how the $GHASH$ is computed for one block of authenticated data and two
+blocks of plaintext, this happens according to the following steps:
+
+\begin{enumerate}
+  \item The Galois field multiplication is applied to the block of
+authenticated data. $R_0 = mult_H(A_1)$.
+  \item The result of this is XORed to the first ciphertext. The output
+of this XOR is again multiplied in the Galois field. $R_1 = mult_H(R_0 \oplus
+C_1)$.
+  \item This output is then XORed to the second ciphertext and again
+multiplied. $R_2 = mult_H(R_1 \oplus C_2)$
+  \item Then the length of the authenticated data and the ciphertext is 
+added. $R_3 = mult_H(R_2 \oplus (len(A) \parallel len(C)))$
+  \item To form the tag $TAG$ the hash key is added in the end. $TAG = H \oplus 
+mult_H(R_3)$.
+\end{enumerate}
 
 We refer to the NIST standard for more details~\cite{gcmnist}.
 
