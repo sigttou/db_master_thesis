@@ -217,10 +217,22 @@ property should be well audited.
 
 \section{Webserver}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Web servers provide users with content on the Internet, mostly referred to as
+the World Wide Web (WWW). There are many different software implementations for
+such servers available, most of them being open source and free, such as
+\texttt{apache} and \texttt{nginx}~\todo{reference webserver software}. Web
+servers use the Hypertext Transfer Protocol (HTTP) to handle requests and
+deliver the content to the client. Web servers usually deliver websites encoded
+in Hypertext Markup Language (HTML) but can also deliver all kind of files such
+as JavaScript (JS) and Content Style Sheet (CSS).
+
+A client requests content from the server by sending a Uniform Resource Locator
+(URL). The server then looks up the given path in the URL and answers the
+request by sending the desired file or an error if one occurs during the
+handling of the request. As not all requests should publicly visible webservers
+adapted TLS for security and privacy reasons to provide content over HTTPS. The
+client, most of the time a web browser, can thereby verify the server's identity
+and apply encryption to the connection if needed.
 
 \subsection{Permission Models for Webservers}
 
@@ -401,7 +413,7 @@ C_1)$.
 multiplied. $R_2 = mult_H(R_1 \oplus C_2)$
   \item Then the length of the authenticated data and the ciphertext is
 added. $R_3 = mult_H(R_2 \oplus (len(A) \parallel len(C)))$
-  \item To form the tag $TAG$ the hash key is added in the end. $TAG = H \oplus
+  \item The hash key is added in the end to form the tag $TAG$. $TAG = H \oplus
 mult_H(R_3)$.
 \end{enumerate}
 
