@@ -219,12 +219,12 @@ property should be well audited.
 
 Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
-such servers available, most of them being open source and free, such as
-\texttt{Apache} and \texttt{nginx}~\todo{reference webserver software}. Web
-servers use the Hypertext Transfer Protocol (HTTP) to handle requests and
-deliver the content to the client. Web servers usually deliver websites encoded
-in Hypertext Markup Language (HTML) but can also deliver all kind of files such
-as JavaScript (JS) and Content Style Sheet (CSS).
+such servers available, most of them being open source and free, such as Apache
+and NGINX~\todo{reference webserver software}. Web servers use the Hypertext
+Transfer Protocol (HTTP) to handle requests and deliver the content to the
+client. Web servers usually deliver websites encoded in Hypertext Markup
+Language (HTML) but can also deliver all kind of files such as JavaScript (JS)
+and Content Style Sheet (CSS).
 
 A client requests content from the server by sending a Uniform Resource Locator
 (URL). The server then looks up the given path in the URL and answers the
@@ -234,7 +234,7 @@ adapted TLS for security and privacy reasons to provide content over HTTPS. The
 client, most of the time a web browser, can thereby verify the server's identity
 and apply encryption to the connection if needed.
 
-\subsection{HTTP - Basic Access Authentication}
+\subsection{HTTP - Basic Access Authentication (BA)}
 
 Only authorised users might access specified paths on a web server. Therefore
 HTTP added access-control to the protocol~\todo{reference RFC 7617}. This
@@ -246,16 +246,16 @@ together with HTTPS at most times. The client has to transmit the BA field with
 every request, and there is no logout function as in other techniques using
 cookies or session identifiers.
 
-\subsubsection{Access control in \texttt{Apache} and \texttt{NGINX}}
+\subsubsection{Access control in Apache and NGINX}
 
 Apache and NGINX provide BA in the default configuration. Apache makes use of
 so-called \texttt{ht} files, which are an extension to the usual server
 configuration for users with limited rights, see their documentation for further
-details \todo{reference ht documentation}. To make use of BA, Apache introduced
-so-called \texttt{htpasswd}-files, which store user credentials. NGINX later
-adapted these files for their server. The \texttt{htpasswd}-files keep the data
-either in plaintext or hashed. To create these files \texttt{Apache} provides
-the tool \texttt{htpasswd}\todo{reference htpasswd man page}. This tool uses MD5
+details \todo{reference ht documentation}. Apache introduced so-called
+\texttt{htpasswd}-files to make use of BA, which store user credentials. NGINX
+later adapted these files for their server. The \texttt{htpasswd}-files keep the
+data either in plaintext or hashed. To create these files Apache provides the
+tool \texttt{htpasswd}\todo{reference htpasswd man page}. This tool uses MD5
 hashing per default (as of version 2.2.18), but it is possible to change the
 hashing algorithm to something more secure. On a request including HTTP BA, the
 web server will look up the \texttt{htpasswd}-file to verify given credentials
