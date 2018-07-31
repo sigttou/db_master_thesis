@@ -258,8 +258,13 @@ for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
 \texttt{AES256-GCM} is the  symmetric cypher and \texttt{HMAC-SHA1} checks data
 integrity.
 
+TLS is commonly used in web servers to guarantee user's safety, but also
+applications like Virtual Private Networks (VPNs) and Secure Shell (SSH) make
+use of protocols and cyphers described in the TLS standard and their
+implementation in \texttt{openssl} or other libraries.
+
 \todo{reference TLS standard}
-\todo{add applications making use of TLS}
+\todo{reference applications making use of TLS}
 
 \subsection{Cryptographic Nonces}
 
@@ -384,7 +389,7 @@ $GHASH(H, A, C) = X_{m+n+1}$, is applied. Where, $H$ is the hash key, computed
 by encrypting 128 zero bits with the AES block cypher, $C$ is the ciphertext
 and $A$ being non-encrypted but authenticated data. Figure~\ref{fig:aesgcm}
 shows how the $GHASH$ is computed for one block of authenticated data and two
-blocks of plaintext. This happens according to the following steps:
+blocks of plaintext. The computation happens according to the following steps:
 
 \begin{enumerate}
   \item The Galois field multiplication is applied to the block of
