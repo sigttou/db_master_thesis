@@ -454,32 +454,20 @@ To understand the attack by Joux~\cite{NISTGCMcomment}, we look at the
 simplified attack, described by Böck~\etal~\cite{gcmnonceattack}. We assume
 that the same nonce is used for two messages.
 
-\[
-  g_1(X) = C{_{1}X^2 \oplus L_1X \oplus S}
-\]
-
-\[
-  g_2(X) = C{_{2}X^2 \oplus L_2X \oplus S}
-\]
+\[g_1(X) = C{_{1}X^2 \oplus L_1X \oplus S}\]
+\[g_2(X) = C{_{2}X^2 \oplus L_2X \oplus S}\]
 
 We assume that all values besides $S$ are known to the attacker. We can also
 add the known tag $TAG$ to each polynomial to get $g_i'(X)$ as follows:
 
-\[
-  g_1'(X) = C{_{1}X^2 \oplus L_1X \oplus S \oplus T_1}
-\]
-
-\[
-  g_2'(X) = C{_{2}X^2 \oplus L_2X \oplus S \oplus T_2}
-\]
+\[g_1'(X) = C{_{1}X^2 \oplus L_1X \oplus S \oplus T_1}\]
+\[g_2'(X) = C{_{2}X^2 \oplus L_2X \oplus S \oplus T_2}\]
 
 The combination of those two can be done, because we know they are equal to
 zero, at the point $H$. $g_1'(H) = g_2'(H) = 0$. This combination results in
 the following solvable polynomial:
 
-\[
-  g_{1+2}'(X) = (C_{1} + C_{2})X^2 + (L_1 + L_2)X + T_1 + T_2
-\]
+\[g_{1+2}'(X) = (C_{1} + C_{2})X^2 + (L_1 + L_2)X + T_1 + T_2\]
 
 Which is know to fulfil the equation $g_{1+2}'(H) = 0$. Therefore an attacker
 can recover a list of candidates for $H$. An increasing number of nonce
