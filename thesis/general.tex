@@ -234,7 +234,19 @@ adapted TLS for security and privacy reasons to provide content over HTTPS. The
 client, most of the time a web browser, can thereby verify the server's identity
 and apply encryption to the connection if needed.
 
-\subsection{Permission Models for Webservers}
+\subsection{HTTP - Basic Access Authentication}
+
+Only authorised users might access specified paths on a web server. Therefore
+HTTP added access-control to the protocol~\todo{reference RFC 7617}. This
+technique makes use of a header field in HTTP, namely \texttt{WWW-Authenticate}.
+The functionality to transmit credentials inside the URL has been deprecated by
+RFC 3986~\todo{reference RFC 3986}.BA is a straightforward access-control
+technique and does not protect the transmitted credentials. Therefore it is used
+together with HTTPS at most times. The client has to transmit the BA field with
+every request, and there is no logout function as in other techniques using
+cookies or session identifiers.
+
+\subsubsection{\texttt{htpasswd}}
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
