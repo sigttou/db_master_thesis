@@ -487,25 +487,26 @@ reuse lowers the number of possible key candidates.
 \section{Rowhammer}
 
 Technology is steadily changing, with vendors of computer parts being forced to
-produce cheaper and hardware every year. For DRAM this resulted in less quality
-management and proper checks on possible bitflips which allowed smaller chipsets
-into production. These chips provide less space to store loads, which represents
-data, and little energy to be used to store the loads. Years after vendors
-introduced this increased densities in DRAM to the market researchers like
-\todo{references rowhammer} found a critical bug in the chip design. With the
-little space and energy stored it was possible to use charges of memory rows to
-leak data to nearby rows, which made it possible to even change bits of other
-rows with particular crafted memory access patterns like shown by
-\todo{references rowhammer}.
+produce cheaper and better hardware every year. For DRAM this resulted in less
+quality management and a declining number of proper checks for hardware faults.
+However, industry, therefore, produced smaller and faster memory. These new
+chips need less space and energy to store load, which represents data. Years
+after vendors introduced this increased densities in DRAM to the market,
+researchers like \todo{reference Rowhammer} found a critical bug in the chip
+design. With the little space and energy stored it was possible to use changes
+of charges in memory rows to interfere with data of nearby cells, which made it
+possible to change bits of other rows with particular crafted memory access
+patterns like shown by \todo{reference Rowhammer attack}.
 
 This behaviour and bug then caused researchers to dig deeper into the
 possibilities, and several attacks were found based on the Rowhammer bug. For
-example as~\todo{reference rowhammer exploit} shows, it is possible to use
-Rowhammer for privilege escalation.~\todo{reference dramma} also state that this
-attack not only affects desktop computers but also memory in mobile devices. In
-their work~\todo{reference rowhammer work} show that flipping bits in memory has
-further risks as previously thought and that Rowhammer defences need a general
-overhaul, stating that the only proper solution is to fix the hardware.
+example, \todo{reference Rowhammer privilege escalation} show, it is possible
+to use Rowhammer for privilege escalation. \todo{reference dramma} also state
+that this attack not only affects desktop computers but also memory in mobile
+devices. In their work, \todo{reference Rowhammer possible attacks} show that
+flipping bits in memory has further risks as previously thought and that
+Rowhammer defences need a general overhaul, stating that the only solution is to
+fix the hardware.
 %}}}
 
 %% vim:foldmethod=expr
