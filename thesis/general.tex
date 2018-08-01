@@ -536,10 +536,17 @@ fix the hardware.
 
 \subsubsection{Design of Dynamic Random-Access Memory (DRAM)}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Random-access memory is designed to store information as bits. A simplified view
+of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
+address decoder and buffers for input and output of the memory.
+Figure~\todo{draw simple RAM circuit} shows such a circuit.
+
+The one-bit storage is a one-transistor (1-T) memory cell, as seen in figure
+\todo{draw 1-T cell}. Setting the state of the cell works by sending the logical
+zero or one on the bit-line and asserting the word-line. Reading from the cell
+is also done by asserting the word-line, turning the transistor on and therefore
+setting the bit-line to the voltage level provided by the capacitor. This
+Voltage is then detected and amplified to report the logical state of the bit.
 
 \subsubsection{Introducing bitflips to RAM}
 
