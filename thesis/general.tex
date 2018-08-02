@@ -503,12 +503,35 @@ reuse lowers the number of possible key candidates.
 \todo{Simplify Attack}
 
 \section{Software-based Microarchitectural Attacks}
-\todo{Add introduction of mircoarchitectural attacks}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Attacks against desktop computers and mobile devices have been widespread over
+the last couple of years. As programmers and vendors became more aware of
+classic issues in such systems, researchers moved to other layers to find bugs
+and possible security holes. These movements started with researchers showing
+side-channel information leakages in cryptographic implementations. Like
+\todo{reference some side channel attacks} or \todo{reference more side-channel
+attacks} have shown how timing differences or energy usage can leak keys to an
+attacker. Later similar attacks were generalised to different CPU architectures,
+like \todo{reference cache attack keylogger} have shown that it is possible to
+build key loggers via measuring cache access timings.
+
+\subsection{Cache Attacks}
+
+To speed up access times for memory, vendors of computer systems introduced the
+principle of caching \todo{reference paper about caches} to memory. Hardware
+components closer to the computing core holding memory for future memory
+requests are way faster. In modern CPUs \todo{reference current CPU cache
+details} there are usually three levels of caches applies. As shown in figure
+\todo{draw scheme for caching}, the design assign caches for level one and two
+(L1, L2) for each core and the cores share the level three cache (L3) between
+each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
+computation at rates of about four gigahertz would not be possible.
+
+In the past scientists like \todo{reference some cache attacks papers} have
+shown that caches also introduce bugs and security holes to systems. Cache
+attacks are part of microarchitectural attacks and knowledge gained from this
+kind of attacks have also played a role in the exploitation of the rowhammer
+bug.
 
 \subsection{Rowhammer}
 
@@ -596,24 +619,6 @@ privilege escalation on a standard x86-64 CPU and a sandbox escape from a
 sandbox. After vendors of operating systems started to introduce
 countermeasures, scientists like \todo{reference other rowhammer attacks and
 mention them} came up with further, improved attacks making use of the rowhammer
-bug.
-
-\subsubsection{Memory Caching}
-
-To speed up access times for memory, vendors of computer systems introduced the
-principle of caching \todo{reference paper about caches} to memory. Hardware
-components closer to the computing core holding memory for future memory
-requests are way faster. In modern CPUs \todo{reference current CPU cache
-details} there are usually three levels of caches applies. As shown in figure
-\todo{draw scheme for caching}, the design assign caches for level one and two
-(L1, L2) for each core and the cores share the level three cache (L3) between
-each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
-computation at rates of about four gigahertz would not be possible.
-
-In the past scientists like \todo{reference some cache attacks papers} have
-shown that caches also introduce bugs and security holes to systems. Cache
-attacks are part of microarchitectural attacks and knowledge gained from this
-kind of attacks have also played a role in the exploitation of the rowhammer
 bug.
 %}}}
 
