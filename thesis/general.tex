@@ -512,6 +512,8 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \subsection{Rowhammer}
 
+\todo{shorten Rowhammer introduction and move it to later parts}
+
 Technology is steadily changing, with vendors of computer parts being forced to
 produce cheaper and better hardware every year. For DRAM this resulted in less
 quality management and a declining number of proper checks for hardware faults.
@@ -550,12 +552,12 @@ Voltage is then detected and amplified to report the logical state of the bit.
 
 The storage matrix is a two-dimensional array of one-bit storage cells. Accesses
 to DRAM do not happen per bit but per row. The size of a row depends on the DRAM
-design, but it is usually a multiple of the word size, for example, 64 bits. The
-client sends requests for memory in a sequence, where firstly the row is
-addressed, and then the desired bits for the columns are sent. Accessing the
-entries is done during the row address strobe (RAS) and column address strobe
-(CAS) signal cycles accordingly. DRAM consists of many memory arrays connected
-via a data bus.
+design, but it is usually a multiple of the word size. In modern systems, rows
+are larger than 64 kilobytes. \todo{reference project zero} The client sends
+requests for memory in a sequence, where firstly the row is addressed, and then
+the desired bits for the columns are sent. Accessing the entries is done during
+the row address strobe (RAS) and column address strobe (CAS) signal cycles
+accordingly. DRAM consists of many memory arrays connected via a data bus.
 
 The capacitor used for the 1-T cell will either lose load over time or on
 reading access. Therefore, these capacitors need to be periodically refreshed.
@@ -571,6 +573,34 @@ pointer holding this information.
 
 \subsubsection{Introducing bitflips to RAM}
 
+\todo{reference Rowhammer} show how it is possible to cause bits to flip inside
+memory by correct access patterns. They use two rows, as so-called aggressors
+and one as target row. As the code in figure\todo{include code from paper}, from
+\todo{reference paper}, shows there are periodical reads to the two aggressor
+rows, causing memory accesses. The changes in electrical charge caused by the
+read accesses will by chance interfere with the loads in the target row and
+change content there. The \texttt{clflush} instructions are used to empty the
+memory in the used cache lines, causing the System to access the DRAM for each
+read instead of getting the value out of the cache.
+
+The memory addresses to be accessed to gain the rows next to each other are hard
+to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
+positioning is stored. Also, some systems allow so-called huge pages, where two
+megabytes of memory are used contiguously. Where two megabytes will use more
+than one row, other than normal pages with four kilobytes. In the paper
+\todo{reference rowhammer} use addresses calculated based on their knowledge of
+physical address mapping used by common CPU vendors.
+
+\todo{reference project zero} show how it is possible to use rowhammer to gain
+privilege escalation on a standard x86-64 CPU and a sandbox escape from a
+sandbox. After vendors of operating systems started to introduce
+countermeasures, scientists like \todo{reference other rowhammer attacks and
+mention them} came up with further, improved attacks making use of the rowhammer
+bug.
+
+\subsubsection{Memory Caching}
+
+\todo{add introduction to modern system caching}
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
