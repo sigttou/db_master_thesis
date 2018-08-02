@@ -600,11 +600,21 @@ bug.
 
 \subsubsection{Memory Caching}
 
-\todo{add introduction to modern system caching}
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+To speed up access times for memory, vendors of computer systems introduced the
+principle of caching \todo{reference paper about caches} to memory. Hardware
+components closer to the computing core holding memory for future memory
+requests are way faster. In modern CPUs \todo{reference current CPU cache
+details} there are usually three levels of caches applies. As shown in figure
+\todo{draw scheme for caching}, the design assign caches for level one and two
+(L1, L2) for each core and the cores share the level three cache (L3) between
+each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
+computation at rates of about four gigahertz would not be possible.
+
+In the past scientists like \todo{reference some cache attacks papers} have
+shown that caches also introduce bugs and security holes to systems. Cache
+attacks are part of microarchitectural attacks and knowledge gained from this
+kind of attacks have also played a role in the exploitation of the rowhammer
+bug.
 %}}}
 
 %% vim:foldmethod=expr
