@@ -548,6 +548,27 @@ is also done by asserting the word-line, turning the transistor on and therefore
 setting the bit-line to the voltage level provided by the capacitor. This
 Voltage is then detected and amplified to report the logical state of the bit.
 
+The storage matrix is a two-dimensional array of one-bit storage cells. Accesses
+to DRAM do not happen per bit but per row. The size of a row depends on the DRAM
+design, but it is usually a multiple of the word size, for example, 64 bits. The
+client sends requests for memory in a sequence, where firstly the row is
+addressed, and then the desired bits for the columns are sent. Accessing the
+entries is done during the row address strobe (RAS) and column address strobe
+(CAS) signal cycles accordingly. DRAM consists of many memory arrays connected
+via a data bus.
+
+The capacitor used for the 1-T cell will either lose load over time or on
+reading access. Therefore, these capacitors need to be periodically refreshed.
+\todo{lookup refresh rates for DRAM}. The easiest way to do this is by reading a
+bit and writing the response back to it. In the DRAM design, it is possible to
+refresh each row at a time with a RAS without the following CAS. With this
+refresh cycle, the chip needs to hold the information which was the last
+refreshed row. Some DRAM designs, therefore, implement a so-called row refresh
+pointer holding this information.
+
+\todo{reference JTAG standard}
+\todo{reference DRAM specification}
+
 \subsubsection{Introducing bitflips to RAM}
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
