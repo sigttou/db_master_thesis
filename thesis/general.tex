@@ -594,6 +594,35 @@ pointer holding this information.
 \todo{reference JTAG standard}
 \todo{reference DRAM specification}
 
+\begin{figure}
+  \centering
+  \begin{circuitikz}
+  \ctikzset{label/align = smart}
+  \draw
+  (0,0) to[short, l_=$bit\ line$] (0,-4)
+  (0,-1) to[short, l^=$word\ line$] (4,-1)
+  (1,-2) node[nmos, rotate=-90] (mos) {}
+  (mos.gate) node[anchor=north] {}
+  (mos.drain) node[anchor=east] {}
+  (mos.source) node[anchor=west] {}
+  ;
+  \draw
+  (mos.gate) to[short] (1,-1)
+  (mos.source) to[short] (0,-2)
+  ;
+  \draw
+  (mos.drain) to[short] (2,-2)
+  (2,-3) node[rground] (A) {}
+  node[anchor=west, yshift=-0.4cm, xshift=0.2cm] {$\frac{V_{CC}}{2}$}
+  to[pC] (2,-2)
+  ;
+  \end{circuitikz}
+  \caption{Semantics of a 1-T memory storage element} \label{fig:1Tstorage}
+\end{figure}
+
+\todo{reference other DRAM storage circuits + comparison paper}
+\todo{describe semantics + add VCC etc nodes}
+
 \subsubsection{Introducing bitflips to RAM}
 
 \todo{reference Rowhammer} show how it is possible to cause bits to flip inside
