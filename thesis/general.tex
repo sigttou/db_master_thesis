@@ -529,20 +529,22 @@ computation at rates of about four gigahertz would not be possible.
 
 \tikzstyle{level3block} = [rectangle, minimum width=9.5cm, minimum
 height=0.8cm, text centered, draw=black]
+\tikzstyle{mcblock} = [rectangle, minimum width=4cm, minimum
+height=0.8cm, text centered, draw=black]
 \tikzstyle{doublearrow} = [thick,<->,>=stealth]
 \begin{figure}
   \centering
   \begin{tikzpicture}
     % Level 1 caching blocks
-    \node (C1L1) [block]  {$C_1-L_1$};
-    \node (C2L1) [block, right of=C1L1, xshift=1.5cm]  {$C_2-L_1$};
-    \node (C3L1) [block, right of=C2L1, xshift=1.5cm]  {$C_3-L_1$};
-    \node (C4L1) [block, right of=C3L1, xshift=1.5cm]  {$C_4-L_1$};
+    \node (C1L1) [block] {$C_1-L_1$};
+    \node (C2L1) [block, right of=C1L1, xshift=1.5cm] {$C_2-L_1$};
+    \node (C3L1) [block, right of=C2L1, xshift=1.5cm] {$C_3-L_1$};
+    \node (C4L1) [block, right of=C3L1, xshift=1.5cm] {$C_4-L_1$};
     % Level 2 caching blocks
-    \node (C1L2) [block, below of=C1L1, yshift=-1cm]  {$C_1-L_2$};
-    \node (C2L2) [block, right of=C1L2, xshift=1.5cm]  {$C_2-L_2$};
-    \node (C3L2) [block, right of=C2L2, xshift=1.5cm]  {$C_3-L_2$};
-    \node (C4L2) [block, right of=C3L2, xshift=1.5cm]  {$C_4-L_2$};
+    \node (C1L2) [block, below of=C1L1, yshift=-1cm] {$C_1-L_2$};
+    \node (C2L2) [block, right of=C1L2, xshift=1.5cm] {$C_2-L_2$};
+    \node (C3L2) [block, right of=C2L2, xshift=1.5cm] {$C_3-L_2$};
+    \node (C4L2) [block, right of=C3L2, xshift=1.5cm] {$C_4-L_2$};
     % Level 3 block
     \node (L3) [level3block, below of=C2L2, yshift=-1cm, xshift=1.25cm] {$L_3$};
     % Connections
@@ -554,6 +556,11 @@ height=0.8cm, text centered, draw=black]
     \draw [doublearrow] (C2L2) -- (2.5cm,-3.6cm);
     \draw [doublearrow] (C3L2) -- (5cm,-3.6cm);
     \draw [doublearrow] (C4L2) -- (7.5cm,-3.6cm);
+    % Memory Controler and DDR3
+    \node (MC) [mcblock, below of=L3, yshift=-1cm] {MC};
+    \node (DDR31) [block, below of=MC, yshift=0.2cm, xshift=-1cm] {DRAM};
+    \node (DDR32) [block, below of=MC, yshift=0.2cm, xshift=1cm] {DRAM};
+    \draw [doublearrow] (L3) -- (MC);
   \end{tikzpicture}
   \caption{Semantics of Intel Kaby Lake Caching Architecture}
   \label{fig:intelcache}
@@ -564,6 +571,8 @@ shown that caches also introduce bugs and security holes to systems. Cache
 attacks are part of microarchitectural attacks and knowledge gained from this
 kind of attacks have also played a role in the exploitation of the rowhammer
 bug.
+
+\todo{improve caption of figures}
 
 \subsection{Rowhammer}
 
