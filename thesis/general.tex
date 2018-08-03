@@ -395,7 +395,7 @@ minimum height=0.8cm, text centered, draw=black, fill=blue!30]
     \node (mult4) [function, below of=xor31, yshift=-0.5cm] {$mult_H$};
     \node (xor41) [XOR, below of=mult4, scale=2, yshift=-0.25cm] {};
     \node (tag) [block, right of=xor41, xshift=1cm] {$TAG$};
-    
+
     \draw [arrow] (cnt0) -- (cnt1);
     \draw [arrow] (cnt1) -- (cnt2);
     \draw [arrow] (cnt0) -- (enc0);
@@ -527,6 +527,38 @@ details} there are usually three levels of caches applies. As shown in figure
 each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
 computation at rates of about four gigahertz would not be possible.
 
+\tikzstyle{level3block} = [rectangle, minimum width=9.5cm, minimum
+height=0.8cm, text centered, draw=black]
+\tikzstyle{doublearrow} = [thick,<->,>=stealth]
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    % Level 1 caching blocks
+    \node (C1L1) [block]  {$C_1-L_1$};
+    \node (C2L1) [block, right of=C1L1, xshift=1.5cm]  {$C_2-L_1$};
+    \node (C3L1) [block, right of=C2L1, xshift=1.5cm]  {$C_3-L_1$};
+    \node (C4L1) [block, right of=C3L1, xshift=1.5cm]  {$C_4-L_1$};
+    % Level 2 caching blocks
+    \node (C1L2) [block, below of=C1L1, yshift=-1cm]  {$C_1-L_2$};
+    \node (C2L2) [block, right of=C1L2, xshift=1.5cm]  {$C_2-L_2$};
+    \node (C3L2) [block, right of=C2L2, xshift=1.5cm]  {$C_3-L_2$};
+    \node (C4L2) [block, right of=C3L2, xshift=1.5cm]  {$C_4-L_2$};
+    % Level 3 block
+    \node (L3) [level3block, below of=C2L2, yshift=-1cm, xshift=1.25cm] {$L_3$};
+    % Connections
+    \draw [doublearrow] (C1L1) -- (C1L2);
+    \draw [doublearrow] (C2L1) -- (C2L2);
+    \draw [doublearrow] (C3L1) -- (C3L2);
+    \draw [doublearrow] (C4L1) -- (C4L2);
+    \draw [doublearrow] (C1L2) -- (0,-3.6cm);
+    \draw [doublearrow] (C2L2) -- (2.5cm,-3.6cm);
+    \draw [doublearrow] (C3L2) -- (5cm,-3.6cm);
+    \draw [doublearrow] (C4L2) -- (7.5cm,-3.6cm);
+  \end{tikzpicture}
+  \caption{Semantics of Intel Kaby Lake Caching Architecture}
+  \label{fig:intelcache}
+\end{figure}
+
 In the past scientists like \todo{reference some cache attacks papers} have
 shown that caches also introduce bugs and security holes to systems. Cache
 attacks are part of microarchitectural attacks and knowledge gained from this
@@ -614,7 +646,7 @@ pointer holding this information.
   (mos.drain) to[short] (2,-2)
   (2,-3) node[rground] (A) {}
   node[anchor=west, yshift=-0.4cm, xshift=0.2cm] {$\frac{V_{CC}}{2}$}
-  to[pC] (2,-2)
+  to[pC, l_=$C$] (2,-2)
   ;
   \end{circuitikz}
   \caption{Semantics of a 1-T memory storage element} \label{fig:1Tstorage}
