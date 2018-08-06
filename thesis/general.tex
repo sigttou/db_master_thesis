@@ -327,14 +327,20 @@ attacker to execute that code with the permission of another user. Therefore,
 the number of \texttt{setuid} binaries should be low and programs having that
 property should be well audited.
 
-\section{Internet Connection between Computers}
+\section{Connecting Computers}
 
-\todo{Add introduction to LAN and the Internet}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+People are exchanging data between devices for several decades now. The internet
+started when scientists found a way to have universities share research results
+over the back then used Advanced Research Projects Agency Network (ARPANET).
+The ARPANET already used the TCP/IP protocol and showed requirements for future
+interconnection networks. With easier access to computers more and more
+universities, companies and private households wanted to be connected and
+transmit data. In the beginning, many protocols were introduced with the
+creation of the internet, where Hypertext protocols where shared in the World
+Wide Web, electronic mail was used to transmit messages, and file sharing became
+common. With this growing amount of users security to the network and the
+connected devices become more relevant every day. Therefore, protocols to ensure
+security for the participants became standard and regularly improved.
 
 \subsection{Webserver}
 
@@ -554,10 +560,14 @@ standard about AES-GCM~\cite{gcmnist} for more details.
 
 \paragraph{AES-GCM Implementation in OpenSSL}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+The OpenSSL source code is structured in a way that each part of a cypher is
+implemented on its own. For our thesis and analysation we want to refer to
+version \texttt{1.1.0g} of OpenSSL. \todo{reference OpenSSL}. The AESGCM code
+part is located at \texttt{crypto/evp/e\_aes.c}. The structures used by the
+cypher are defined in \texttt{crypto/evp/evp\_locl.h},
+\texttt{crypto/include/internal/evp\_int.h} and \texttt{ssl/ssl\_locl.h}. The
+file \texttt{crypto/evp/evp\_lib.c} shows the implementation for the creation of
+the cypher data.
 
 \subsubsection{AES-GCM Nonce Reuse Attack}
 
