@@ -32,6 +32,7 @@ opcodes with the length of two or three bytes exist. The length of the
 instruction then depends on the opcode and the number and length of arguments.
 
 \todo{reference Intel manual}
+\todo{draw figure for opcodes}
 
 \subsection{Executable and Linkable Format (ELF)}
 
@@ -41,6 +42,58 @@ The assembler and linker create the ELF files. The ELF
 specification~\cite{elfspec} is followed by most modern Unix like operating
 systems, therefore we need to understand the layout of the executable files
 before introducing bitflips to it.
+
+\tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm,
+text centered, draw=black]
+\tikzstyle{function} = [rectangle, rounded corners, minimum width=2cm,
+minimum height=0.8cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzset{XOR/.style={draw,circle,append after command={
+        [shorten >=\pgflinewidth, shorten <=\pgflinewidth,]
+        (\tikzlastnode.north) edge (\tikzlastnode.south)
+        (\tikzlastnode.east) edge (\tikzlastnode.west)
+        }
+    }
+}
+\tikzstyle{level3block} = [rectangle, minimum width=9.5cm, minimum
+height=0.8cm, text centered, draw=black]
+\tikzstyle{mcblock} = [rectangle, minimum width=4cm, minimum
+height=0.8cm, text centered, draw=black]
+\tikzstyle{doublearrow} = [thick,<->,>=stealth]
+\tikzstyle{segblock} = [rectangle, minimum width=1cm, minimum height=0.8cm,
+text centered, draw=black]
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+  \node (eh) [block] {ELF HEADER};
+  \node (ph) [block, right of=eh, xshift=3cm] {Program Header Table};
+  \node (sh) [block, below of=eh] {Section Header Table};
+  \node (text) [block, below of=ph] {.text};
+  \node (rodata) [block, below of=text] {.rodata};
+  \node (data) [block, below of=rodata] {.data};
+  \node (bss) [block, below of=data] {.bss};
+  \node (seg02) [segblock, right of=text, xshift=1cm, yshift=-0.5cm] {02};
+  \node (seg03) [segblock, right of=data, xshift=1cm, yshift=-0.5cm] {03};
+  % connections
+  \path [thick,->,>=stealth] (eh) edge[out=0, in=180] (ph);
+  \path [thick,->,>=stealth] (eh) edge[out=180, in=180] (sh);
+  \path [thick,->,>=stealth] (sh) edge[out=0, in=180] (text);
+  \path [thick,->,>=stealth] (sh) edge[out=0, in=180] (rodata);
+  \path [thick,->,>=stealth] (sh) edge[out=0, in=180] (data);
+  \path [thick,->,>=stealth] (sh) edge[out=0, in=180] (bss);
+  \path [thick,->,>=stealth] (ph) edge[out=0, in=0] (seg02);
+  \path [thick,->,>=stealth] (ph) edge[out=0, in=0] (seg03);
+  \path [thick,->,>=stealth] (seg02) edge[out=180, in=0] (text);
+  \path [thick,->,>=stealth] (seg02) edge[out=180, in=0] (rodata);
+  \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (data);
+  \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (bss);
+  \end{tikzpicture}
+  \caption{Structure of an ELF showing the four main sections}
+\label{fig:elfstruct}
+\end{figure}
+
+\todo{describe sections in more details}
 
 \subsubsection{Structure of an ELF file}
 
@@ -356,19 +409,6 @@ with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
   \item[$TAG$] Authentication tag.
 \end{itemize}
 
-\tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm, 
-text centered, draw=black]
-\tikzstyle{function} = [rectangle, rounded corners, minimum width=2cm, 
-minimum height=0.8cm, text centered, draw=black, fill=blue!30]
-\tikzstyle{arrow} = [thick,->,>=stealth]
-\tikzset{XOR/.style={draw,circle,append after command={
-        [shorten >=\pgflinewidth, shorten <=\pgflinewidth,]
-        (\tikzlastnode.north) edge (\tikzlastnode.south)
-        (\tikzlastnode.east) edge (\tikzlastnode.west)
-        }
-    }
-}
-
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -527,11 +567,6 @@ details} there are usually three levels of caches applies. As shown in figure
 each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
 computation at rates of about four gigahertz would not be possible.
 
-\tikzstyle{level3block} = [rectangle, minimum width=9.5cm, minimum
-height=0.8cm, text centered, draw=black]
-\tikzstyle{mcblock} = [rectangle, minimum width=4cm, minimum
-height=0.8cm, text centered, draw=black]
-\tikzstyle{doublearrow} = [thick,<->,>=stealth]
 \begin{figure}
   \centering
   \begin{tikzpicture}
