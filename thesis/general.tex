@@ -45,6 +45,7 @@ before introducing bitflips to it.
 
 \tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm,
 text centered, draw=black]
+\tikzstyle{dot} = [circle, fill, inner sep=1.5pt]
 \tikzstyle{function} = [rectangle, rounded corners, minimum width=2cm,
 minimum height=0.8cm, text centered, draw=black, fill=blue!30]
 \tikzstyle{arrow} = [thick,->,>=stealth]
@@ -68,13 +69,21 @@ text centered, draw=black]
   \begin{tikzpicture}
   \node (eh) [block] {ELF HEADER};
   \node (ph) [block, right of=eh, xshift=3cm] {Program Header Table};
-  \node (sh) [block, below of=eh] {Section Header Table};
-  \node (text) [block, below of=ph] {.text};
+  \node (sh) [block, below of=eh, yshift=-2cm] {Section Header Table};
+  \node (dot0) [dot, below of=ph] {};
+  \node (dot1) [dot, below of=dot0, yshift=0.5cm] {};
+  \node (text) [block, below of=dot1] {.text};
   \node (rodata) [block, below of=text] {.rodata};
   \node (data) [block, below of=rodata] {.data};
   \node (bss) [block, below of=data] {.bss};
+  \node (dot2) [dot, below of=bss] {};
+  \node (dot3) [dot, below of=dot2, yshift=0.5cm] {};
   \node (seg02) [segblock, right of=text, xshift=1cm, yshift=-0.5cm] {02};
+  \node (dot4) [dot, above of=seg02] {};
+  \node (dot5) [dot, above of=dot4, yshift=-0.5cm] {};
   \node (seg03) [segblock, right of=data, xshift=1cm, yshift=-0.5cm] {03};
+  \node (dot6) [dot, below of=seg03] {};
+  \node (dot7) [dot, below of=dot6, yshift=0.5cm] {};
   % connections
   \path [thick,->,>=stealth] (eh) edge[out=0, in=180] (ph);
   \path [thick,->,>=stealth] (eh) edge[out=180, in=180] (sh);
