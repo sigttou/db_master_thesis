@@ -37,8 +37,43 @@ The length of an opcode is usually one byte, whereas in \texttt{x86\_64} also
 opcodes with the length of two or three bytes exist. The length of the
 instruction then depends on the opcode and the number and length of arguments.
 
-\todo{reference Intel manual}
-\todo{draw figure for opcodes}
+The Intel manual \todo{reference Intel manual} describes the instruction format
+as seen in table~\ref{tab:instrfor}.Whereas the following sections can be seen:
+
+\begin{itemize}
+  \item Prefix - Used to give the CPU further instructions on how to handle the 
+opcode. There are prefixes for memory locks in a multi-core environment or 
+repeat instructions to apply an operation on each string or I/O entry. There are 
+also prefixes overriding the operand sizes or introducing SSE instruction calls 
+or some give branching hints to the CPU.
+  \item Opcode - Tells the CPU what to do and how to handle parameters given to 
+the opcode.
+  \item ModR/M - This byte is used behind the opcode to tell the CPU what 
+addressing form to use for the operands in memory.
+  \item SIB - For some addressing-modes specified in the ModR/M byte this byte 
+also needs to be parsed and evaluated.
+  \item Displacement - Some addressing-modes referred in the ModR/M or SIB byte 
+might include a displacement following them.
+  \item Immediate - Immediate data might follow if referred by the operand.
+\end{itemize}
+
+We refer to the Intel Manual \todo{reference Intel Manual} section 2.1 for 
+further details on the instruction format used in \texttt{x86\_64}.
+
+\begin{table}[]
+\begin{tabular}{ccccccc}
+\cline{2-7}
+\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{Prefix} &
+\multicolumn{1}{c|}{Opcode} & \multicolumn{1}{c|}{ModR/M} &
+\multicolumn{1}{c|}{SIB} & \multicolumn{1}{c|}{Displacement} &
+\multicolumn{1}{c|}{Immediate} \\ \cline{2-7}
+bytes         & 1 per prefix                & 1, 2 or 3
+ & 0 or 1                      & 0 or 1                   & 0, 1, 2 or 4
+             & 0, 1, 2 or 4
+\end{tabular}
+\caption{Instruction Format for Intel 64 and IA-32 Architectures}
+\label{tab:instrfor}
+\end{table}
 
 \subsection{Executable and Linkable Format (ELF)}
 
