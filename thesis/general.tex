@@ -5,19 +5,25 @@ This chapter describes terms, techniques, tools and programs used during the
 work for this thesis. It provides a general overview to make it easier to
 understand the details of the work in the following chapters.
 
-\section{Executing Program on Modern Unix Systems}
+\section{Executing Programs}
 
-\todo{Add introduction of program execution}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Processing units (PU) execute programs. Usually, the central processing unit
+(CPU) runs programs. Often referred to as the processor, the CPU carries out the
+instruction given to it by the program. The CPU can only step over single
+instructions and execute them. This is done by moving the so-called instruction
+pointer to different memory locations. Simple processors execute just one
+program. On ordinary desktop computers, the operating system is the main program
+being able to load other processes and manage them. CPUs can only execute
+machine code, but programs usually are written in programming languages which
+then are translated to machine code by either a compiler or an interpreter.
+Files created by a compiler are mostly referred to as executables or binaries,
+these can directly be loaded into memory by the OS. Operating Systems use
+defined structures for executables to make the loading possible, for example,
+Unix/Linux systems use ELF and Windows uses PE.
 
 \subsection{CPU Instructions}
 
-Computers execute programs by iterating over machine code, which is a list of
-Instructions. An instruction consists of an operation code (opcode), telling the
+An instruction consists of an operation code (opcode), telling the
 processor what to do, and parameters for the opcode, on which the processor
 operates on.~\todo{add figure showing an instruction} Instructions can either
 operate on registers or memory locations directly.
