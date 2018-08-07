@@ -224,16 +224,13 @@ with its created tests. Another more advanced fuzzer is Steelix by
 Yuekang~\etal~\cite{steelix}, which provides program-state based binary fuzzing
 which uses static-analysis and binary instrumentation to provide more
 information about the fuzzing process and therefore gains better test cases and
-execution paths for the fuzzed program. Fuzzing is a growing topic in security
-research as Stephens~\etal~\cite{driller} showed with Driller how symbolic
-execution could be beneficial to fuzzing approaches.
-Shoshitaishvili~\etal~\cite{firmalice} showed how fuzzing could find
-authentication bypasses in binary firmware with their tool Firmalice. In their
-work Wang~\etal~\cite{inmemfuzzing} showed how in-memory fuzzing is used to
-detect similarities in binary code. This is done by fuzzing every function
-available and compare traces of program behaviours with machine learning models.
-They show that they can find similarities in binaries even when different
-compilers, optimisations or obfuscation is applied.
+execution paths for the fuzzed program. Shoshitaishvili~\etal~\cite{firmalice}
+showed how fuzzing could find authentication bypasses in binary firmware with
+their tool Firmalice. In their work Wang~\etal~\cite{inmemfuzzing} showed how
+in-memory fuzzing is used to detect similarities in binary code. This is done by
+fuzzing every function available and compare traces of program behaviours with
+machine learning models. They show that they can find similarities in binaries
+even when different compilers, optimisations or obfuscation is applied.
 
 \subsubsection{Symbolic Execution}
 
@@ -252,7 +249,11 @@ Besides the symbolic execution of binaries, it also allows various other
 symbolic analysis methods such as control-flow graph recovery, automatic exploit
 generation or automatic binary hardening.
 
-\todo{add some symbolic execution methods}
+Stephens~\etal~\cite{driller} showed with Driller how symbolic execution could
+be beneficial to fuzzing approaches. This allows keeping the number of execution
+paths to test lower but also try to cover as much code as possible. Driller uses
+concolic execution for the path exploring, which is seen as the combination of
+symbolic and concrete execution of a program.
 
 \subsubsection{Instrumentation}
 
