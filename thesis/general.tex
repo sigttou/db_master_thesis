@@ -214,13 +214,13 @@ strings or just very long strings might be enough, advanced software needs
 better ways of fuzzing. For example, network protocols, file systems or image
 formats have a very complex structure which makes it hard to find possible
 crashes by random data input. Therefore this kind of fuzzers generate inputs
-from given examples and apply small changes to them. Like, Xmlfuzzer~\todo{cite
-xmlfuzzer} is a tool crafted specially to test XML schemes in programs. More
-advanced fuzzers exist which directly interact with the target, allowing to
-track execution paths per input and therefore even create even more test cases
-automatically. The most popular fuzzer is "american fuzzy lop" (afl)~\todo{cite
-afl}. It contains described algorithms to get the best possible code coverage
-with its created tests. Another more advanced fuzzer is Steelix by
+from given examples and apply small changes to them. Like,
+Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
+programs. More advanced fuzzers exist which directly interact with the target,
+allowing to track execution paths per input and therefore even create even more
+test cases automatically. The most popular fuzzer is "american fuzzy lop"
+(afl)~\cite{aflweb}. It contains described algorithms to get the best possible
+code coverage with its created tests. Another more advanced fuzzer is Steelix by
 Yuekang~\etal~\cite{steelix}, which provides program-state based binary fuzzing
 which uses static-analysis and binary instrumentation to provide more
 information about the fuzzing process and therefore gains better test cases and
@@ -292,7 +292,7 @@ modify the runtime of a program, whereas it is no problem to log register values
 or change those before or after desired instruction calls or even inject code to
 be run before given calls. Programs instrumenting a binary are called pintools,
 the framework provides their API calls for C++, but also bindings for Python can
-be found~\todo{reference python-pin}.
+be found in \texttt{python-pin}~\cite{pythonpin}.
 
 \subsection{Permission Model in Unix-based Systems}
 
