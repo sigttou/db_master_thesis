@@ -356,8 +356,8 @@ security for the participants became standard and regularly improved.
 
 Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
-such servers available, most of them being open source and free, such as Apache
-and NGINX~\todo{reference webserver software}. Web servers use the Hypertext
+such servers available, most of them being open source and free, such as
+Apache\cite{apacheweb} and NGINX\cite{nginxweb}. Web servers use the Hypertext
 Transfer Protocol (HTTP) to handle requests and deliver the content to the
 client. Web servers usually deliver websites encoded in Hypertext Markup
 Language (HTML) but can also deliver all kind of files such as JavaScript (JS)
@@ -374,30 +374,28 @@ and apply encryption to the connection if needed.
 \subsubsection{HTTP - Basic Access Authentication (BA)}
 
 Only authorised users might access specified paths on a web server. Therefore
-HTTP added access-control to the protocol~\todo{reference RFC 7617}. This
-technique makes use of a header field in HTTP, namely \texttt{WWW-Authenticate}.
-The functionality to transmit credentials inside the URL has been deprecated by
-RFC 3986~\todo{reference RFC 3986}.BA is a straightforward access-control
-technique and does not protect the transmitted credentials. Therefore it is used
-together with HTTPS at most times. The client has to transmit the BA field with
-every request, and there is no logout function as in other techniques using
-cookies or session identifiers.
+HTTP added access-control to the protocol described by RFC 7617\cite{rfc7617}.
+This technique makes use of a header field in HTTP, namely
+\texttt{WWW-Authenticate}. The functionality to transmit credentials inside the
+URL has been deprecated by RFC 3986\cite{rfc3986}. BA is a straightforward
+access-control technique and does not protect the transmitted credentials.
+Therefore it is used together with HTTPS at most times. The client has to
+transmit the BA field with every request, and there is no logout function as in
+other techniques using cookies or session identifiers.
 
-\paragraph{Access control in Apache and NGINX}
-
-Apache and NGINX provide BA in the default configuration. Apache makes use of
-so-called \texttt{ht} files, which are an extension to the usual server
-configuration for users with limited rights, see their documentation for further
-details \todo{reference ht documentation}. Apache introduced so-called
-\texttt{htpasswd}-files to make use of BA, which store user credentials. NGINX
-later adapted these files for their server. The \texttt{htpasswd}-files keep the
-data either in plaintext or hashed. To create these files Apache provides the
-tool \texttt{htpasswd}\todo{reference htpasswd man page}. This tool uses MD5
-hashing per default (as of version 2.2.18), but it is possible to change the
-hashing algorithm to something more secure. On a request including HTTP BA, the
-web server will look up the \texttt{htpasswd}-file to verify given credentials
-and then return the requested content or return an error according to the HTTP
-RFC \todo{reference HTTP RFC}.
+\paragraph{Access control in Apache and NGINX} is done by providing BA in the
+default configuration. Apache makes use of \texttt{ht} files, which
+are an extension to the usual server configuration for users with limited
+rights, see their documentation\cite{apacheauthdoc} for further details. Apache
+introduced \texttt{htpasswd}-files to make use of BA, which store user
+credentials. NGINX later adapted these files for their server. The
+\texttt{htpasswd}-files keep the data either in plaintext or hashed. To create
+these files Apache provides the tool \texttt{htpasswd}\cite{htpasswddoc}. This
+tool uses MD5 hashing per default (as of version 2.2.18), but it is possible to
+change the hashing algorithm to something more secure. On a request including
+HTTP BA, the web server will look up the \texttt{htpasswd}-file to verify given
+credentials and then return the requested content or return an error according
+to RFC 7231\cite{rfc7231}.
 
 \subsection{Transport Layer Security}
 
