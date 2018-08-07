@@ -321,10 +321,11 @@ commands as the target user.
 
 \subsubsection{\texttt{setuid} Binary Property}
 
-\texttt{setuid} stands for "set user identity"~\todo{reference setuid manpage}.
-It allows an executable to change its user ID on execution. A bit in the fire
-permissions represents the \texttt{setuid} property. This property allows a user
-to run a program with the permissions of the file's owner. Tools like
+\texttt{setuid} stands for "set user identity"~\cite{ogroupsetuid}. It allows an
+executable to change its user ID on execution. A bit in the fire permissions
+represents the \texttt{setuid} property, namely \texttt{S\_ISUID}, see the GNU
+libc documentation for more details~\cite{libcpermission}. This property allows
+a user to run a program with the permissions of the file's owner. Tools like
 \texttt{su} and \texttt{sudo} need this as they require the permission to change
 the current context. It is also practical to allow normal users the usage of
 tools like \texttt{ping} or \texttt{ip}, without allowing them the usage of
