@@ -452,17 +452,16 @@ is possible to force nonce reuse in WPA2\cite{wpanoncereuse}.
 
 \subsubsection{AES-GCM}
 
-Galois Counter Mode (GCM) in combination with AES provides encryption and
-simultaneously performs message authentication~\cite{gcm, gcmnist}.
-
-Figure~\ref{fig:aesgcm} shows the schematic of AES-GCM is shown in. Whereas we
-use close to the same notation as Hanno Böck~\etal in their
+Galois Counter Mode (GCM) in combination with Advanced Encryption Standard (AES)
+provides encryption and simultaneously performs message
+authentication~\cite{gcm, gcmnist}. Figure~\ref{fig:aesgcm} shows the schematic
+of AES-GCM. Where we use close to the same notation as Böck~\etal in their
 paper~\cite{gcmnonceattack}:
 
 \begin{itemize}
   \item[$CNT_i$] The $i$-th counter block, computed using the concatenation of
 the $IV$ and the counter value $cnt$, $cnt = (i+1) \mod{2^{32}}$, to achieve 128
-bits. $J_0 = IV \parallel 0 ^{31} \parallel 1$. With $IV$ being the
+bits. $CNT_0 = IV \parallel 0 ^{31} \parallel 1$. With $IV$ being the
 initialisation vector with a size of 96 bits.
   \item[$E_k$] AES encryption with symmetric key $k$.
   \item[$a \oplus b$] XOR operation between $a$ and $b$.
@@ -531,7 +530,7 @@ with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
   \caption{Semantics of AES-GCM} \label{fig:aesgcm}
 \end{figure}
 
-The encryption for AES-GCM works according to the following steps:
+Following steps describe how AES-GCM is used to encrypt data:
 
 \begin{enumerate}
   \item The initialisation $IV$ of 96 bits is generated.
@@ -542,12 +541,12 @@ represents the number of plaintext blocks.
 $CNT_i$ and XORing it to the plaintext $P_i$, as $C_i = P_i \oplus E_k(CNT_i)$.
 \end{enumerate}
 
-To get the authentication tag $TAG$ the so-called $GHASH$ function,
+To get the authentication tag $TAG$ the $GHASH$ function,
 $GHASH(H, A, C) = X_{m+n+1}$, is applied. Where, $H$ is the hash key, computed
-by encrypting 128 zero bits with the AES block cypher, $C$ is the ciphertext
-and $A$ being non-encrypted but authenticated data. Figure~\ref{fig:aesgcm}
+by encrypting 128 zero bits with the AES block cypher, $C$ is the ciphertext,
+and $A$ is non-encrypted but authenticated data. Figure~\ref{fig:aesgcm}
 shows how the $GHASH$ is computed for one block of authenticated data and two
-blocks of plaintext. The computation happens according to the following steps:
+blocks of plaintext. Following steps describes the computation of the $TAG$:
 
 \begin{enumerate}
   \item The Galois field multiplication is applied to the block of
@@ -567,14 +566,12 @@ The authenticated tag $TAG$ can therefore be found by solving the polynomial
 $g(X) = A_{1}X^{m+n+1} + \cdots + A_{m}X^{n+2} + C_{1}X^{n+1} + \cdots +
 C_{n}X^2 + LX + S$, as $g(H) = TAG$. Where $L$ is the combined length of $A$
 and $C$, and $S$ is the nonce plus the counter. We refer to the NIST
-standard about AES-GCM~\cite{gcmnist} for more details.
+standard about AES-GCM\cite{gcmnist} for more details.
 
-\paragraph{AES-GCM Implementation in OpenSSL}
-
-The OpenSSL source code is structured in a way that each part of a cypher is
-implemented on its own. For our thesis and analysation we want to refer to
-version \texttt{1.1.0g} of OpenSSL. \todo{reference OpenSSL}. The AESGCM code
-part is located at \texttt{crypto/evp/e\_aes.c}. The structures used by the
+\paragraph{The OpenSSL source code} is structured in a way that each part of a
+cypher is implemented on its own. For our thesis and analysation we want to
+refer to version \texttt{1.1.0g} of OpenSSL\cite{opensslsource}. The AES-GCM
+code part is located at \texttt{crypto/evp/e\_aes.c}. The structures used by the
 cypher are defined in \texttt{crypto/evp/evp\_locl.h},
 \texttt{crypto/include/internal/evp\_int.h} and \texttt{ssl/ssl\_locl.h}. The
 file \texttt{crypto/evp/evp\_lib.c} shows the implementation for the creation of
