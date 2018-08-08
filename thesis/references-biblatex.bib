@@ -1,523 +1,237 @@
 @article{rowhammerjs,
-  author    = {Daniel Gruss and
-               Cl{\'{e}}mentine Maurice and
-               Stefan Mangard},
-  title     = {Rowhammer.js: {A} Remote Software-Induced Fault Attack in JavaScript},
-  journal   = {CoRR},
-  volume    = {abs/1507.06955},
-  year      = {2015},
-  url       = {http://arxiv.org/abs/1507.06955},
-  archivePrefix = {arXiv},
-  eprint    = {1507.06955},
-  timestamp = {Wed, 07 Jun 2017 14:41:05 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/GrussMM15},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@article{rowhammeranal,
-  author    = {Yoongu Kim and
-               Ross Daly and
-               Jeremie Kim and
-               Chris Fallin and
-               Ji{-}Hye Lee and
-               Donghyuk Lee and
-               Chris Wilkerson and
-               Konrad Lai and
-               Onur Mutlu},
-  title     = {RowHammer: Reliability Analysis and Security Implications},
-  journal   = {CoRR},
-  volume    = {abs/1603.00747},
-  year      = {2016},
-  url       = {http://arxiv.org/abs/1603.00747},
-  archivePrefix = {arXiv},
-  eprint    = {1603.00747},
-  timestamp = {Wed, 07 Jun 2017 14:43:14 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/KimDKFLLWLM16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  author    = {{Daniel Gruss, Clémentine Maurice, Stefan Mangard}},
+  title     = {Rowhammer.js: A Remote Software-Induced Fault Attack in
+               JavaScript},
+  booktitle = {DIMVA'16},
+  year      = {2016}
 }
 
 @inproceedings{rowhammergeneral,
-  author    = {Yoongu Kim and
-               Ross Daly and
-               Jeremie Kim and
-               Chris Fallin and
-               Ji{-}Hye Lee and
-               Donghyuk Lee and
-               Chris Wilkerson and
-               Konrad Lai and
-               Onur Mutlu},
+  author    = {{Yoongu Kim, Ross Daly, Jeremie Kim, Chris Fallin, Ji-Hye Lee,
+               Donghyuk Lee, Chris Wilkerson, Konrad Lai, Onur Mutlu}},
   title     = {Flipping bits in memory without accessing them: An experimental
-study
-               of {DRAM} disturbance errors},
-  booktitle = {{ACM/IEEE} 41st International Symposium on Computer Architecture,
-               {ISCA} 2014, Minneapolis, MN, USA, June 14-18, 2014},
-  pages     = {361--372},
+              study of {DRAM} disturbance errors},
+  booktitle = {ISCA'14},
   year      = {2014},
-  crossref  = {DBLP:conf/isca/2014},
-  url       = {https://doi.org/10.1109/ISCA.2014.6853210},
-  doi       = {10.1109/ISCA.2014.6853210},
-  timestamp = {Tue, 23 May 2017 01:12:16 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/isca/KimDKFLLWLM14},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @inproceedings{drammer,
-  author    = {Victor van der Veen and
-               Yanick Fratantonio and
-               Martina Lindorfer and
-               Daniel Gruss and
-               Cl{\'{e}}mentine Maurice and
-               Giovanni Vigna and
-               Herbert Bos and
-               Kaveh Razavi and
-               Cristiano Giuffrida},
+  author    = {{Victor van der Veen, Yanick Fratantonio, Martina Lindorfer,
+                Daniel Gruss, Clémentine Maurice, Giovanni Vigna, Herbert Bos,
+                Kaveh Razavi, Cristiano Giuffrida}},
   title     = {Drammer: Deterministic Rowhammer Attacks on Mobile Platforms},
-  booktitle = {Proceedings of the 2016 {ACM} {SIGSAC} Conference on Computer and
-               Communications Security, Vienna, Austria, October 24-28, 2016},
-  pages     = {1675--1689},
+  booktitle = {SIGSAC'16},
   year      = {2016},
-  crossref  = {DBLP:conf/ccs/2016},
-  url       = {http://doi.acm.org/10.1145/2976749.2978406},
-  doi       = {10.1145/2976749.2978406},
-  timestamp = {Thu, 15 Jun 2017 21:42:46 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/ccs/VeenFLGMVBRG16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{flipinthewall,
-  author    = {Daniel Gruss and
-               Moritz Lipp and
-               Michael Schwarz and
-               Daniel Genkin and
-               Jonas Juffinger and
-               Sioli O'Connell and
-               Wolfgang Schoechl and
-               Yuval Yarom},
+  author    = {{Daniel Gruss, Moritz Lipp, Michael Schwarz, Daniel Genkin,
+                Jonas Juffinger, Sioli O'Connell, Wolfgang Schoechl,
+                Yuval Yarom}},
   title     = {Another Flip in the Wall of Rowhammer Defenses},
-  journal   = {CoRR},
-  volume    = {abs/1710.00551},
+  booktitle = {CoRR'17},
   year      = {2017},
-  url       = {http://arxiv.org/abs/1710.00551},
-  archivePrefix = {arXiv},
-  eprint    = {1710.00551},
-  timestamp = {Thu, 04 Jan 2018 07:02:51 +0100},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1710-00551},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{flipbitanal,
-  author    = {Yoongu Kim and
-               Ross Daly and
-               Jeremie Kim and
-               Chris Fallin and
-               Ji{-}Hye Lee and
-               Donghyuk Lee and
-               Chris Wilkerson and
-               Konrad Lai and
-               Onur Mutlu},
-  title     = {Flipping bits in memory without accessing them: An experimental study
-               of {DRAM} disturbance errors},
-  booktitle = {{ACM/IEEE} 41st International Symposium on Computer Architecture,
-               {ISCA} 2014, Minneapolis, MN, USA, June 14-18, 2014},
-  pages     = {361--372},
-  year      = {2014},
-  crossref  = {DBLP:conf/isca/2014},
-  url       = {https://doi.org/10.1109/ISCA.2014.6853210},
-  doi       = {10.1109/ISCA.2014.6853210},
-  timestamp = {Tue, 23 May 2017 01:12:16 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/isca/KimDKFLLWLM14},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @inproceedings{driller,
-  author    = {Nick Stephens and
-               John Grosen and
-               Christopher Salls and
-               Andrew Dutcher and
-               Ruoyu Wang and
-               Jacopo Corbetta and
-               Yan Shoshitaishvili and
-               Christopher Kruegel and
-               Giovanni Vigna},
+  author    = {{Nick Stephens, John Grosen, Christopher Salls, Andrew Dutcher,
+               Ruoyu Wang, Jacopo Corbetta, Yan Shoshitaishvili,
+               Christopher Kruegel, Giovanni Vigna}},
   title     = {Driller: Augmenting Fuzzing Through Selective Symbolic Execution},
-  booktitle = {23rd Annual Network and Distributed System Security Symposium, {NDSS}
-               2016, San Diego, California, USA, February 21-24, 2016},
+  booktitle = {NDSS'16},
   year      = {2016},
-  crossref  = {DBLP:conf/ndss/2016},
-  url       = {http://wp.internetsociety.org/ndss/wp-content/uploads/sites/25/2017/09/driller-augmenting-fuzzing-through-selective-symbolic-execution.pdf},
-  timestamp = {Tue, 16 Jan 2018 13:23:48 +0100},
-  biburl    = {https://dblp.org/rec/bib/conf/ndss/StephensGSDWCSK16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @inproceedings{firmalice,
-  author    = {Yan Shoshitaishvili and
-               Ruoyu Wang and
-               Christophe Hauser and
-               Christopher Kruegel and
-               Giovanni Vigna},
+  author    = {{Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser,
+                Christopher Kruegel, Giovanni Vigna}},
   title     = {Firmalice - Automatic Detection of Authentication Bypass Vulnerabilities
                in Binary Firmware},
-  booktitle = {22nd Annual Network and Distributed System Security Symposium, {NDSS}
-               2015, San Diego, California, USA, February 8-11, 2015},
+  booktitle = {NDSS'15},
   year      = {2015},
-  crossref  = {DBLP:conf/ndss/2015},
-  url       = {https://www.ndss-symposium.org/ndss2015/firmalice-automatic-detection-authentication-bypass-vulnerabilities-binary-firmware},
-  timestamp = {Tue, 16 Jan 2018 13:23:48 +0100},
-  biburl    = {https://dblp.org/rec/bib/conf/ndss/Shoshitaishvili15},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@inproceedings{offensivebinanal,
-  author    = {Yan Shoshitaishvili and
-               Ruoyu Wang and
-               Christopher Salls and
-               Nick Stephens and
-               Mario Polino and
-               Andrew Dutcher and
-               John Grosen and
-               Siji Feng and
-               Christophe Hauser and
-               Christopher Kr{\"{u}}gel and
-               Giovanni Vigna},
+@inproceedings{angrpaper,
+  author    = {{Yan Shoshitaishvili, Ruoyu Wang, Christopher Salls,
+                Nick Stephens, Mario Polino, Andrew Dutcher, John Grosen,
+                Siji Feng, Christophe Hauser, Christopher Krügel,
+                Giovanni Vigna}},
   title     = {{SOK:} (State of) The Art of War: Offensive Techniques in Binary Analysis},
-  booktitle = {{IEEE} Symposium on Security and Privacy, {SP} 2016, San Jose, CA,
-               USA, May 22-26, 2016},
-  pages     = {138--157},
+  booktitle = {{SP'16} Symposium on Security and Privacy},
   year      = {2016},
-  crossref  = {DBLP:conf/sp/2016},
-  url       = {https://doi.org/10.1109/SP.2016.17},
-  doi       = {10.1109/SP.2016.17},
-  timestamp = {Fri, 26 May 2017 00:50:05 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/sp/Shoshitaishvili16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @inproceedings{inmemfuzzing,
-  author    = {Shuai Wang and
-               Dinghao Wu},
+  author    = {{Shuai Wang, Dinghao Wu}},
   title     = {In-memory fuzzing for binary code similarity analysis},
-  booktitle = {Proceedings of the 32nd {IEEE/ACM} International Conference on Automated
-               Software Engineering, {ASE} 2017, Urbana, IL, USA, October 30 - November
-               03, 2017},
-  pages     = {319--330},
+  booktitle = {{ASE'17}Conference on Automated Software Engineering},
   year      = {2017},
-  crossref  = {DBLP:conf/kbse/2017},
-  url       = {https://doi.org/10.1109/ASE.2017.8115645},
-  doi       = {10.1109/ASE.2017.8115645},
-  timestamp = {Fri, 01 Dec 2017 22:44:10 +0100},
-  biburl    = {https://dblp.org/rec/bib/conf/kbse/WangW17},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{symbolexecsurvey,
-  author    = {Roberto Baldoni and
-               Emilio Coppa and
-               Daniele Cono D'Elia and
-               Camil Demetrescu and
-               Irene Finocchi},
+@inproceedings{symbolexecsurvey,
+  author    = {{Roberto Baldoni, Emilio Coppa, Daniele Cono D'Elia,
+                Camil Demetrescu, Irene Finocchi}},
   title     = {A Survey of Symbolic Execution Techniques},
-  journal   = {CoRR},
-  volume    = {abs/1610.00502},
+  journal   = {CoRR'16},
   year      = {2016},
-  url       = {http://arxiv.org/abs/1610.00502},
-  archivePrefix = {arXiv},
-  eprint    = {1610.00502},
-  timestamp = {Wed, 07 Jun 2017 14:41:05 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/BaldoniCDDF16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{pincallpaths,
+  author    = {{Milind Chabbi, Xu Liu, John M. Mellor-Crummey}},
+  title     = {Call Paths for Pin Tools},
+  booktitle = {{CGO'14} Symposium on Code Generation and Optimization},
+  year      = {2014},
+}
+
+@inproceedings{gcmnonceattack,
+  author    = {{Hanno Böck, Aaron Zauner, Sean Devlin, Juraj Somorovsky,
+                Philipp Jovanovic}},
+  title     = {Nonce-Disrespecting Adversaries: Practical Forgery Attacks on
+               {GCM} in {TLS}},
+  booktitle = {USENIX'16},
+  year      = {2016},
+}
+
+@inproceedings{spectre,
+  author    = {{Paul Kocher, Daniel Genkin, Daniel Gruss, Werner Haas,
+                Mike Hamburg, Moritz Lipp, Stefan Mangard, Thomas Prescher,
+                Michael Schwarz, Yuval Yarom}},
+  title     = {Spectre Attacks: Exploiting Speculative Execution},
+  journal   = {CoRR'18},
+  year      = {2018},
+}
+
+@inproceedings{meltdown,
+  author    = {{Moritz Lipp, Michael Schwarz, Daniel Gruss, Thomas Prescher,
+                Werner Haas, Stefan Mangard, Paul Kocher, Daniel Genkin,
+                Yuval Yarom, Mike Hamburg}},
+  title     = {Meltdown},
+  journal   = {CoRR'18},
+  year      = {2018},
+}
+
+@inproceedings{pintool,
+  author    = {{Chi-Keung Luk, Robert S. Cohn, Robert Muth, Harish Patil,
+                Artur Klauser, P. Geoffrey Lowney, Steven Wallace,
+                Vijay Janapa Reddi, Kim M. Hazelwood}},
+  title     = {Pin: building customized program analysis tools with dynamic
+               instrumentation},
+  booktitle = {{SIGPLAN'05} Conference on Programming Language Design and
+Implementation},
+  year      = {2005},
+}
+
+@inproceedings{noncegeneral,
+  author    = {Phillip Rogaway},
+  title     = {Nonce-Based Symmetric Encryption},
+  booktitle = {{FSE'04} Workshop - Fast Software Encryption},
+  year      = {2004},
+}
+
+@inproceedings{steelix,
+  author    = {{Yuekang Li, Bihuan Chen, Mahinthan Chandramohan, Shang-Wei Lin,
+                Yang Liu, Alwen Tiu}},
+  title     = {Steelix: program-state based binary fuzzing},
+  booktitle = {{FSE'17} Foundations of Software},
+  year      = {2017},
+}
+
+@inproceedings{replaytax,
+  author    = {Paul F. Syverson},
+  title     = {A Taxonomy of Replay Attacks},
+  booktitle = {{CSFW'94} Computer Security Foundations Workshop},
+  year      = {1994},
+}
+
+@inproceedings{wpanoncereuse,
+  author    = {Mathy Vanhoef, Frank Piessens},
+  title     = {Key Reinstallation Attacks: Forcing Nonce Reuse in {WPA2}},
+  booktitle = {{SIGSAC'17} Conference on Computer and Communications Security},
+  year      = {2017},
+}
+
+@inproceedings{weinberg2011still,
+  author    = {{Zachary Weinberg, Eric Y. Chen, Pavithra Ramesh Jayaraman,
+                Jackson Collin}},
+  title     = {I still know what you visited last summer: Leaking browsing
+               history via user interaction and side channel attacks},
+  booktitle = {{SP'11} Symposium on Security and Privacy},
+  year      = {2011},
+}
+
+@inproceedings{kelsey1998side,
+  author    = {{John Kelsey, Bruce Schneier, David Wagner, Chris Hall}},
+  title     = {Side channel cryptanalysis of product ciphers},
+  booktitle = {{ESORICS'98}},
+  year={1998},
+}
+
+@inproceedings{gruss2015cache,
+  author    = {{Daniel Gruss, Raphael Spreitzer, Stefan Mangard}},
+  title     = {Cache Template Attacks: Automating Attacks on Inclusive
+               Last-Level Caches.},
+  booktitle = {USENIX'15},
+  year={2015}
 }
 
 @article{symbolexecandprogtest,
-  author    = {James C. King},
+  author    = {{James C. King}},
   title     = {Symbolic Execution and Program Testing},
   journal   = {Commun. {ACM}},
   volume    = {19},
   number    = {7},
   pages     = {385--394},
   year      = {1976},
-  url       = {http://doi.acm.org/10.1145/360248.360252},
-  doi       = {10.1145/360248.360252},
-  timestamp = {Tue, 07 Jun 2011 16:51:04 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/cacm/King76},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{evalrandtest,
-  author    = {Joe W. Duran and
-               Simeon C. Ntafos},
+  author    = {{Joe W. Duran, Simeon C. Ntafos}},
   title     = {An Evaluation of Random Testing},
   journal   = {{IEEE} Trans. Software Eng.},
   volume    = {10},
   number    = {4},
   pages     = {438--444},
   year      = {1984},
-  url       = {https://doi.org/10.1109/TSE.1984.5010257},
-  doi       = {10.1109/TSE.1984.5010257},
-  timestamp = {Wed, 17 May 2017 10:56:35 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/tse/DuranN84},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @misc{elfspec,
-  author = {Committee, T. I. S.},
-  posted-at = {2008-06-30 12:32:26},
-  title = {{Tool Interface Standard (TIS) Executable and Linking Format (ELF)
-Specification Version 1.2}},
-  year = {1995}
+  author    = {{TIS Committee}},
+  title     = {{Tool Interface Standard (TIS) Executable and Linking Format
+                (ELF) Specification Version 1.2}},
+  year      = {1995}
 }
 
 @misc{jedec,
-  author={{JEDEC Solid State Technology Association}},
-  title={Double Data Rate (DDR) SDRAM Specification},
-  published={March 2003},
-}
-
-@inproceedings{pincallpaths,
-  author    = {Milind Chabbi and
-               Xu Liu and
-               John M. Mellor{-}Crummey},
-  title     = {Call Paths for Pin Tools},
-  booktitle = {12th Annual {IEEE/ACM} International Symposium on Code Generation
-               and Optimization, {CGO} 2014, Orlando, FL, USA, February 15-19, 
-2014},
-  pages     = {76},
-  year      = {2014},
-  crossref  = {DBLP:conf/cgo/2014},
-  url       = {http://doi.acm.org/10.1145/2544137.2544164},
-  doi       = {10.1145/2544137.2544164},
-  timestamp = {Tue, 17 Apr 2018 15:21:22 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/cgo/ChabbiLM14},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{gcmnonceattack,
-  author    = {Hanno B{\"{o}}ck and
-               Aaron Zauner and
-               Sean Devlin and
-               Juraj Somorovsky and
-               Philipp Jovanovic},
-  title     = {Nonce-Disrespecting Adversaries: Practical Forgery Attacks on 
-{GCM}
-               in {TLS}},
-  booktitle = {10th {USENIX} Workshop on Offensive Technologies, {WOOT} 16, 
-Austin,
-               TX, USA, August 8-9, 2016.},
-  year      = {2016},
-  crossref  = {DBLP:conf/woot/2016},
-  url       = 
-{https://www.usenix.org/conference/woot16/workshop-program/presentation/bock},
-  timestamp = {Mon, 18 Jun 2018 20:47:22 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/woot/BockZDSJ16},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@article{spectre,
-  author    = {Paul Kocher and
-               Daniel Genkin and
-               Daniel Gruss and
-               Werner Haas and
-               Mike Hamburg and
-               Moritz Lipp and
-               Stefan Mangard and
-               Thomas Prescher and
-               Michael Schwarz and
-               Yuval Yarom},
-  title     = {Spectre Attacks: Exploiting Speculative Execution},
-  journal   = {CoRR},
-  volume    = {abs/1801.01203},
-  year      = {2018},
-  url       = {http://arxiv.org/abs/1801.01203},
-  archivePrefix = {arXiv},
-  eprint    = {1801.01203},
-  timestamp = {Thu, 01 Feb 2018 19:52:26 +0100},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1801-01203},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@article{meltdown,
-  author    = {Moritz Lipp and
-               Michael Schwarz and
-               Daniel Gruss and
-               Thomas Prescher and
-               Werner Haas and
-               Stefan Mangard and
-               Paul Kocher and
-               Daniel Genkin and
-               Yuval Yarom and
-               Mike Hamburg},
-  title     = {Meltdown},
-  journal   = {CoRR},
-  volume    = {abs/1801.01207},
-  year      = {2018},
-  url       = {http://arxiv.org/abs/1801.01207},
-  archivePrefix = {arXiv},
-  eprint    = {1801.01207},
-  timestamp = {Thu, 01 Feb 2018 19:52:26 +0100},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1801-01207},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{pintool,
-  author    = {Chi{-}Keung Luk and
-               Robert S. Cohn and
-               Robert Muth and
-               Harish Patil and
-               Artur Klauser and
-               P. Geoffrey Lowney and
-               Steven Wallace and
-               Vijay Janapa Reddi and
-               Kim M. Hazelwood},
-  title     = {Pin: building customized program analysis tools with dynamic instrumentation},
-  booktitle = {Proceedings of the {ACM} {SIGPLAN} 2005 Conference on Programming
-               Language Design and Implementation, Chicago, IL, USA, June 12-15,
-               2005},
-  pages     = {190--200},
-  year      = {2005},
-  crossref  = {DBLP:conf/pldi/2005},
-  url       = {http://doi.acm.org/10.1145/1065010.1065034},
-  doi       = {10.1145/1065010.1065034},
-  timestamp = {Mon, 10 Jul 2006 11:17:30 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/pldi/LukCMPKLWRH05},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{noncegeneral,
-  author    = {Phillip Rogaway},
-  title     = {Nonce-Based Symmetric Encryption},
-  booktitle = {Fast Software Encryption, 11th International Workshop, {FSE} 2004,
-               Delhi, India, February 5-7, 2004, Revised Papers},
-  pages     = {348--359},
-  year      = {2004},
-  crossref  = {DBLP:conf/fse/2004},
-  url       = {https://doi.org/10.1007/978-3-540-25937-4\_22},
-  doi       = {10.1007/978-3-540-25937-4\_22},
-  timestamp = {Tue, 30 May 2017 12:57:44 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/fse/Rogaway04},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  author    = {{JEDEC Solid State Technology Association}},
+  title     = {Double Data Rate (DDR) SDRAM Specification},
+  year      = {2003},
 }
 
 @article{NISTGCMcomment,
-  title={Authentication failures in NIST version of GCM},
-  author={Joux, Antoine}
+  author    = {Joux Antoine},
+  title     = {Authentication failures in NIST version of GCM},
+  year      = {2006}
 }
 
-@misc{gcmnist,
-	Title = {{Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC}},
-	Author = {Morris Dworkin},
-	note = {\url{http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf}},
-	year = 2007,
-	month = nov
+@article{gcmnist,
+  author    = {Morris Dworkin},
+  title     = {{Recommendation for Block Cipher Modes of Operation:
+                Galois/Counter Mode (GCM) and GMAC}},
+  year      = {2007},
 }
 
-@misc{gcm,
-	Title = {{The Galois/Counter Mode of Operation (GCM)}},
-	Author = {D. McGrew and J. Viega},
-	note = {\url{http://csrc.nist.gov/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-spec.pdf}},
-	year = 2005,
-	month = may
-}
-
-@inproceedings{angrpaper,
-  title={{SoK: (State of) The Art of War: Offensive Techniques in Binary Analysis}},
-  author={Shoshitaishvili, Yan and Wang, Ruoyu and Salls, Christopher and
-          Stephens, Nick and Polino, Mario and Dutcher, Audrey and Grosen, John and
-          Feng, Siji and Hauser, Christophe and Kruegel, Christopher and Vigna, Giovanni},
-  booktitle={IEEE Symposium on Security and Privacy},
-  year={2016}
+@article{gcm,
+  author    = {D. McGrew, J. Viega},
+  title     = {{The Galois/Counter Mode of Operation (GCM)}},
+  year      = {2005},
 }
 
 @book{intelsys,
-  author        = {{Intel Corporation}},
-  title         = {{Intel\textsuperscript{\textregistered} 64 and IA-32
-Architectures Software Developer's Manual}},
-  year          = {2009},
-  month         = {December},
-  number        = {253669-033US},
-}
-
-@inproceedings{steelix,
-  author    = {Yuekang Li and
-               Bihuan Chen and
-               Mahinthan Chandramohan and
-               Shang{-}Wei Lin and
-               Yang Liu and
-               Alwen Tiu},
-  title     = {Steelix: program-state based binary fuzzing},
-  booktitle = {Proceedings of the 2017 11th Joint Meeting on Foundations of
-Software
-               Engineering, {ESEC/FSE} 2017, Paderborn, Germany, September 4-8,
-2017},
-  pages     = {627--637},
-  year      = {2017},
-  crossref  = {DBLP:conf/sigsoft/2017},
-  url       = {http://doi.acm.org/10.1145/3106237.3106295},
-  doi       = {10.1145/3106237.3106295},
-  timestamp = {Mon, 18 Sep 2017 08:38:37 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/sigsoft/LiCCLLT17},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{replaytax,
-  author    = {Paul F. Syverson},
-  title     = {A Taxonomy of Replay Attacks},
-  booktitle = {Seventh {IEEE} Computer Security Foundations Workshop - CSFW'94,
-Franconia,
-               New Hampshire, USA, June 14-16, 1994, Proceedings},
-  pages     = {187--191},
-  year      = {1994},
-  crossref  = {DBLP:conf/csfw/1994},
-  url       = {https://doi.org/10.1109/CSFW.1994.315935},
-  doi       = {10.1109/CSFW.1994.315935},
-  timestamp = {Thu, 25 May 2017 00:40:50 +0200},
-  biburl    = {https://dblp.org/rec/bib/conf/csfw/Syverson94},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{wpanoncereuse,
-  author    = {Mathy Vanhoef and
-               Frank Piessens},
-  title     = {Key Reinstallation Attacks: Forcing Nonce Reuse in {WPA2}},
-  booktitle = {Proceedings of the 2017 {ACM} {SIGSAC} Conference on Computer and
-               Communications Security, {CCS} 2017, Dallas, TX, USA, October 30
--
-               November 03, 2017},
-  pages     = {1313--1328},
-  year      = {2017},
-  crossref  = {DBLP:conf/ccs/2017},
-  url       = {http://doi.acm.org/10.1145/3133956.3134027},
-  doi       = {10.1145/3133956.3134027},
-  timestamp = {Tue, 13 Mar 2018 15:08:56 +0100},
-  biburl    = {https://dblp.org/rec/bib/conf/ccs/VanhoefP17},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-
-@inproceedings{weinberg2011still,
-  title={I still know what you visited last summer: Leaking browsing history via
-user interaction and side channel attacks},
-  author={{Zachary Weinberg, Eric Y. Chen, Pavithra Ramesh Jayaraman, Jackson
- Collin}},
-  booktitle={SP'11},
-  pages={147--161},
-  year={2011},
-}
-
-@article{kelsey1998side,
-  title={Side channel cryptanalysis of product ciphers},
-  author={{John Kelsey, Bruce Schneier, David Wagner, Chris Hall}},
-  journal={{ESORICS'98}},
-  pages={97--110},
-  year={1998},
-  publisher={Springer}
-}
-
-@inproceedings{gruss2015cache,
-  title={Cache Template Attacks: Automating Attacks on Inclusive
-Last-Level Caches.},
-  author={{Daniel Gruss, Raphael Spreitzer, Stefan Mangard}},
-  booktitle={USENIX'15},
-  pages={897--912},
-  year={2015}
+  author    = {{Intel Corporation}},
+  title     = {{Intel\textsuperscript{\textregistered} 64 and IA-32
+                Architectures Software Developer's Manual}},
+  year      = {2009},
+  number    = {253669-033US},
 }
 
 @online{posix,
