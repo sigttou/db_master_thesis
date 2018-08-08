@@ -80,6 +80,8 @@ The assembler and linker create the ELF files. Most modern Unix-like operating
 systems follow the ELF specification~\cite{elfspec}. Therefore we need to
 understand the layout of the executable files before introducing bitflips to it.
 
+\todo{recheck details on ELF Structure}
+
 \subsubsection{Structure of an ELF file}
 
 \tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm,
@@ -401,36 +403,36 @@ to RFC 7231\cite{rfc7231}.
 
 Transport Layer Security (TLS) is used to describe a collection of cryptographic
 protocols. It is a standard proposed by the Internet Engineering Task Force
-(IETF), a detailed description can be found in RFC 5246\cite{rfc5246}. The IETF
-regularly updates the collection by adding new protocols and removing old, now
-seen as insecure, ones.
+(IETF), RFC 5246\cite{rfc5246} describes the standard in detail. The IETF
+regularly updates the collection by adding new protocols and removing old, seen
+as insecure, ones.
 
-TLS provides a secure connection between a server and its clients. The
-connection holds the following properties:
+TLS provides a secure connection between various devices, usually clients and a
+server. The connection holds the following properties:
 \begin{itemize}
-  \item Public-key cryptography is used to provide authenticated identities.
-  That is usually just needed for clients to make sure they communicate with the
-  correct server. To proof the identity of a server, protocols make use of TLS
-  certificates, which provide the client with the public key.
-  \item Symmetric cryptography is used to provide a private connection between
-  the parties. The parties have to agree on how they exchange the key for the
-  symmetric encryption.
-  \item The message authentication code prevents undetected alteration
-  or losses during communication, which makes TLS connections reliable.
+  \item Authenticated identities are provided by public-key cryptography. This
+is needed for clients to make sure they communicate with the correct server. To
+proof the identity of a server, protocols make use of TLS certificates, which
+provide the client with the public key.
+  \item Private connections between the parties are provided by symmetric
+cryptography. The participants in a connection have to agree on how they
+exchange the key for the symmetric encryption.
+  \item Reliability is provided by the so-called message authentication code
+(MAC), which prevents undetected alteration or losses during TLS communication.
 \end{itemize}
 
 As TLS is just a collection of protocols, the parties have to agree on which one
 they use for each part of the connection, which happens during the TLS
-handshake. A common TLS connection protocol is
+Handshake. A common name for a TLS connection protocol is
 \texttt{ECDHE-RSA-AES256-GCM-HMAC-SHA1}, which contains all three protocols used
 for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
 \texttt{AES256-GCM} is the  symmetric cypher and \texttt{HMAC-SHA1} checks data
 integrity.
 
-TLS is commonly used in web servers to guarantee user's safety, but also
-applications like Virtual Private Networks (VPNs) and Secure Shell (SSH) make
-use of protocols and cyphers described in the TLS standard and their
-implementation in OpenSSL or other libraries.
+TLS is commonly used in web servers to guarantee user\textquotesingle s safety,
+but also applications like Virtual Private Networks (VPNs) and Secure Shell
+(SSH) make use of protocols and cyphers described in the TLS standard and their
+implementation in OpenSSL\cite{opensslweb} or other libraries.
 
 \subsubsection{Cryptographic Nonces}
 
