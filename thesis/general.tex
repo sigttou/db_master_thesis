@@ -693,7 +693,7 @@ resulted in less quality management and a declining number of proper checks for
 hardware faults. However, the industry produced smaller and faster memory chips.
 These new chips need less space and energy to store electric load, which
 represents data. Years after vendors introduced increased densities in DRAM to
-the market, researchers like Yoongu\etal\cite{rowhammeranal, rowhammergeneral}
+the market, researchers like Kim~\etal\cite{rowhammeranal, rowhammergeneral}
 found a critical bug in the chip design. With the little space and energy stored
 it was possible to use changes of charges in memory rows to interfere with data
 of nearby cells. This interference resulted in a change of bits in other memory
@@ -737,15 +737,14 @@ of many memory arrays connected via a data bus.
 
 The capacitor used for the 1-T cell will either lose load over time or on
 reading access. Therefore, these capacitors need to be periodically refreshed.
-\todo{lookup refresh rates for DRAM}. The easiest way to do this is by reading a
-bit and writing the response back to it. In the DRAM design, it is possible to
-refresh each row at a time with a RAS without the following CAS. With this
+The JEDEC standard~\cite{jedec} sets the refresh cycle to a 64-millisecond
+interval. For a usual chip with $8192$ rows, this means a refresh happens all
+$7,8$ microseconds. The easiest way to do this is by reading a bit and writing
+the response back to it. In the DRAM design, it is possible to refresh each row
+at a time with a RAS without the following CAS. With this
 refresh cycle, the chip needs to hold the information which was the last
 refreshed row. Some DRAM designs, therefore, implement a so-called row refresh
 pointer holding this information.
-
-\todo{reference JTAG standard}
-\todo{reference DRAM specification}
 
 \begin{figure}
   \centering
@@ -774,12 +773,11 @@ pointer holding this information.
   \label{fig:1Tstorage}
 \end{figure}
 
-\todo{reference other DRAM storage circuits + comparison paper}
 \todo{describe semantics + add VCC etc nodes}
 
 \subsubsection{Introducing bitflips to RAM}
 
-Yoongu~\etal\cite{rowhammergeneral} show how it is possible to cause bits to
+Kim~\etal\cite{rowhammergeneral} show how it is possible to cause bits to
 flip inside memory by correct access patterns. They use two rows, as so-called
 aggressors and one as target row. As the code in
 listing~\ref{lst:rowhammercode}, shows there are periodical reads to the two
@@ -794,7 +792,7 @@ each read instead of getting the value out of the cache.
   label={lst:rowhammercode},
   frame=single,
   caption={Code to trigger the rowhammer bug, as of
-Yoongu~\etal\cite{rowhammergeneral}},
+Kim~\etal\cite{rowhammergeneral}},
   captionpos=b]
 code1a:
   mov (X), %eax
@@ -813,7 +811,7 @@ to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
 positioning is stored. Also, some systems allow so-called huge pages, where two
 megabytes of memory are used contiguously. Where two megabytes will use more
 than one row, other than normal pages with four kilobytes. In the paper
-Yoongu~\etal\cite{rowhammergeneral} use addresses calculated based on their
+Kim~\etal\cite{rowhammergeneral} use addresses calculated based on their
 knowledge of physical address mapping used by common CPU vendors.
 
 Project Zero~\cite{projectzerorow} show how it is possible to use rowhammer to
