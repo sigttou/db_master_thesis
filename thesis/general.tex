@@ -105,6 +105,7 @@ height=0.8cm, text centered, draw=black]
 \tikzstyle{segblock} = [rectangle, minimum width=1cm, minimum height=0.8cm,
 text centered, draw=black]
 
+\todo{improve caption of figures}
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -458,6 +459,7 @@ authentication~\cite{gcm, gcmnist}. Figure~\ref{fig:aesgcm} shows the schematic
 of AES-GCM. Where we use close to the same notation as Böck~\etal in their
 paper~\cite{gcmnonceattack}:
 
+\todo{improve caption of figures}
 \begin{itemize}
   \item[$CNT_i$] The $i$-th counter block, computed using the concatenation of
 the $IV$ and the counter value $cnt$, $cnt = (i+1) \mod{2^{32}}$, to achieve 128
@@ -624,18 +626,20 @@ Additionally, Weinberg \etal\cite{weinberg2011still}, who showed that it is
 possible to gather information about a users browser history by using side
 channels.
 
-\subsection{Cache Attacks}
+\subsection{Caches}
 
 To speed up access times for memory, vendors of computer systems introduced the
-principle of caching \todo{reference paper about caches} to memory. Hardware
-components closer to the computing core holding memory for future memory
-requests are way faster. In modern CPUs \todo{reference current CPU cache
-details} there are usually three levels of caches applies. As shown in figure
-\todo{draw scheme for caching}, the design assign caches for level one and two
-(L1, L2) for each core and the cores share the level three cache (L3) between
+principle of caching to memory management. Hardware components closer to the
+computing core holding memory for future memory requests are way faster. In
+modern CPUs, there are usually three levels of caches applied. As shown in
+figure \ref{fig:intelcache}, the design assigns caches for level one and two
+(L1, L2) to each core and the cores share the level three cache (L3) between
 each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
-computation at rates of about four gigahertz would not be possible.
+computation at rates of about four gigahertz would not be possible. We refer to
+the Intel manual~\cite{intelsys} chapter 11.1 for more details about cache
+management in modern CPUs.
 
+\todo{improve caption of figures}
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -661,7 +665,7 @@ computation at rates of about four gigahertz would not be possible.
     \draw [doublearrow] (C3L2) -- (5cm,-3.6cm);
     \draw [doublearrow] (C4L2) -- (7.5cm,-3.6cm);
     % Memory Controler and DDR3
-    \node (MC) [mcblock, below of=L3, yshift=-1cm] {MC};
+    \node (MC) [mcblock, below of=L3, yshift=-1cm] {Memory Controller};
     \node (DDR31) [block, below of=MC, yshift=0.2cm, xshift=-1cm] {DRAM};
     \node (DDR32) [block, below of=MC, yshift=0.2cm, xshift=1cm] {DRAM};
     \draw [doublearrow] (L3) -- (MC);
@@ -670,13 +674,16 @@ computation at rates of about four gigahertz would not be possible.
   \label{fig:intelcache}
 \end{figure}
 
-In the past scientists like \todo{reference some cache attacks papers} have
-shown that caches also introduce bugs and security holes to systems. Cache
-attacks are part of microarchitectural attacks and knowledge gained from this
-kind of attacks have also played a role in the exploitation of the rowhammer
-bug.
+\subsubsection{Cache Attacks}
 
-\todo{improve caption of figures}
+In the past scientists have shown that caches also introduce bugs and security
+holes to systems. Gruss \etal\cite{gruss2015cache} showed how side-channel
+attacks on caches can be used as a powerful source for information leakage and
+how to automate attacks on last-level caches. Cache attacks are part of
+microarchitectural attacks and knowledge gained from this kind of attacks have
+also played a role in the exploitation of the rowhammer bug.
+
+\todo{recheck self-plagiarism}
 
 \subsection{Rowhammer}
 
