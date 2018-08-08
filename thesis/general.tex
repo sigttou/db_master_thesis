@@ -753,7 +753,7 @@ pointer holding this information.
   \ctikzset{label/align = smart}
   \draw
   (0,0) to[short, l_=$bit\ line$] (0,-4)
-  (0,-1) to[short, l^=$word\ line$] (4,-1)
+  (-1,-1) to[short, l^=$word\ line$] (4,-1)
   (1,-2) node[nmos, rotate=-90] (mos) {}
   (mos.gate) node[anchor=north] {}
   (mos.drain) node[anchor=east] {}
@@ -793,22 +793,19 @@ each read instead of getting the value out of the cache.
 \begin{lstlisting}[
   label={lst:rowhammercode},
   frame=single,
-  caption={Receiving highly accurate timestamps in JavaScript},
+  caption={Code to trigger the rowhammer bug, as of
+Yoongu~\etal\cite{rowhammergeneral}},
   captionpos=b]
-results[];
-func timing(index)
-{
-  setTimeout(timing, 0, index+1);
-  cnt = 0;
-  start = performance.now();
-  while((performance.now() - start) < 5)
-    cnt++;
-  results[index] = cnt;
-}
+code1a:
+  mov (X), %eax
+  mov (Y), %ebx
+  clflush (X)
+  clflush (Y)
+  mfense
+  jmp code1a
 \end{lstlisting}
 \end{minipage}
 
-\todo{fill listing with code}
 \todo{improve listing caption}
 
 The memory addresses to be accessed to gain the rows next to each other are hard
