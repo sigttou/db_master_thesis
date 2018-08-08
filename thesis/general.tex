@@ -436,16 +436,19 @@ implementation in OpenSSL\cite{opensslweb} or other libraries.
 
 \subsubsection{Cryptographic Nonces}
 
-In the early days of encrypted communication replay-attacks were a common
-problem.~\todo{reference replay-attack paper} To resolve this issue newer
-protocols introduced so-called nonces. Cryptographic nonces are one-time
-pseudorandom numbers used for each packet sent. They are combined with the key
-so that the encryption differs for each packet. This technique makes
-replay-attacks harder. In most cases, nonce reuse is a problem for the protocol
-and results in breakage of the encryption of future or past packages. Hence,
-most protocol standards define a nonce as a pseudorandom or unpredicted
-value~\cite{noncegeneral}. It is also possible to use the nonce can as a counter
-which has a random start value and increases for each packet sent.
+In the early days of encrypted communication, replay-attacks were a common
+problem, as Syverson showed in his taxonomy of replay attacks in 1994
+\cite{replaytax}. To resolve this issue newer protocols introduced so-called
+nonces. Cryptographic nonces are one-time pseudorandom numbers used for each
+packet sent. They are combined with the key so that the encryption differs for
+each packet. This technique makes replay-attacks harder. In most cases, nonce
+reuse is a problem for the protocol and results in breakage of the encryption of
+future or past packages. Hence, most protocol standards define a nonce as a
+pseudorandom or unpredicted value~\cite{noncegeneral}. It is also possible to
+use the nonce as a counter which has a random start value and increases for each
+packet sent. However, also current protocols and technologies still face
+problems with nonces, like Vanhoef~\etal showed in their work in 2017, that it
+is possible to force nonce reuse in WPA2\cite{wpanoncereuse}.
 
 \subsubsection{AES-GCM}
 
