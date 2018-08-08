@@ -718,21 +718,22 @@ of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
 address decoder and buffers for input and output of the memory.
 Figure~\todo{draw simple RAM circuit} shows such a circuit.
 
-The one-bit storage is a one-transistor (1-T) memory cell, as seen in figure
-\todo{draw 1-T cell}. Setting the state of the cell works by sending the logical
-zero or one on the bit-line and asserting the word-line. Reading from the cell
-is also done by asserting the word-line, turning the transistor on and therefore
-setting the bit-line to the voltage level provided by the capacitor. This
-Voltage is then detected and amplified to report the logical state of the bit.
+The one-bit storage is a one-transistor (1-T) memory cell, as seen in
+figure~\ref{fig:1Tstorage}. Setting the state of the cell works by sending the
+logical zero or one on the bit-line and asserting the word-line. Reading from
+the cell is also done by asserting the word-line, turning the transistor on and
+therefore setting the bit-line to the voltage level provided by the capacitor.
+This Voltage is then detected and amplified to report the logical state of the
+bit.
 
 The storage matrix is a two-dimensional array of one-bit storage cells. Accesses
 to DRAM do not happen per bit but per row. The size of a row depends on the DRAM
 design, but it is usually a multiple of the word size. In modern systems, rows
-are larger than 64 kilobytes. \todo{reference project zero} The client sends
-requests for memory in a sequence, where firstly the row is addressed, and then
-the desired bits for the columns are sent. Accessing the entries is done during
-the row address strobe (RAS) and column address strobe (CAS) signal cycles
-accordingly. DRAM consists of many memory arrays connected via a data bus.
+are larger than 64 kilobytes. The client sends requests for memory in a
+sequence, where firstly the row is addressed, and then the desired bits for the
+columns are sent. Accessing the entries is done during the row address strobe
+(RAS) and column address strobe (CAS) signal cycles accordingly. DRAM consists
+of many memory arrays connected via a data bus.
 
 The capacitor used for the 1-T cell will either lose load over time or on
 reading access. Therefore, these capacitors need to be periodically refreshed.
@@ -769,7 +770,8 @@ pointer holding this information.
   to[pC, l_=$C$] (2,-2)
   ;
   \end{circuitikz}
-  \caption{Semantics of a 1-T memory storage element} \label{fig:1Tstorage}
+  \caption{Semantics of a 1-T memory storage element}
+  \label{fig:1Tstorage}
 \end{figure}
 
 \todo{reference other DRAM storage circuits + comparison paper}
@@ -777,30 +779,52 @@ pointer holding this information.
 
 \subsubsection{Introducing bitflips to RAM}
 
-\todo{reference Rowhammer} show how it is possible to cause bits to flip inside
-memory by correct access patterns. They use two rows, as so-called aggressors
-and one as target row. As the code in figure\todo{include code from paper}, from
-\todo{reference paper}, shows there are periodical reads to the two aggressor
-rows, causing memory accesses. The changes in electrical charge caused by the
-read accesses will by chance interfere with the loads in the target row and
-change content there. The \texttt{clflush} instructions are used to empty the
-memory in the used cache lines, causing the System to access the DRAM for each
-read instead of getting the value out of the cache.
+Yoongu~\etal\cite{rowhammergeneral} show how it is possible to cause bits to
+flip inside memory by correct access patterns. They use two rows, as so-called
+aggressors and one as target row. As the code in
+listing~\ref{lst:rowhammercode}, shows there are periodical reads to the two
+aggressor rows, causing memory accesses. The changes in electrical charge caused
+by the read accesses will by chance interfere with the loads in the target row
+and change content there. The \texttt{clflush} instructions are used to empty
+the memory in the used cache lines, causing the System to access the DRAM for
+each read instead of getting the value out of the cache.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[
+  label={lst:rowhammercode},
+  frame=single,
+  caption={Receiving highly accurate timestamps in JavaScript},
+  captionpos=b]
+results[];
+func timing(index)
+{
+  setTimeout(timing, 0, index+1);
+  cnt = 0;
+  start = performance.now();
+  while((performance.now() - start) < 5)
+    cnt++;
+  results[index] = cnt;
+}
+\end{lstlisting}
+\end{minipage}
+
+\todo{fill listing with code}
+\todo{improve listing caption}
 
 The memory addresses to be accessed to gain the rows next to each other are hard
 to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
 positioning is stored. Also, some systems allow so-called huge pages, where two
 megabytes of memory are used contiguously. Where two megabytes will use more
 than one row, other than normal pages with four kilobytes. In the paper
-\todo{reference rowhammer} use addresses calculated based on their knowledge of
-physical address mapping used by common CPU vendors.
+Yoongu~\etal\cite{rowhammergeneral} use addresses calculated based on their
+knowledge of physical address mapping used by common CPU vendors.
 
-\todo{reference project zero} show how it is possible to use rowhammer to gain
-privilege escalation on a standard x86-64 CPU and a sandbox escape from a
+Project Zero~\cite{projectzerorow} show how it is possible to use rowhammer to
+gain privilege escalation on a standard x86\_64 CPU and an escape from a
 sandbox. After vendors of operating systems started to introduce
-countermeasures, scientists like \todo{reference other rowhammer attacks and
-mention them} came up with further, improved attacks making use of the rowhammer
-bug.
+countermeasures, scientists like Gruss~\etal\cite{rowhammerjs}, with their
+improved attack vectors introducing possible flips in binaries, came up with
+further, improved attacks making use of the rowhammer bug.
 %}}}
 
 %% vim:foldmethod=expr
