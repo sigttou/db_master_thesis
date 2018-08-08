@@ -617,11 +617,12 @@ the last couple of years. As programmers and vendors became more aware of
 classic issues in such systems, researchers moved to other layers to find bugs
 and possible security holes. These movements started with researchers showing
 side-channel information leakages in cryptographic implementations. Like
-\todo{reference some side channel attacks} or \todo{reference more side-channel
-attacks} have shown how timing differences or energy usage can leak keys to an
-attacker. Later similar attacks were generalised to different CPU architectures,
-like \todo{reference cache attack keylogger} have shown that it is possible to
-build key loggers via measuring cache access timings.
+Kelsey \etal\cite{kelsey1998side} showed how little information was needed
+to break cryptographic cypher implementations. They used time, processor flags,
+and power consumption as their sources to break various implementations.
+Additionally, Weinberg \etal\cite{weinberg2011still}, who showed that it is
+possible to gather information about a users browser history by using side
+channels.
 
 \subsection{Cache Attacks}
 
