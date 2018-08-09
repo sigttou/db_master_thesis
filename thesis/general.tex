@@ -209,7 +209,7 @@ fetches the information about the needed library from the ELF file and then
 checks the library paths provided by the operating system if the library is
 available to be loaded.
 
-\subsection{Analysis and Testing of Executables}
+\section{Analysis and Testing of Executables}
 
 Testing is a significant part of software development. There are a lot of
 different approaches and styles for testing. One approach to test a program is
@@ -222,7 +222,7 @@ available to a tester, or it is way too much work to read the whole source code
 to such tests. Therefore, developers came up with tools which can be used to
 test binaries on their own without knowing the source code.
 
-\subsubsection{Fuzzing}
+\subsection{Fuzzing}
 
 Fuzzing is an approach for testing programs with just a little knowledge about
 the program to test. Such an approach is called black box testing. Fuzzing is a
@@ -260,7 +260,7 @@ behaviours with machine learning models. They show that they can find
 similarities in binaries even when different compilers, optimisations or
 obfuscation is applied.
 
-\subsubsection{Symbolic Execution}
+\subsection{Symbolic Execution}
 
 Fuzzing provides a pseudorandom input to a program to test it. Therefore it
 might not catch all possible execution paths of a program. Scientists developed
@@ -284,7 +284,7 @@ paths to test lower but also try to cover as much code as possible. Driller uses
 concolic execution for the path exploring. Concolic execution is the combination
 of symbolic and concrete execution of a program.
 
-\subsubsection{Instrumentation}
+\subsection{Instrumentation}
 
 Instrumentation comes down to adding new code to already existing one in an
 automated manner. Developers use instrumentation as a tool for debugging or
@@ -311,20 +311,22 @@ to change and read register values before and after CPU instructions are called,
 which might not be possible at source code level, as used registers and memory
 areas are unknown to the instrumenter at this point.
 
-\paragraph{Intel Pin}~\cite{pintool} is a proprietary, dynamic, binary
-instrumentation framework developed and released by Intel, who supply it for
-free. The framework provides a large number of API calls which abstracts most of
-the work done by Pin and gives easy access to binary analysis. As Pin is a
-binary instrumentation framework, the source of the to be analysed program is
-not needed, and the program does it need to be recompiled if the instrumentation
-tool changes. The framework allows to log and modify the runtime of a program,
-whereas it is no problem to log register values or change those before or after
-desired instruction calls or even inject code to be run before given calls.
-Programs instrumenting a binary are called pintools, the framework provides
-their API calls for C++, but also bindings for Python can be found in
+\subsubsection{Intel Pin}
+
+Pin~\cite{pintool} is a proprietary, dynamic, binary instrumentation framework
+developed and released by Intel, who supply it for free. The framework provides
+a large number of API calls which abstracts most of the work done by Pin and
+gives easy access to binary analysis. As Pin is a binary instrumentation
+framework, the source of the to be analysed program is not needed, and the
+program does it need to be recompiled if the instrumentation tool changes. The
+framework allows to log and modify the runtime of a program, whereas it is no
+problem to log register values or change those before or after desired
+instruction calls or even inject code to be run before given calls. Programs
+instrumenting a binary are called pintools, the framework provides their API
+calls for C++, but also bindings for Python can be found in
 \texttt{python-pin}~\cite{pythonpin}.
 
-\subsection{Permission Model in Unix-based Systems}
+\section{Permission Model in Unix-based Systems}
 
 The POSIX standard~\cite{posix} defines permissions for users and their groups.
 For the identification, each of them has its ID, represented by an integer. The
@@ -349,7 +351,7 @@ has a better management system in the background and given the correct
 permissions the user does not need to know the other user's password to execute
 commands as the target user.
 
-\subsubsection{\texttt{setuid} Binary Property}
+\subsection{\texttt{setuid} Binary Property}
 
 \texttt{setuid} stands for "set user identity"~\cite{ogroupsetuid}. It allows an
 executable to change its user ID on execution. A bit in the fire permissions
@@ -462,7 +464,7 @@ but also applications like Virtual Private Networks (VPNs) and Secure Shell
 (SSH) make use of protocols and cyphers described in the TLS standard and their
 implementation in OpenSSL\cite{opensslweb} or other libraries.
 
-\subsubsection{Cryptographic Nonces}
+\subsection{Cryptographic Nonces}
 
 In the early days of encrypted communication, replay-attacks were a common
 problem, as Syverson showed in his taxonomy of replay attacks in 1994
@@ -478,7 +480,7 @@ packet sent. However, also current protocols and technologies still face
 problems with nonces, like Vanhoef~\etal showed in their work in 2017, that it
 is possible to force nonce reuse in WPA2\cite{wpanoncereuse}.
 
-\subsubsection{AES-GCM}
+\subsection{AES-GCM}
 
 Galois Counter Mode (GCM) in combination with Advanced Encryption Standard (AES)
 provides encryption and simultaneously performs message
@@ -854,7 +856,7 @@ memory in the buffer directly.}
   \label{fig:DRAMscheme}
 \end{figure}
 
-\subsubsection{Introducing bitflips to RAM}
+\subsubsection{Introducing bitflips to DRAM}
 
 Kim~\etal\cite{rowhammergeneral} show how it is possible to cause bits to
 flip inside memory by correct access patterns. They use two rows, as so-called
