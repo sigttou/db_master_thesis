@@ -639,7 +639,9 @@ computation at rates of about four gigahertz would not be possible. We refer to
 the Intel manual~\cite{intelsys} chapter 11.1 for more details about cache
 management in modern CPUs.
 
+\todo{talk more about the figure about caching}
 \todo{improve caption of figures}
+
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -773,6 +775,57 @@ pointer holding this information.
 \end{figure}
 
 \todo{describe semantics + add VCC etc nodes}
+
+\tikzstyle{memarray} = [rectangle, minimum width=3cm, minimum height=3cm,
+                        text centered, draw=black]
+\tikzstyle{memfunc} = [rectangle, minimum width=3cm, minimum height=1cm,
+                       text centered, draw=black]
+\tikzstyle{memcon} = [rectangle, minimum width=2cm, minimum height=2cm,
+                        text centered, draw=black]
+\tikzstyle{line} = [thick,-,>=stealth]
+\tikzstyle{textbox} = [rec]
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+  %blocks
+  \node (arr) [memarray]  {Memory Array};
+  \node (rowdec) [memfunc, left of=arr, rotate=90, yshift=1.5cm] {Row decoder};
+  \node (amp) [memfunc, below of=arr, yshift=-1.5cm] {Amplifier};
+  \node (coldec) [memfunc, below of=amp, yshift=-0.5cm] {Column decoder};
+  \node (memcon) [memcon, left of=amp, align=center, xshift=-2cm,
+                  yshift=-0.5cm] {Memory \\ Controller};
+  \node (buf) [memfunc, right of=arr, rotate=90, yshift=-1.5cm] {Data Buffer};
+  %connections
+  \draw [arrow] (amp) -| (buf);
+  % memcon -> rowdec
+  \draw [arrow] (-2.5,-2) -- (-2.5,-1.5);
+  % memcon -> coldec
+  \draw [arrow] (-2,-3.75) -- (-1.5,-3.75);
+  % coldec -> amp
+  \draw [arrow] (-1,-3.5) -- (-1,-3);
+  \draw [arrow] (1,-3.5) -- (1,-3);
+  % amp -> arr
+  \draw [arrow] (-1,-2) -- (-1,-1.5);
+  \draw [arrow] (1,-2) -- (1,-1.5);
+  \node at (0,-1.75) {bit lines};
+  % rowdec -> arr
+  \draw [arrow] (-2,-1) -- (-1.5,-1);
+  \draw [arrow] (-2,1) -- (-1.5,1);
+  \node at (-1.75,0) [rotate=90] {word lines};
+  % arr <-> buf
+  \draw [doublearrow] (1.5,-1) -- (2,-1);
+  \draw [doublearrow] (1.5,1) -- (2,1);
+  % memcon <-> buf
+  \draw [arrow] (-3,-5) -- (memcon.south);
+  \draw [line] (-3,-5) -- (3.5,-5);
+  \draw [line] (3.5,-5) -- (3.5,0);
+  \draw [arrow] (3.5,0) -- (3,0);
+  \end{tikzpicture}
+  \caption{Semantics of a DRAM module}
+  \label{fig:DRAMscheme}
+\end{figure}
+
+\todo{improve RAM scheme}
 
 \subsubsection{Introducing bitflips to RAM}
 
