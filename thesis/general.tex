@@ -1,61 +1,38 @@
 %%%%%% General %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{General}\label{sec:general}
 
-This chapter describes terms, techniques, tools and programs used during the
+This chapter describes the terms, techniques, tools and programs used during the
 work for this thesis. It provides a general overview to make it easier to
 understand the details of the work in the following chapters.
 
 \section{Executing Programs}
 
-Processing units (PU) execute programs, any device running code contains at
-least one. Usually, the central processing unit (CPU) runs programs and triggers
-other PUs to run tasks if needed. Often referred to as the processor, the CPU
-carries out the instruction given to it by the machine code representing a
-program. The CPU can only step over single instructions and execute them. This
-is done by moving the instruction pointer to different memory locations. Simple
-processors execute just one program. On ordinary desktop computers, the
-operating system is the main program being able to load other programs as
-processes and manage them. CPUs can only execute machine code, but programs
-usually are written in programming languages which are then translated to
-machine language by either a compiler or an interpreter. Files created by a
-compiler are mostly referred to as executables or binaries, these can directly
-be loaded into memory by the OS. Operating Systems use defined structures for
-executables to make the loading possible, for example, Unix/Linux systems use
-ELF and Windows uses PE.
+Processing units (PU) execute machine code. Any device running programs contains
+at least one. Usually, the central processing unit (CPU) runs programs and
+triggers other PUs to run other tasks if needed. Often referred to as the main
+processor, the CPU carries out the instruction given to it by the machine code
+representing a program. A PU can only step over single instructions and execute
+them one by one. This is done by moving the instruction pointer to different
+memory locations. Simple processors may only execute one single program. On
+ordinary desktop computers, the operating system is the main program which can
+load other programs as processes and manage them. CPUs can only execute machine
+code, but programs usually are written in programming languages which are then
+translated to machine language by either a compiler or an interpreter. We refer
+to files created by a compiler as executables or binaries. These files can
+directly be loaded into memory by the OS. Operating Systems use defined
+structures for executables to make this loading possible, for example,
+Unix/Linux systems use ELF and Windows uses PE.
 
 \subsection{CPU Instructions}
 
-Machine code is in general just a list of instructions. In general, an
-instruction consists of an operation code (opcode), telling the processor what
-to do, and parameters for the opcode, on which the processor operates on.
-Instructions can operate on registers or memory locations directly. Available
-instructions and their design are depending on the architecture used. The most
-common instruction set architectures (ISA) are Intel x86 mostly referred to as
-\texttt{x86\_64} or \texttt{AMD64} and ARM ISA which is used by most mobile
-processors.
-
-Table~\ref{tab:instrfor} shows the instruction format for Intel 64 and IA-32
-Architectures. The format splits an instruction into the following sections:
-
-\begin{itemize}
-  \item Prefix - Used to give the CPU further instructions on how to handle the
-opcode. There are prefixes for memory locks in a multi-core environment or
-repeat instructions to apply an operation on each string or I/O entry. There are
-also prefixes overriding the operand sizes or introducing SSE instruction calls
-or some give branching hints to the CPU.
-  \item Opcode - Tells the CPU what to do and how to handle parameters given to
-the opcode.
-  \item ModR/M - This byte is used behind the opcode to tell the CPU what
-addressing form to use for the operands in memory.
-  \item SIB - For some addressing-modes specified in the ModR/M byte this byte
-also needs to be parsed and evaluated.
-  \item Displacement - Some addressing-modes referred in the ModR/M or SIB byte
-might include a displacement following them.
-  \item Immediate - Immediate data might follow if referred by the operand.
-\end{itemize}
-
-We refer to the Intel Manual~\cite{intelsys} section 2.1 for further details on
-the instruction format used in \texttt{x86\_64}.
+Machine code, in general, is a list of instructions, encoded in some binary
+format. Usually, an instruction consists of an operation code (opcode), telling
+the processor what to do, and parameters for the opcode, which the processor
+uses for the operation. Instructions can operate on registers or locations in
+memory directly. Available instructions and their design are depending on the
+architecture used. The most common instruction set architectures (ISA) are Intel
+$x86$, mostly referred to as \texttt{x86\_64} or \texttt{AMD64}, and ARM ISA
+which is used by most mobile processors.
 
 \begin{table}[]
 \begin{tabular}{ccccccc}
@@ -68,19 +45,45 @@ bytes         & 1 per prefix                & 1, 2 or 3
  & 0 or 1                      & 0 or 1                   & 0, 1, 2 or 4
              & 0, 1, 2 or 4
 \end{tabular}
-\caption{Instruction Format for Intel 64 and IA-32 Architectures}
+\caption{Instruction Format for Intel 64 and IA-32 architectures. It shows how
+many different instruction lengths are possible in modern architectures and
+also which parts they may contain.}
 \label{tab:instrfor}
 \end{table}
 
+Table~\ref{tab:instrfor} shows the instruction format for Intel 64 and IA-32
+Architectures. The format splits an instruction into the following sections:
+
+\begin{itemize}
+  \item Prefix - Used to give the CPU further instructions on how to handle the
+opcode. There are prefixes for memory locks in a multi-core environment or
+repeat instructions to apply an operation on each byte in a string or I/O data.
+There are also prefixes overriding the operand sizes or introducing SSE
+instruction calls, or even others give branching hints to the CPU.
+  \item Opcode - Tells the CPU what to do and how to handle the following
+parameters.
+  \item ModR/M - This byte is used behind the opcode to tell the CPU what
+addressing mode to use for memory accesses.
+  \item SIB - For some ModR/M addressing-modes, this byte also needs to be
+parsed and evaluated.
+  \item Displacement - Some addressing-modes referred in the ModR/M or SIB byte
+might include a displacement following them.
+  \item Immediate - Immediate data might follow if referred in previous
+parameters.
+\end{itemize}
+
+We refer to the Intel Manual~\cite{intelsys} section 2.1 for further details on
+the instruction format used in \texttt{x86\_64}.
+
 \subsection{Executable and Linkable Format (ELF)}
 
-The ELF format is an object file format. It is used to describe a program in a
-way to execute it on a processor without applying changes to the binary itself.
-The assembler and linker create the ELF files. Most modern Unix-like operating
-systems follow the ELF specification~\cite{elfspec}. Therefore we need to
-understand the layout of the executable files before introducing bitflips to it.
-
-\todo{recheck details on ELF Structure}
+ELF is an object file format. It is used to describe a program in a way to load
+a program into memory to make it execution ready for the processor without
+applying changes to the binary itself. A linker creates ELF files after an
+assembler turned the program's source code into machine code. Most modern
+Unix-like operating systems follow the ELF specification released by the Tool
+Interface Standard Committee~\cite{elfspec}. Therefore, we need to understand
+the layout of such executable files before introducing bitflips to them.
 
 \subsubsection{Structure of an ELF file}
 
@@ -147,52 +150,54 @@ text centered, draw=black]
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (bss);
   \end{tikzpicture}
   \caption{Structure of an ELF file showing the four main sections inside an
-executable. Whereas the connection of between sections and segments is shown via
-the program header table and the section header table. Segments usually are
-just numbers and can refer to multiple section inside the section header table.}
+executable. The Figure shows the connection of between sections and segments via
+the program header table and the section header table. Segments usually are just
+numbers and can refer to multiple sections inside the section header table.}
 \label{fig:elfstruct}
 \end{figure}
 
-There are two views of an ELF binary, the so-called linking view and the
-execution view. Those views are also called section and segment view. They share
-the same ELF header but serve different purposes for the operating system.
-Figure ~\ref{fig:elfstruct} show the connection between sections and segments
-via the two different used headers. Sections and segments can be described as
-follows:
+There are two views of an ELF file, the linking view and the execution view.
+Those are also called section and segment view respectively. They share the same
+ELF header but serve different purposes for the operating system. Figure
+~\ref{fig:elfstruct} show the connection between sections and segments via the
+two different headers. Sections and segments can be seen as follows:
 
 \paragraph{Sections} describe the binary for the linking view. A section
 contains instructions, data, symbol table and relocation information. Sections
 reserved for the system start with a dot, there might be additional sections
-defined by the user. Sections that are directly loaded into the program's memory
-image are initialized data (\texttt{.data, .data1}), read-only data
-(\texttt{.rodata, .rodata1}) and executable instructions (\texttt{.text}).
+defined by the user. Sections are created and managed by the linker. Sections
+that are directly loaded into the program's memory image are initialized data
+(\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}) and
+executable instructions (\texttt{.text}).
 
-\paragraph{Segments} describe the virtual memory layout of a loaded binary. The
-process image contains segments with \texttt{text}, \texttt{data},
-\texttt{stack} and others. When loading the image into memory references inside
-the ELF file need to be resolved and loaded into the memory too. After
-successfully loading the image and its dependencies the program can be executed.
+\paragraph{Segments} describe the virtual memory layout of a loaded binary.
+Figure~\ref{fig:elfstruct} shows how segments are applied in an ELF file.
+Usually, the linker splits segments into different behaviours the loader needs
+to apply. For example, all read-only data sections are in the same segment. When
+loading the image into memory references inside the ELF file need to be resolved
+and loaded into the memory too. After successfully loading the image and its
+dependencies the program can be executed.
 
 \subsubsection{Loading ELF files into Memory}
 
 As we focus on GNU/Linux operating systems, we will look at how UNIX System V
-Release 4 based operating systems shall handle ELF in order to create running
-programs. These operating systems use no physical addresses for execution, and
-the operating system is free to change the position of sections in the virtual
-address space. Therefore the ELF format only contains a base address per section
-and offsets to that address. During the loading step, the operating system is
-free to change the base address in the programs virtual address space but keep
-the offsets.
+Release 4 based operating systems handle ELF files in order to create running
+programs. Operating systems use no physical addresses for execution, and the OS
+is free to change the position of sections in the virtual address space.
+Therefore, in an ELF, a section only contains a base address and offsets to that
+address. During the loading step, the operating system is free to change the
+base address in the programs virtual address space. The loader then places
+additional memory according to these offsets.
 
-\paragraph{Dynamic Linking} is needed in modern operating systems, because it is
-widespread to have multiple functions used by different programs. Shared
-libraries can be used to provide such functions. When deploying programs,
-developers usually need to make sure all libraries exist on the target platform
-or ship their software with those included. When depending on libraries by the
-system, the loader will move the shared libraries into memory at the desired
-entry point. It usually reads the needed library from the ELF file and then
-checks the library paths provided by the system if the library is available to
-be loaded.
+\paragraph{Dynamic Linking} is needed because it is widespread to have multiple
+functions used by different programs. Shared libraries can be used to provide
+such general functions. When deploying programs, developers usually make sure
+all needed shared libraries exist on the target platform or ship their software
+with those included. When depending on libraries by the system, the loader will
+move the shared libraries into memory at the desired entry point. The loader
+fetches the information about the needed library from the ELF file and then
+checks the library paths provided by the operating system if the library is
+available to be loaded.
 
 \subsection{Analysis and Testing of Executables}
 
