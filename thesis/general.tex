@@ -118,7 +118,7 @@ text centered, draw=black]
 \begin{figure}
   \centering
   \begin{tikzpicture}
-  \node (eh) [block] {ELF HEADER};
+  \node (eh) [block] {ELF Header};
   \node (ph) [block, right of=eh, xshift=3cm] {Program Header Table};
   \node (sh) [block, below of=eh, yshift=-2cm] {Section Header Table};
   \node (dot0) [dot, below of=ph] {};
@@ -201,115 +201,118 @@ available to be loaded.
 
 \subsection{Analysis and Testing of Executables}
 
-Testing is a large part of software development in general. There are a lot of
-different approaches and styles of testing. One approach to test a program is to
-apply input to it and check if the code operates as expected by validating the
-output. With increasing amount of code and an increasing number of bugs found,
-the style of testing changed over the years. On the one hand, developers
-nowadays provide unit tests inside their code to test their functions and make
+Testing is a significant part of software development. There are a lot of
+different approaches and styles for testing. One approach to test a program is
+to apply input to it and check if the code operates as expected by validating
+the output. With increasing amount of code and an increasing number of bugs
+found, the style of testing changed over the years. On the one hand, developers
+nowadays provide unit tests inside their code to test single functions and make
 sure they work as desired. On the other hand, sometimes the source code is not
-available to a tester, or it is way too much effort to read the source code or
-write such tests. Therefore there are tools which can be used to test binaries
-with just a little effort but still receive useful results.
+available to a tester, or it is way too much work to read the whole source code
+to such tests. Therefore, developers came up with tools which can be used to
+test binaries on their own without knowing the source code.
 
 \subsubsection{Fuzzing}
 
 Fuzzing is an approach for testing programs with just a little knowledge about
-the code to test. Fuzzing is black box testing most of the time as testers do
-not need access to the source code. It is a technique to detect erroneous
-responses of a program by providing different randomised inputs. Tools applying
-this technique are called fuzzers. Fuzzers try to reach corner cases in programs
-without knowing which exist and detect undefined behaviour or crashes of
-software. Generally, fuzzers give an overall view on the robustness of software,
-they are cheap to apply and even can find bugs usual white box tests would miss.
+the program to test. Such an approach is called black box testing. Fuzzing is a
+technique to detect erroneous responses of a program by providing different,
+automatically created, mostly random, inputs. Tools applying this technique are
+called fuzzers. Fuzzers try to reach corner cases in programs without knowing
+which exist and detect undefined behaviour or crashes. Generally, fuzzers give
+an overall view on the robustness of a program, they are cheap to apply and even
+can find bugs usual white box tests would miss.
 
-Fuzzing is done by just using random input, but this could take very long, and a
-lot of unneeded tests would be run. Over the years the technology improved and
-different fuzzers evolved. Whereas for simple programs just testing common input
-mistakes, like negative numbers, newlines, end of file characters, format
-strings or just very long strings might be enough, advanced software needs
-better ways of fuzzing. For example, network protocols, file systems or image
+If a fuzzer only applies random inputs, testing would take a very long time, as
+a lot of unneeded tests would run. Because of this, the technology improved over
+the time and different fuzzers evolved. For simple programs just testing common
+input mistakes, like negative numbers, newlines, end of file characters, format
+strings or just very long strings might be enough. Advanced software needs
+better ways of fuzzing, for example, network protocols, file systems or image
 formats have a very complex structure which makes it hard to find possible
-crashes by random data input. Therefore this kind of fuzzers generate inputs
+crashes by random data input. Fuzzers for such kind of software generate inputs
 from given examples and apply small changes to them. Like,
 Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
-programs. More advanced fuzzers exist which directly interact with the target,
-allowing to track execution paths per input and therefore even create even more
-test cases automatically. The most popular fuzzer is "american fuzzy lop"
-(afl)~\cite{aflweb}. It contains described algorithms to get the best possible
-code coverage with its created tests. Another more advanced fuzzer is Steelix by
-Yuekang~\etal~\cite{steelix}, which provides program-state based binary fuzzing
-which uses static-analysis and binary instrumentation to provide more
+programs. Besides special format fuzzers, more advanced ones exist which
+directly interact with the target, allowing to track execution paths per input
+and therefore even create more test cases automatically. The most popular fuzzer
+is "american fuzzy lop" (afl)~\cite{aflweb}. It contains described algorithms to
+get the best possible code coverage. Another more advanced fuzzer is Steelix by
+Yuekang~\etal~\cite{steelix}, which provides program-state based binary fuzzing.
+Steelix uses static-analysis and binary instrumentation to provide more
 information about the fuzzing process and therefore gains better test cases and
-execution paths for the fuzzed program. Shoshitaishvili~\etal~\cite{firmalice}
-showed how fuzzing could find authentication bypasses in binary firmware with
-their tool Firmalice. In their work Wang~\etal~\cite{inmemfuzzing} showed how
-in-memory fuzzing is used to detect similarities in binary code. This is done by
-fuzzing every function available and compare traces of program behaviours with
-machine learning models. They show that they can find similarities in binaries
-even when different compilers, optimisations or obfuscation is applied.
+execution paths for the fuzzed program. Shoshitaishvili~\etal showed how fuzzing
+could find authentication bypasses in binary firmware with their tool
+Firmalice~\cite{firmalice}. In their work Wang~\etal~\cite{inmemfuzzing} showed
+how in-memory fuzzing is used to detect similarities in binary code. This is
+done by fuzzing every function available and compare traces of program
+behaviours with machine learning models. They show that they can find
+similarities in binaries even when different compilers, optimisations or
+obfuscation is applied.
 
 \subsubsection{Symbolic Execution}
 
-As fuzzing only provides a pseudorandom input to a program to test it, it might
-not catch all possible execution paths of a program. Therefore scientists
-developed a technique to test all possible paths by simplifying the program.
-This technique is called symbolic execution. It makes use of the possible
-simplification of inputs where they use a symbol with less possible states
-instead. The possible symbolic inputs then run through the program in
-combination with a constraint solver to report possible violations of the
-program's specification. The solver can also be used to find possible paths to
-reach a pre-defined goal inside the binary.
+Fuzzing provides a pseudorandom input to a program to test it. Therefore it
+might not catch all possible execution paths of a program. Scientists developed
+techniques to test all possible paths by simplifying the program,  one of this
+techniques is symbolic execution. It makes use of the possible simplification of
+inputs where they use a logic symbol with less possible states instead. For
+example, a number can be represented by the possible states: maximal value,
+minimum value, positive, negative, zero. The possible symbolic-state inputs then
+run through the program in combination with a constraint solver to report
+possible violations of the program's specification. The solver can also be used
+to find possible paths to reach a pre-defined goal inside the binary.
 
 One of the most famous symbolic analysis frameworks is angr~\cite{angrpaper}.
 Besides the symbolic execution of binaries, it also allows various other
-symbolic analysis methods such as control-flow graph recovery, automatic exploit
+analysis methods such as control-flow graph recovery, automatic exploit
 generation or automatic binary hardening.
 
 Stephens~\etal~\cite{driller} showed with Driller how symbolic execution could
 be beneficial to fuzzing approaches. This allows keeping the number of execution
 paths to test lower but also try to cover as much code as possible. Driller uses
-concolic execution for the path exploring, which is seen as the combination of
-symbolic and concrete execution of a program.
+concolic execution for the path exploring. Concolic execution is the combination
+of symbolic and concrete execution of a program.
 
 \subsubsection{Instrumentation}
 
-Instrumentation usually comes down to adding new code to the already existing
-one in an automated manner. Developers usually use instrumentation as a tool for
-debugging or performance measures by adding calls to timing functions or
-information logging to the code. Information from instrumentation could be
-something like what functions are called and how often, what execution branches
-are taken, how long does a subroutine take, what memory is accessed and many
-more. It usually also allows the developer to change the runtime environment of
-a program, like change return values or skip instruction calls.
+Instrumentation comes down to adding new code to already existing one in an
+automated manner. Developers use instrumentation as a tool for debugging or
+performance measures by adding calls to timing functions or information logging
+to the code. Information from instrumentation could be something like what
+functions are called and how often, what execution branches are taken, how long
+does a subroutine take, what memory is accessed and many more. It usually also
+allows the developer to change the runtime environment of a program, like change
+return values or skip instruction calls.
 
-There are two different styles of instrumentation, one is source
-instrumentation, and one is binary instrumentation. The so-called
-instrumenter-calls are either added pre-compilation to the source of the program
-or later directly added to the binary context of the program. The first style
-might bring the advantage that it is easier to apply and the structure of the
-program is better known, so calls for performance checks over functions are done
-by adding timer calls at the entry and exit points. However, binary
-instrumentation also has its perks. For example, users do not need the source of
-the program, which might not be available in proprietary programs and
-recompilation of the program is not needed if the code for the instrumentation
-changes. Given enough debug information in the binary the instrumentation
-information might not differ much from the source code one. With binary
-instrumentation, it is also possible to change and read register values before
-and after CPU instructions are called, which might not be possible at source
-code level, as used registers and memory areas are unknown to the instrumenter.
+Two different styles of instrumentation exist, one is source instrumentation,
+and one is binary instrumentation, where so-called instrumenter-calls are either
+added pre-compilation to the source of the program or later added to the binary
+context of the program. The first style might bring the advantage that it is
+easier to apply and the structure of the program is better known to the
+instrumenter, so calls for performance checks over functions are done by adding
+timer calls at the entry and exit points. However, binary instrumentation also
+has its perks. For example, users do not need the source of the program, which
+might not be available in proprietary programs. Also, recompilation of the
+program is not needed if the code for the instrumentation changes. Given enough
+debug information in the binary the instrumentation information might not differ
+much from the source based one. With binary instrumentation it is also possible
+to change and read register values before and after CPU instructions are called,
+which might not be possible at source code level, as used registers and memory
+areas are unknown to the instrumenter at this point.
 
 \paragraph{Intel Pin}~\cite{pintool} is a proprietary, dynamic, binary
 instrumentation framework developed and released by Intel, who supply it for
 free. The framework provides a large number of API calls which abstracts most of
-the work done and gives easy access to binary analysis. As the framework is
-dynamic, the source of the to be analysed program is not needed nor does it need
-to be recompiled for changes in the instrumentation tool. Pin allows to log and
-modify the runtime of a program, whereas it is no problem to log register values
-or change those before or after desired instruction calls or even inject code to
-be run before given calls. Programs instrumenting a binary are called pintools,
-the framework provides their API calls for C++, but also bindings for Python can
-be found in \texttt{python-pin}~\cite{pythonpin}.
+the work done by Pin and gives easy access to binary analysis. As Pin is a
+binary instrumentation framework, the source of the to be analysed program is
+not needed, and the program does it need to be recompiled if the instrumentation
+tool changes. The framework allows to log and modify the runtime of a program,
+whereas it is no problem to log register values or change those before or after
+desired instruction calls or even inject code to be run before given calls.
+Programs instrumenting a binary are called pintools, the framework provides
+their API calls for C++, but also bindings for Python can be found in
+\texttt{python-pin}~\cite{pythonpin}.
 
 \subsection{Permission Model in Unix-based Systems}
 
