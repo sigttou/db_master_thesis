@@ -659,18 +659,22 @@ channels.
 
 \subsection{Caches}
 
-To speed up access times for memory, vendors of computer systems introduced the
+To speed up access times for memory, vendors of processors introduced the
 principle of caching to memory management. Hardware components closer to the
-computing core holding memory for future memory requests are way faster. In
-modern CPUs, there are usually three levels of caches applied. As shown in
-figure \ref{fig:intelcache}, the design assigns caches for level one and two
-(L1, L2) to each core and the cores share the level three cache (L3) between
-each other. Caches allow CPUs to be faster, as access to the DRAM is slow,
-computation at rates of about four gigahertz would not be possible. We refer to
-the Intel manual~\cite{intelsys} chapter 11.1 for more details about cache
-management in modern CPUs.
+computing core holding a part of memory for future memory requests are way
+faster. In modern CPUs, there are three or four levels of caching applied. As
+shown in figure \ref{fig:intelcache}, the design assigns caches for level one
+and two (L1, L2) to each core and the cores share the level three cache (L3)
+between each other. Caches are updated on each memory access. Inclusive caching
+is a form of managing the caches in a way where data stored on one level is also
+at lower levels. The CPU needs to validate memory all the time to make sure
+memory accesses do not get wrong data from other cache levels or the DRAM. L1
+caches can also be split up in a data and an instruction cache. There might also
+be an L0 cache for micro-operations, as in Intel Haswell. Computation at rates
+of about four gigahertz would not be possible without such caching mechanisms.
 
-\todo{talk more about the figure about caching}
+We refer to the Intel manual~\cite{intelsys} chapter 11.1 for more details about
+cache management in modern CPUs.
 
 \begin{figure}
   \centering
