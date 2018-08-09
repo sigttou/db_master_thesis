@@ -104,8 +104,14 @@ height=0.8cm, text centered, draw=black]
 \tikzstyle{doublearrow} = [thick,<->,>=stealth]
 \tikzstyle{segblock} = [rectangle, minimum width=1cm, minimum height=0.8cm,
 text centered, draw=black]
+\tikzstyle{memarray} = [rectangle, minimum width=3cm, minimum height=3cm,
+                        text centered, draw=black]
+\tikzstyle{memfunc} = [rectangle, minimum width=3cm, minimum height=1cm,
+                       text centered, draw=black]
+\tikzstyle{memcon} = [rectangle, minimum width=2cm, minimum height=2cm,
+                        text centered, draw=black]
+\tikzstyle{line} = [thick,-,>=stealth]
 
-\todo{improve caption of figures}
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -140,7 +146,10 @@ text centered, draw=black]
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (data);
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (bss);
   \end{tikzpicture}
-  \caption{Structure of an ELF showing the four main sections}
+  \caption{Structure of an ELF file showing the four main sections inside an
+executable. Whereas the connection of between sections and segments is shown via
+the program header table and the section header table. Segments usually are
+just numbers and can refer to multiple section inside the section header table.}
 \label{fig:elfstruct}
 \end{figure}
 
@@ -459,7 +468,6 @@ authentication~\cite{gcm, gcmnist}. Figure~\ref{fig:aesgcm} shows the schematic
 of AES-GCM. Where we use close to the same notation as Böck~\etal in their
 paper~\cite{gcmnonceattack}:
 
-\todo{improve caption of figures}
 \begin{itemize}
   \item[$CNT_i$] The $i$-th counter block, computed using the concatenation of
 the $IV$ and the counter value $cnt$, $cnt = (i+1) \mod{2^{32}}$, to achieve 128
@@ -529,7 +537,10 @@ with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
     \draw [arrow] (mult4) -- (xor41);
     \draw [arrow] (xor41) -- (tag);
   \end{tikzpicture}
-  \caption{Semantics of AES-GCM} \label{fig:aesgcm}
+  \caption{Semantics of AES-GCM. Whereas the $E_k$ blocks apply AES-encryption
+with the key $k$. The $mult_H$ blocks apply a multiplication in the
+Galois-field. $A$ represents a block of authenticated data, which is added to
+the MAC $TAG$ but not encrypted.} \label{fig:aesgcm}
 \end{figure}
 
 Following steps describe how AES-GCM is used to encrypt data:
@@ -640,7 +651,6 @@ the Intel manual~\cite{intelsys} chapter 11.1 for more details about cache
 management in modern CPUs.
 
 \todo{talk more about the figure about caching}
-\todo{improve caption of figures}
 
 \begin{figure}
   \centering
@@ -672,8 +682,11 @@ management in modern CPUs.
     \node (DDR32) [block, below of=MC, yshift=0.2cm, xshift=1cm] {DRAM};
     \draw [doublearrow] (L3) -- (MC);
   \end{tikzpicture}
-  \caption{Semantics of Intel Kaby Lake Caching Architecture}
-  \label{fig:intelcache}
+  \caption{Semantics of Intel Kaby Lake caching architecture. Whereas $C_x$
+represents each processing core and $L_x$ the level of the cache. Requests are
+sent from the processing core to each memory storage, the one finding the
+desired memory first will answer before the others. Caches get updated with
+each request.} \label{fig:intelcache}
 \end{figure}
 
 \subsubsection{Cache Attacks}
@@ -717,7 +730,7 @@ from JavaScript.
 Random-access memory is designed to store information as bits. A simplified view
 of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
 address decoder and buffers for input and output of the memory.
-Figure~\todo{draw simple RAM circuit} shows such a circuit.
+Figure~\ref{fig:DRAMscheme} shows such a circuit.
 
 The one-bit storage is a one-transistor (1-T) memory cell, as seen in
 figure~\ref{fig:1Tstorage}. Setting the state of the cell works by sending the
@@ -770,20 +783,14 @@ pointer holding this information.
   to[pC, l_=$C$] (2,-2)
   ;
   \end{circuitikz}
-  \caption{Semantics of a 1-T memory storage element}
+  \caption{Semantics of a 1-T memory storage element. The capacitor $C$ is used
+to store information. It is on a potential of $\frac{V_{CC}}{2}$ to differ
+between true and false without actually using $0V$, which is used to prevent
+errors. The bit and word lines are used to access bits stored in a row and
+column layout, which can be seen in figure~\ref{fig:DRAMscheme} in more detail.}
   \label{fig:1Tstorage}
 \end{figure}
 
-\todo{describe semantics + add VCC etc nodes}
-
-\tikzstyle{memarray} = [rectangle, minimum width=3cm, minimum height=3cm,
-                        text centered, draw=black]
-\tikzstyle{memfunc} = [rectangle, minimum width=3cm, minimum height=1cm,
-                       text centered, draw=black]
-\tikzstyle{memcon} = [rectangle, minimum width=2cm, minimum height=2cm,
-                        text centered, draw=black]
-\tikzstyle{line} = [thick,-,>=stealth]
-\tikzstyle{textbox} = [rec]
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -821,11 +828,13 @@ pointer holding this information.
   \draw [line] (3.5,-5) -- (3.5,0);
   \draw [arrow] (3.5,0) -- (3,0);
   \end{tikzpicture}
-  \caption{Semantics of a DRAM module}
+  \caption{Semantics of a single DRAM module. The memory controller is managing
+the data buffer to fill or read the buffer via a bus connection to the CPU. The
+decoders are used to make sure the correct bits are accessed. The amplifier is
+used because the bit voltage differences are usually too small to change the
+memory in the buffer directly.}
   \label{fig:DRAMscheme}
 \end{figure}
-
-\todo{improve RAM scheme}
 
 \subsubsection{Introducing bitflips to RAM}
 
@@ -844,7 +853,11 @@ each read instead of getting the value out of the cache.
   label={lst:rowhammercode},
   frame=single,
   caption={Code to trigger the rowhammer bug, as of
-Kim~\etal\cite{rowhammergeneral}},
+Kim~\etal\cite{rowhammergeneral}. The preating accesses to the aggressor
+locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
+neededed to make sure the DRAM rows are accessed directly. According to
+Project Zero\cite{projectzerorow} the \texttt{mfense} is not needed and even
+lowered the number of flips.},
   captionpos=b]
 code1a:
   mov (X), %eax
@@ -855,8 +868,6 @@ code1a:
   jmp code1a
 \end{lstlisting}
 \end{minipage}
-
-\todo{improve listing caption}
 
 The memory addresses to be accessed to gain the rows next to each other are hard
 to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
