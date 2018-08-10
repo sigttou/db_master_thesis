@@ -1,10 +1,15 @@
 %%%%%% Static Data Flips %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on ELF Files}\label{sec:bitflip}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+In this chapter, we will discuss our approach to automate the finding bitflips
+in ELF files to gain privilege escalation. This is an approach which
+Gruss~\etal~\cite{flipinthewall} already have shown by disassembling binaries
+and manually looking for them. We start by describing the impact of a single
+bitflip. Then, we look at our work and the framework we created to find bitflips
+in binaries to change their behaviour to a pre-defined state. We take a look at
+the framework design in general. Then we look at the details on how we find bits
+to check, how the definition for searching works, how we test the bitflips and
+how results are captured and verified.
 
 \section{Changing the Execution Path with a Single Bitflip}
 
