@@ -16,12 +16,15 @@ how results are captured and verified.
 The task of our thesis was to find a bit in an ELF file which we can flip to
 change the behaviour in a way that it benefits us. See the code in
 listing~\ref{lst:csimbranch} for example. We want to change the binary in a way
-it will print \texttt{success} instead of \texttt{fail}, and all this by just
+it will print \texttt{success.} instead of \texttt{fail.}, and all this by just
 toggling a single bit. For this, we look at the disassembly of the code in
 listing~\ref{lst:disasmsimplebranch}. From this, we first mention that we can
-change the \texttt{1} can to a \texttt{0}. Besides that, also the opcode of
-\texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a \texttt{jz},
-as this is \texttt{0x74 (1110100)}.
+change the \texttt{1} can to a \texttt{0} at the \texttt{mov} instruction on
+address \texttt{0x0642}. Besides that, also the opcode of \texttt{jnz}, namely
+\texttt{0x75 (1110101)}, can be changed into a \texttt{jz}, as this is
+\texttt{0x74 (1110100)}, at address \texttt{0x064d}. For compiling we
+used~\texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}~\cite{gccubuntu}, for
+disassembling~\texttt{radare2 2.3.0-git 17214}~\cite{radare2web} was used.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -52,7 +55,7 @@ inside the ELF file, starting at \texttt{0x063a}.},
 0x063e  sub rsp, 0x10
 0x0642  mov dword [local_4h], 0
 0x0649  cmp dword [local_4h], 1  ; [0x1:4]=0x2464c45
-0x064d  jne 0x65d
+0x064d  jnz 0x65d
 0x064f  lea rdi, str.success.    ; 0x6f4 ; "success."
 0x0656  call sym.imp.puts        ; int puts(const char *s)
 0x065b  jmp 0x669
@@ -64,18 +67,18 @@ inside the ELF file, starting at \texttt{0x063a}.},
 \end{lstlisting}
 \end{minipage}
 
-Looking at just the opcodes we could achieve from changing the single byte
-\texttt{jnz}~(\texttt{0x75)}), we get a possible of eight different opcodes,
-whereas two of them would result in invalid instructions, the eight
-possibilities and the results we get, can be seen in table~\ref{tab:jnzflips}.
+To line out what other possible changes could be done when changing the
+\texttt{jnz}, we flip each bit in the \texttt{0x75}-byte and look at the output
+of the resulting binary. The flips and results are pointed out in
+table~\ref{tab:jnzflips}. We see that in three cases the program would print
+\texttt{success.}, in one case the output would not change and in four cases the
+program would crash for different reasons.
 
 \begin{table}[]
 \begin{tabular}{|l|l|l|l|}
 \hline
 Opcode & Hex Value & Describtion                                           &
 Output              \\ \hline
-JNZ    & 0x75      & Jump short if not zero/not equal                      &
-fail.               \\ \hline
 JZ     & 0x74      & Jump short if zero/equal                              &
 success.            \\ \hline
 JNBE   & 0x77      & Jump short if not below or equal/above                &
@@ -93,16 +96,16 @@ Segmentation fault  \\ \hline
 CMC    & 0xF5      & Complement Carry Flag                                 &
 Illegal instruction \\ \hline
 \end{tabular}
-\caption{Possible opcodes resulting from changing a single bit in \texttt{JNZ}
-and the output when applied in the assembly showed in
+\caption{Possible opcodes resulting from changing a single bit in
+\texttt{JNZ}~\texttt{0x75} and the output when applied in the assembly showed in
 listing~\ref{lst:disasmsimplebranch}.}
 \label{tab:jnzflips}
 \end{table}
 
-From this, we gain the knowledge that at least three bit flips to the opcode
-give us our desired behaviour. Additionally we can add the bitflip to the $1$,
-which makes it four. From this point, the question arises how do we automate
-this searching process?
+From this, we gain the knowledge that at least three bitflips to the opcode give
+us our desired behaviour. Additionally, we can add the bitflip to the $1$, which
+makes it four, which we can find manually quite fast. Now, the question arises
+how do we automate this searching process?
 
 \section{Automating the Finding of Feasible Bitflips}
 
