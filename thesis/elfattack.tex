@@ -23,6 +23,47 @@ change the \texttt{1} can to a \texttt{0}. Besides that, also the opcode of
 \texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a \texttt{jz},
 as this is \texttt{0x74 (1110100)}.
 
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Simple branching code to show an example for a
+single bitflip to change the execution path.},
+                   label={lst:csimbranch}]
+#include <stdio.h>
+int main(void)
+{
+  int x = 0;
+  if(x == 1)
+    printf("success.\n");
+  else
+    printf("fail.\n");
+  return 0;
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=nasm,
+                   caption={Disassemby of the main function created by the
+code in listing~\ref{lst:csimbranch}. Shows machine code at given address
+inside the ELF file, starting at \texttt{0x063a}.},
+                   label={lst:disasmsimplebranch}]
+0x063a  push rbp
+0x063b  mov rbp, rsp
+0x063e  sub rsp, 0x10
+0x0642  mov dword [local_4h], 0
+0x0649  cmp dword [local_4h], 1  ; [0x1:4]=0x2464c45
+0x064d  jne 0x65d
+0x064f  lea rdi, str.success.    ; 0x6f4 ; "success."
+0x0656  call sym.imp.puts        ; int puts(const char *s)
+0x065b  jmp 0x669
+0x065d  lea rdi, str.fail.       ; 0x6fd ; "fail."
+0x0664  call sym.imp.puts        ; int puts(const char *s)
+0x0669  mov eax, 0
+0x066e  leave
+0x066f  ret
+\end{lstlisting}
+\end{minipage}
+
 Looking at just the opcodes we could achieve from changing the single byte
 \texttt{jnz}~(\texttt{0x75)}), we get a possible of eight different opcodes,
 whereas two of them would result in invalid instructions, the eight

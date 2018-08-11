@@ -878,20 +878,19 @@ capacitors hold enough voltage.
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[
   label={lst:rowhammercode},
-  frame=single,
+  style=nasm,
   caption={Code to trigger the rowhammer bug, as of
 Kim~\etal\cite{rowhammergeneral}. The preating accesses to the aggressor
 locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
 neededed to make sure the DRAM rows are accessed directly. According to
-Project Zero\cite{projectzerorow} the \texttt{mfense} is not needed and even
-lowered the number of flips.},
-  captionpos=b]
+Project Zero\cite{projectzerorow} the \texttt{mfence} is not needed and even
+lowered the number of flips.},]
 code1a:
   mov (X), %eax
   mov (Y), %ebx
   clflush (X)
   clflush (Y)
-  mfense
+  mfence
   jmp code1a
 \end{lstlisting}
 \end{minipage}
