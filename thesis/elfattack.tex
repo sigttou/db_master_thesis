@@ -20,19 +20,48 @@ it will print \texttt{success} instead of \texttt{fail}, and all this by just
 toggling a single bit. For this, we look at the disassembly of the code in
 listing~\ref{lst:disasmsimplebranch}. From this, we first mention that we can
 change the \texttt{1} can to a \texttt{0}. Besides that, also the opcode of
-\texttt{jz}, namely \texttt{0x74 (1110100)}, can be changed into a
-\texttt{jnz}, as this is \texttt{0x75 (1110101)}.
+\texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a \texttt{jz},
+as this is \texttt{0x74 (1110100)}.
 
 Looking at just the opcodes we could achieve from changing the single byte
-\texttt{jz}~(\texttt{0x75)}), we get a possible of eight different opcodes,
+\texttt{jnz}~(\texttt{0x75)}), we get a possible of eight different opcodes,
 whereas two of them would result in invalid instructions, the eight
-possibilities and the results we get, can be seen in table~\ref{tab:jzflips}.
+possibilities and the results we get, can be seen in table~\ref{tab:jnzflips}.
 
-From this, we gain the knowledge that at least \todo{actually get the number of
-working bitflips} bit flips to the opcode give us our desired behaviour,
-additionally we can add the bitflip to the $1$, which makes it \todo{actually
-get the number}. From this point, the question arises how do we automate this
-searching process?
+\begin{table}[]
+\begin{tabular}{|l|l|l|l|}
+\hline
+Opcode & Hex Value & Describtion                                           &
+Output              \\ \hline
+JNZ    & 0x75      & Jump short if not zero/not equal                      &
+fail.               \\ \hline
+JZ     & 0x74      & Jump short if zero/equal                              &
+success.            \\ \hline
+JNBE   & 0x77      & Jump short if not below or equal/above                &
+success.            \\ \hline
+JNO    & 0x71      & Jump short if not overflow                            &
+fail.               \\ \hline
+JNL    & 0x7D      & Jump short if less or equal/not greater               &
+success.            \\ \hline
+GS     & 0x65      & GS segment override prefix                            &
+Illegal instruction \\ \hline
+PUSH   & 0x55      & ($50+r$) Push onto the Stack &
+Illegal instruction \\ \hline
+XOR    & 0x35      & Logical Exclusive OR                                  &
+Segmentation fault  \\ \hline
+CMC    & 0xF5      & Complement Carry Flag                                 &
+Illegal instruction \\ \hline
+\end{tabular}
+\caption{Possible opcodes resulting from changing a single bit in \texttt{JNZ}
+and the output when applied in the assembly showed in
+listing~\ref{lst:disasmsimplebranch}.}
+\label{tab:jnzflips}
+\end{table}
+
+From this, we gain the knowledge that at least three bit flips to the opcode
+give us our desired behaviour. Additionally we can add the bitflip to the $1$,
+which makes it four. From this point, the question arises how do we automate
+this searching process?
 
 \section{Automating the Finding of Feasible Bitflips}
 
