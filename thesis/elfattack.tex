@@ -13,10 +13,26 @@ how results are captured and verified.
 
 \section{Changing the Execution Path with a Single Bitflip}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+The task of our thesis was to find a bit in an ELF file which we can flip to
+change the behaviour in a way that it benefits us. See the code in
+listing~\ref{lst:csimbranch} for example. We want to change the binary in a way
+it will print \texttt{success} instead of \texttt{fail}, and all this by just
+toggling a single bit. For this, we look at the disassembly of the code in
+listing~\ref{lst:disasmsimplebranch}. From this, we first mention that we can
+change the \texttt{1} can to a \texttt{0}. Besides that, also the opcode of
+\texttt{jz}, namely \texttt{0x74 (1110100)}, can be changed into a
+\texttt{jnz}, as this is \texttt{0x75 (1110101)}.
+
+Looking at just the opcodes we could achieve from changing the single byte
+\texttt{jz}~(\texttt{0x75)}), we get a possible of eight different opcodes,
+whereas two of them would result in invalid instructions, the eight
+possibilities and the results we get, can be seen in table~\ref{tab:jzflips}.
+
+From this, we gain the knowledge that at least \todo{actually get the number of
+working bitflips} bit flips to the opcode give us our desired behaviour,
+additionally we can add the bitflip to the $1$, which makes it \todo{actually
+get the number}. From this point, the question arises how do we automate this
+searching process?
 
 \section{Automating the Finding of Feasible Bitflips}
 
