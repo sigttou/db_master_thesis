@@ -343,7 +343,15 @@ property should be well audited.
 
 \subsection{\texttt{chroot}}
 
-\todo{add short text about chroot}
+\texttt{chroot}~\cite{ogroupchroot} stands for "change root directory". One can
+either use it via the system call or the wrapper program. A \texttt{chroot} call
+changes the root directory for the running process. Meaning, the environment is
+changed, and the program runs inside a completely different system. It is not
+possible to access files from outside the new environment nor to interact with
+processes running in the old environment. The tool is either used for testing
+purposes, to create packages in clean environments, to check compatibility, as
+the chrooted system could be a different system or for sandboxing and privilege
+separation.
 
 \section{Connecting Computers}
 
