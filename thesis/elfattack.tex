@@ -191,6 +191,20 @@ for all test runs. It adds instrumenter calls to all memory accesses. The tools
 stores all accesses per file and what base offsets are used. This information is
 needed to determine if the accessed area is mapped to a file later on.
 
+We instrument the program with a run defining a failed state, after the run, we
+filter the accessed memory areas for each file and check if areas were written
+before reading. If so, we can also skip testing those bits, as the program would
+overwrite the flips again. Listing~\ref{lst:pinlogcode} shows an example code
+snippet of a pintool which logs all memory accesses as it instruments each
+instruction and logs the opcode position and its parameters if they address
+memory. The listing~\ref{lst:pinlogcode} also shows some API-calls for the PIN
+framework. The \texttt{INS\_InsertPredicatedCall} function is used to insert a
+function call on the machine code layer. The function can have an arbitrary
+number of parameters, as the user have to define the function with each
+parameter and the type. Pin then inserts a call to the given function pointer
+and manages the handling of the parameters and return values in a way that the
+instrumented binary's execution is not affected.
+
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Example C++ code for a pintool logging memory
@@ -233,13 +247,12 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 \end{lstlisting}
 \end{minipage}
 
-We instrument the program with a run defining a failed state, after the run, we
-filter the accessed memory areas for each file and check if areas were written
-before reading. If so, we can also skip testing those bits, as the program would
-overwrite the flips again. Listing~\ref{lst:pinlogcode} shows an example code
-snippet of a pintool which logs all memory accesses as it instruments each
-instruction and logs the opcode position and its parameters if they address
-memory.
+\subsubsection{Generating flipped ELF files}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \subsubsection{Finding Successful Flips}
 
