@@ -179,7 +179,65 @@ Each part of the framework is designed to work on its own and has a clearly
 defined input and output. The parts can quickly be adopted or used for other
 testing purposes. The configuration file for the framework defines how each step
 is applied to the program as instrumentation and verification differ for each
-application.
+application. The file in listing~\ref{lst:expconfig} shows an example config
+file for the framework. Figure~\ref{fig:framfilesys} shows the layout of the
+framework in the file system. The configuration file tells the framework where
+to find each of the needed files. The template chroot describes the system used
+for testing.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=nasm,
+                   caption={JSON style config file for the framework, showing
+all parameters used to tweak each part of the framework. Entries
+starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
+                   label={lst:expconfig}]
+{
+  "instrumenter_call": "./instr_tool.sh",
+  "instrumenter_outfile": "tool.out",
+  "chroot_template": "chroot_tmpl/bionic",
+  "tmp_chroot_folder": "/media/ramdisk/chroot/",
+  "folder_with_flips": "/media/ramdisk/flips/",
+  "num_of_parallel_checks": 1,
+  "CR_exec_file": "./run_tool_chroot.sh",
+  "CR_flip_folder": "/media/flips",
+  "CR_success_folder": "/media/success/",
+  "CR_log_file": "/tmp/succ.file"
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{figure}
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  \node [fsnode] {proj.root}
+    child {node[fsnode] {tool\_config.json}}
+    child {node [fsnode] {instr\_tool.sh}}
+    child {node [fsnode] {run\_tool\_chroot.sh}}
+    child {node [fsnode, optional] {tool.out}}
+    child {node [fsnode] {chroot\_tmpl/}
+      child {node [fsnode] {bionic/}}
+      };
+  \node [fsnode, xshift=5cm] {chroot.root}
+    child {node [fsnode] {media/}
+      child {node [fsnode] {success/}}
+      child {node [fsnode] {flips/}}
+    }
+    child [missing] {}
+    child [missing] {}
+    child {node [fsnode] {tmp/}
+      child {node [fsnode] {succ.file}}
+    }
+    child [missing] {}
+    child {node [fsnode, optional] {run\_tool\_chroot.sh}};
+\end{tikzpicture}
+\caption{File system structure of framework and the chroot loaded for the test
+runs, whereas the chroot is created from a templated loaded from the
+\texttt{proj.root} and the \texttt{run\_tool\_chroot.sh} is copied over to the
+created chroot.}
+\label{fig:framfilesys}
+\end{figure}
 
 \subsubsection{Instrumenting the Program}
 
@@ -198,12 +256,16 @@ overwrite the flips again. Listing~\ref{lst:pinlogcode} shows an example code
 snippet of a pintool which logs all memory accesses as it instruments each
 instruction and logs the opcode position and its parameters if they address
 memory. The listing~\ref{lst:pinlogcode} also shows some API-calls for the PIN
-framework. The \texttt{INS\_InsertPredicatedCall} function is used to insert a
-function call on the machine code layer. The function can have an arbitrary
-number of parameters, as the user have to define the function with each
-parameter and the type. Pin then inserts a call to the given function pointer
-and manages the handling of the parameters and return values in a way that the
-instrumented binary's execution is not affected.
+framework. In Pin, the Image~\texttt{img} refers to files. These are most of the
+time dynamically loaded libraries. The \texttt{INS\_InsertPredicatedCall}
+function is used to insert a function call on the machine code layer. The
+function can have an arbitrary number of parameters, as the user have to define
+the function with each parameter and the type. Pin then inserts a call to the
+given function pointer and manages the handling of the parameters and return
+values in a way that the instrumented binary's execution is not affected.
+
+The logged accesses are then saved and a filter is applied to them before the
+actual bitflips are tested.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -247,26 +309,28 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 \end{lstlisting}
 \end{minipage}
 
-\subsubsection{Generating flipped ELF files}
+\subsubsection{Filtering Memory Accesses reported by the Instrumentation}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+We apply a filter to the memory accesses at two different points. At first, we
+already filter inside the written pintool. As we log reading and writing
+accesses to memory separately, we can check on reading accesses if the program
+has written to the position before, if so, there is no need to flip this
+location in the binary.
 
-\subsubsection{Finding Successful Flips}
+At second, after the program run, we translate all reported accessed addresses
+to positions in ELF files. At this point, every access which does not refer to
+the file content is thrown away. We can find this as we know the base address
+from the loaded library from the pintool report.
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Additionally, we add addresses of ELF structure headers, as remapping sections
+or change other property bits inside the ELF structure can affect the way the
+binary tuns. After applying the filters, we gain a list of bytes to flip.
 
-\subsubsection{Testing all Flips}
+\subsubsection{Generating and Testing the Flips}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Next, we create a new ELF file for each bit for each of the reported bytes. We
+generate those files into a \texttt{tmpfs} file-system placing its memory in
+the DRAM to have lower access times than to the hard drive.
 
 \subsection{Applying the Framework to real-world Applications}
 
