@@ -97,34 +97,6 @@ the layout of such executable files before introducing bitflips to them.
 
 \subsubsection{Structure of an ELF file}
 
-\tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm,
-text centered, draw=black]
-\tikzstyle{dot} = [circle, fill, inner sep=1.5pt]
-\tikzstyle{function} = [rectangle, rounded corners, minimum width=2cm,
-minimum height=0.8cm, text centered, draw=black, fill=blue!30]
-\tikzstyle{arrow} = [thick,->,>=stealth]
-\tikzset{XOR/.style={draw,circle,append after command={
-        [shorten >=\pgflinewidth, shorten <=\pgflinewidth,]
-        (\tikzlastnode.north) edge (\tikzlastnode.south)
-        (\tikzlastnode.east) edge (\tikzlastnode.west)
-        }
-    }
-}
-\tikzstyle{level3block} = [rectangle, minimum width=9.5cm, minimum
-height=0.8cm, text centered, draw=black]
-\tikzstyle{mcblock} = [rectangle, minimum width=4cm, minimum
-height=0.8cm, text centered, draw=black]
-\tikzstyle{doublearrow} = [thick,<->,>=stealth]
-\tikzstyle{segblock} = [rectangle, minimum width=1cm, minimum height=0.8cm,
-text centered, draw=black]
-\tikzstyle{memarray} = [rectangle, minimum width=3cm, minimum height=3cm,
-                        text centered, draw=black]
-\tikzstyle{memfunc} = [rectangle, minimum width=3cm, minimum height=1cm,
-                       text centered, draw=black]
-\tikzstyle{memcon} = [rectangle, minimum width=2cm, minimum height=2cm,
-                        text centered, draw=black]
-\tikzstyle{line} = [thick,-,>=stealth]
-
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -368,6 +340,10 @@ security risks. A bug allowing code execution in such a program allows an
 attacker to execute that code with the permission of another user. Therefore,
 the number of \texttt{setuid} binaries should be low and programs having that
 property should be well audited.
+
+\subsection{\texttt{chroot}}
+
+\todo{add short text about chroot}
 
 \section{Connecting Computers}
 
