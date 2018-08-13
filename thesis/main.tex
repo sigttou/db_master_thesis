@@ -190,7 +190,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath,amssymb,amsfonts,xfrac}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{shapes.geometric, arrows, trees}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{circuitikz}
@@ -233,6 +233,10 @@ centered, draw=black, fill=blue!30]
 width=2cm, minimum height=0.8cm, text centered, draw=black, font=\Large,
 fill=green!30]
 
+\tikzstyle{fsnode}=[draw=black,thick,anchor=west]
+\tikzstyle{selected}=[draw=red,fill=red!30]
+\tikzstyle{optional}=[dashed,fill=gray!50]
+
 \definecolor{mGreen}{rgb}{0,0.6,0}
 \definecolor{mGray}{rgb}{0.5,0.5,0.5}
 \definecolor{mPurple}{rgb}{0.58,0,0.82}
@@ -244,7 +248,7 @@ fill=green!30]
   keywordstyle=\color{magenta},
   numberstyle=\tiny\color{mGray},
   stringstyle=\color{mPurple},
-  basicstyle=\footnotesize,
+  basicstyle=\footnotesize\ttfamily,
   breakatwhitespace=false,
   breaklines=true,
   captionpos=b,
@@ -285,19 +289,19 @@ fill=green!30]
 }
 
 \lstdefinelanguage{nasm}{
-	sensitive=true,
-	alsoletter={\%},
-	% comments.
-	%    ; line comment
-	comment=[l]{;},
-	% strings.
-	%    "foo"
-	%    'bar'
-	string=[b]{"},
-	morestring=[b]{'},
-	% instructions.
-	%    ref: http://www.nasm.us/doc/nasmdocb.html
-	keywords=[1]{
+  sensitive=true,
+  alsoletter={\%},
+  % comments.
+  %    ; line comment
+  comment=[l]{;},
+  % strings.
+  %    "foo"
+  %    'bar'
+  string=[b]{"},
+  morestring=[b]{'},
+  % instructions.
+  %    ref: http://www.nasm.us/doc/nasmdocb.html
+  keywords=[1]{
 AAA, AAD, AAM, AAS, ADC, ADCX, ADD, ADDPD, ADDPS, ADDSD, ADDSS, ADDSUBPD,
 ADDSUBPS, ADOX, AESDEC, AESDECLAST, AESENC, AESENCLAST, AESIMC, AESKEYGENASSIST,
 AND, ANDN, ANDNPD, ANDNPS, ANDPD, ANDPS, ARPL, BEXTR, BLCFILL, BLCI, BLCIC,
@@ -752,15 +756,15 @@ short, strict, times, uppercase, use16, use32, word, wrt
 \%imacro, \%include, \%ixdefine, \%label, \%line, \%local, \%macro,
 \%pathsearch, \%pop, \%push, \%rep, \%repl, \%rotate, \%skip, \%stacksize,
 \%strcat, \%strlen, \%substr, \%undef, \%unmacro, \%use, \%warning, \%xdefine
-	},
-	% macros.
-	morekeywords=[2]{
+  },
+  % macros.
+  morekeywords=[2]{
 ENDSTRUC, IEND, ISTRUC, STRUC,
 endstruc, iend, istruc, struc,
-	},
-	% registers.
-	%    ref: http://www.nasm.us/doc/nasmdo11.html#section-11.1
-	keywords=[3]{
+  },
+  % registers.
+  %    ref: http://www.nasm.us/doc/nasmdo11.html#section-11.1
+  keywords=[3]{
 AH, AL, AX, BH, BL, BP, BPL, BX, CH, CL, CX, DH, DI, DIL, DL, DX, EAX, EBP, EBX,
 ECX, EDI, EDX, ESI, ESP, R10, R10B, R10D, R10W, R11, R11B, R11D, R11W, R12,
 R12B, R12D, R12W, R13, R13B, R13D, R13W, R14, R14B, R14D, R14W, R15, R15B, R15D,
@@ -771,7 +775,7 @@ ecx, edi, edx, esi, esp, r10, r10b, r10d, r10w, r11, r11b, r11d, r11w, r12,
 r12b, r12d, r12w, r13, r13b, r13d, r13w, r14, r14b, r14d, r14w, r15, r15b, r15d,
 r15w, r8, r8b, r8d, r8w, r9, r9b, r9d, r9w, rax, rbp, rbx, rcx, rdi, rdx, rsi,
 rsp, si, sil, sp, spl
-	},
+  },
 }
 
 %% ========================================================================
