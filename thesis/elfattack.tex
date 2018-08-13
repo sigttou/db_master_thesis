@@ -120,10 +120,62 @@ number.
 
 \subsection{Design of the Testing Framework}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+We implemented a framework to search bits to flip in binaries.
+Figure~\ref{fig:frameworkdesign} shows a diagram describing the framework. The
+framework is split into multiple parts:
+
+\begin{enumerate}
+\item We instrument the binary with Intel pintool~\cite{pintool} to gain the
+accessed memory areas from the used ELF files, this includes all libraries.
+\item We apply pre-defined filters to the results.
+\item We generate ELF files for each of the bit flips
+\item We execute each ELF file and check if the output fits a pre-defined
+success state
+\end{enumerate}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+  % Nodes of the framework
+  \node (start) [root] {Start};
+  \node (conf) [function, right of=start, xshift=2cm] {Load config};
+  \node (instr) [function, right of=conf, align=center, xshift=2cm]
+                {Instrument \\ binary};
+  \node (filter) [function, right of=instr, align=center, xshift=2cm]
+                 {Filter \\ memory areas};
+  \node (gen) [function, below of=filter, align=center, yshift=-1cm]
+              {Generate \\ flipped binaries};
+  \node (test) [function, below of=gen, align=center, yshift=-1cm]
+               {Test \\ generated files};
+  \node (report) [function, below of=test, align=center, yshift=-1cm]
+                 {Log results};
+  \node (clean) [function, right of=report, align=center, xshift=2cm]
+                {Delete \\ generated files};
+  \node (dec) [decision, below of=report, align=center, yshift=-1cm]
+              {Finished?};
+  \node (propclean) [function, left of=dec, align=center, xshift=-2cm]
+                    {Cleanup \\ Testing \\ Environment};
+  \node (printres) [function, left of=propclean, align=center, xshift=-2cm]
+                   {Print Results};
+  \node (finish) [finish, left of=printres, xshift=-2cm] {Done};
+  % Connections
+  \draw [arrow] (start) -- (conf);
+  \draw [arrow] (conf) -- (instr);
+  \draw [arrow] (instr) -- (filter);
+  \draw [arrow] (filter) -- (gen);
+  \draw [arrow] (gen) -- (test);
+  \draw [arrow] (test) -- (report);
+  \draw [arrow] (report) -- (dec);
+  \draw [arrow] (dec) -- (propclean) node[near start, above] {Yes};
+  \draw [arrow] (propclean) -- (printres);
+  \draw [arrow] (printres) -- (finish);
+  \draw [arrow] (dec) -| (clean) node[near start, above] {No};
+  \draw [arrow] (clean) |- (gen);
+  \end{tikzpicture}
+  \caption{Flowchart showing each part of the framework and their connections.}
+  \label{fig:frameworkdesign}
+\end{figure}
+
 
 \subsubsection{Gaining a List of Flips to Test}
 
