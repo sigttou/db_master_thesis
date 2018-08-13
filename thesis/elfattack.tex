@@ -328,7 +328,7 @@ from the loaded library from the pintool report.
 
 Additionally, we add addresses of ELF structure headers, as remapping sections
 or change other property bits inside the ELF structure can affect the way the
-binary tuns. After applying the filters, we gain a list of bytes to flip.
+binary runs. After applying the filters, we gain a list of bytes to flip.
 
 \subsubsection{Generating and Testing the Flips}
 
@@ -339,7 +339,12 @@ configured number of parallel checks, chroots are created in the \texttt{tmpfs}
 too. The framework makes sure the number of created ELF files does not need more
 than the memory available. If there are more files to test than the available
 memory allows, the framework takes multiple runs, as seen in
-figure~\ref{fig:frameworkdesign}.
+figure~\ref{fig:frameworkdesign}. A test run starts configured
+\texttt{CR\_exec\_file} which will copy a flipped file from
+\texttt{CR\_flip\_folder} to the original position, then run it and check if the
+output matches a defined success state. If the flipped file reaches the success
+state, the framework writes the flipped address to \texttt{CR\_log\_file} and
+copies the flipped ELF file to \texttt{CR\_success\_folder}.
 
 \subsection{Applying the Framework to real-world Applications}
 
