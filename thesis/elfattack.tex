@@ -264,8 +264,12 @@ the function with each parameter and the type. Pin then inserts a call to the
 given function pointer and manages the handling of the parameters and return
 values in a way that the instrumented binary's execution is not affected.
 
-The logged accesses are then saved and a filter is applied to them before the
-actual bitflips are tested.
+Instrumentation is done via the configured \texttt{instrumenter\_call}. That
+entry is executed and expected to generate a file named in the
+\texttt{instrumenter\_outfile} configuration parameter. This file needs to
+follow an output format for the accesses as in \texttt{<hex:position\_in\_file>
+- str:filename}. The framework then applies a filter to that before it tests the
+actual bitflips.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -329,8 +333,13 @@ binary tuns. After applying the filters, we gain a list of bytes to flip.
 \subsubsection{Generating and Testing the Flips}
 
 Next, we create a new ELF file for each bit for each of the reported bytes. We
-generate those files into a \texttt{tmpfs} file-system placing its memory in
-the DRAM to have lower access times than to the hard drive.
+generate those files into a \texttt{tmpfs} file-system placing its memory in the
+DRAM to have lower access times than to the hard drive. Depending on the
+configured number of parallel checks, chroots are created in the \texttt{tmpfs}
+too. The framework makes sure the number of created ELF files does not need more
+than the memory available. If there are more files to test than the available
+memory allows, the framework takes multiple runs, as seen in
+figure~\ref{fig:frameworkdesign}.
 
 \subsection{Applying the Framework to real-world Applications}
 
