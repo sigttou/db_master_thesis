@@ -125,8 +125,7 @@ Figure~\ref{fig:frameworkdesign} shows a diagram describing the framework. The
 framework is split into multiple parts:
 
 \begin{enumerate}
-\item We instrument the binary with Intel pintool~\cite{pintool} to gain the
-accessed memory areas from the used ELF files, this includes all libraries.
+\item We log the accessed memory areas from all the ELF files the binary uses.
 \item We apply pre-defined filters to the results.
 \item We generate ELF files for each of the bit flips
 \item We execute each ELF file and check if the output fits a pre-defined
@@ -184,10 +183,63 @@ application.
 
 \subsubsection{Instrumenting the Program}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+We use Intel Pin~\cite{pintool} for instrumentation. The instrumentation is used
+to log every memory access during execution of the program, whereas we want to
+log all accesses which happen inside of ELF files, which means the program's
+binary and all libraries used by it during runtime. The used pintool is the same
+for all test runs. It adds instrumenter calls to all memory accesses. The tools
+stores all accesses per file and what base offsets are used. This information is
+needed to determine if the accessed area is mapped to a file later on.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Example C++ code for a pintool logging memory
+accesses. At first, the tool stores the instruction bytes, and after the
+operands are stored separately, depending on if they are writing or reading
+memory.},
+                   label={lst:pinlogcode}]
+ADDRINT ins_addr = INS_Address(ins);
+IMG img = IMG_FindByAddress(ins_addr);
+ADDRINT base = IMG_LowAddress(img);
+img_offsets[base] = IMG_LoadOffset(img);
+
+for(size_t i = 0; i < INS_Size(ins); i++)
+  accesses.insert(std::make_pair(ins_addr + i, base));
+
+UINT32 memOperands = INS_MemoryOperandCount(ins);
+for (UINT32 memOp = 0; memOp < memOperands; memOp++)
+{
+  if(INS_MemoryOperandIsRead(ins, memOp))
+  {
+    INS_InsertPredicatedCall(
+      ins, IPOINT_BEFORE, (AFUNPTR)RecordMemRead,
+      IARG_INST_PTR,
+      IARG_MEMORYREAD_EA,
+      IARG_ADDRINT, base,
+      IARG_MEMORYREAD_SIZE,
+      IARG_END);
+  }
+  if(INS_MemoryOperandIsWritten(ins, memOp))
+  {
+    INS_InsertPredicatedCall(
+      ins, IPOINT_BEFORE, (AFUNPTR)RecordMemWrite,
+      IARG_INST_PTR,
+      IARG_MEMORYWRITE_EA,
+      IARG_ADDRINT, base,
+      IARG_MEMORYWRITE_SIZE,
+      IARG_END);
+  }
+}
+\end{lstlisting}
+\end{minipage}
+
+We instrument the program with a run defining a failed state, after the run, we
+filter the accessed memory areas for each file and check if areas were written
+before reading. If so, we can also skip testing those bits, as the program would
+overwrite the flips again. Listing~\ref{lst:pinlogcode} shows an example code
+snippet of a pintool which logs all memory accesses as it instruments each
+instruction and logs the opcode position and its parameters if they address
+memory.
 
 \subsubsection{Finding Successful Flips}
 
