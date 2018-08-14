@@ -447,10 +447,13 @@ in any way by the bitflip.
 
 \subsection{Results given by the Framework}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Looking back at the introduced flips for the code in
+listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
+bypassed in the same way for both programs we looked at. As at some point jump
+instructions will point to code executed only in a successful state. We can also
+see flips causing a success which change bits in other sections than the code
+one. We want to show which ELF files have bits where flips would cause
+successes and what areas in ELF files are most promising for flips to be found.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
