@@ -413,11 +413,11 @@ loading the library before any other code. We use the
 \texttt{/etc/ld.so.preload} file to make our library load for any program, to
 not have all of them waiting on start-up, we check the name of the binary.
 
-\paragraph{Testing} Lorem ipsum dolor sit amet, consetetur sadipscing
-elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-dolor sit amet.
+\paragraph{Testing} the \texttt{sudo} program is easy, we call it and give it a
+wrong password. There are multiple ways to verify a successful privilege change.
+For once, it would be possible to use the \texttt{whoami} program to check if
+the system changed the current user to \texttt{root}. On the other side, it is
+also possible to verify by reading a file owned by the other user.
 
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
