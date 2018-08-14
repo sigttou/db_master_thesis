@@ -207,6 +207,7 @@ starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
 \end{minipage}
 
 \begin{figure}
+\centering
 \begin{tikzpicture}[%
   grow via three points={one child at (0.5,-0.7) and
   two children at (0.5,-0.7) and (0.5,-1.4)},
@@ -456,6 +457,25 @@ one. We want to show which ELF files have bits where flips would cause
 successes and what areas in ELF files are most promising for flips to be found.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
+
+\begin{table}[]
+\centering
+\begin{tabular}{c|c}
+ELF File               & Number of Flips \\ \hline
+\texttt{ld-linux-x86-64.so.2} & 1               \\
+\texttt{libpthread.so.0}      & 2               \\
+\texttt{sudo}                 & 6               \\
+\texttt{libnns\_compat.so.2}  & 7               \\
+\texttt{libpam.so.0}          & 64              \\
+\texttt{pam\_unix.so}         & 86              \\
+\texttt{sudoers.so}           & 259      \\ \hline
+Sum of flips:                 & 425
+\end{tabular}
+\caption{List of ELF files used by the \texttt{sudo} program and the number of
+flips causing privilege escalation.}
+\label{tab:sudores}
+\end{table}
+
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
