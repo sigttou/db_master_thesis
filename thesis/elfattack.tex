@@ -421,22 +421,29 @@ also possible to verify by reading a file owned by the other user.
 
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+For \texttt{nginx} we want to achieve an authentication bypass by flipping a
+single bit. This means we need to set up a page which is only accessible given a
+correct user and password credential pair.
 
-\paragraph{Instrumentation} Lorem ipsum dolor sit amet, consetetur sadipscing
-elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-dolor sit amet.
+\paragraph{Instrumentation} for \texttt{nginx} is straightforward. We had to
+modify the default configuration a little to make sure the server runs as a
+single process. This was done by not allowing \texttt{nginx} to run as a system
+daemon or use their master process. We also only want to instrument the code run
+when an actual request to the protected site happens. Therefore, we again use
+the functionality to attach Pin to an already running process. For
+instrumentation, we start the web server, attach Pin, sent a request to the
+protected site with wrong credentials, wait for the denying answer from the
+server and then end instrumentation. This should give us only the bytes used
+during a basic authentication request.
 
-\paragraph{Testing} Lorem ipsum dolor sit amet, consetetur sadipscing
-elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
-dolor sit amet.
+\paragraph{Testing} the bitflips in \texttt{nginx} works the same as in the
+instrumentation. We copy the flipped ELF, start the server, verify it is running
+by requesting a standard page, then requesting the protected site with wrong
+credentials, a successful state is if the web server returns the protected site
+to a request with wrong credentials. For requesting the protected site, we would
+use \texttt{netcat} instead of \texttt{curl} or \texttt{wget}, as we only want
+to make sure the content is delivered to us and not if the answer got malformed
+in any way by the bitflip.
 
 \subsection{Results given by the Framework}
 
