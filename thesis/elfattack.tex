@@ -344,14 +344,21 @@ figure~\ref{fig:frameworkdesign}. A test run starts configured
 \texttt{CR\_flip\_folder} to the original position, then run it and check if the
 output matches a defined success state. If the flipped file reaches the success
 state, the framework writes the flipped address to \texttt{CR\_log\_file} and
-copies the flipped ELF file to \texttt{CR\_success\_folder}.
+copies the flipped ELF file to \texttt{CR\_success\_folder}. The framework
+passes the file to replace to the \texttt{CR\_exec\_file} when it calls it. To
+keep track of which bitflip is tested the filename for generated ELF files is
+structured as \texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}.
 
 \subsection{Applying the Framework to real-world Applications}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+In our thesis, we want to apply our tool to more extensive programs, programs
+used in the real world and with bitflips in mind which an attacker also would
+use. As Gruss~\etal\cite{flipinthewall} already showed, there are bits in the
+\texttt{sudoers} library which when toggled, allow using ~\texttt{sudo} without
+or with a wrong password to still gain super-user privilege. We want to show,
+that our framework can find a more significant number of possible bitflips to
+achieve this. Also, we also want to show how we can search for bitflips in the
+\texttt{nginx} program to bypass HTTP basic authentication.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
