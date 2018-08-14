@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import sys
+from parse import parse
 from elftools.elf.elffile import ELFFile
 from elftools.common.exceptions import ELFError
 
 
-def main(elfpath, offset):
+def get_section(elfpath, offset):
     try:
         with open(elfpath, 'rb') as f:
             elf = ELFFile(f)
@@ -13,21 +14,33 @@ def main(elfpath, offset):
                 sec_off = sec["sh_offset"]
                 if(offset > sec_off):
                     if(offset < (sec_off + sec_size)):
-                        print(sec.name)
-                        return
+                        return sec.name
     except FileNotFoundError:
         print("Err: " + elfpath + " not found!")
         sys.exit(-1)
     except ELFError:
         print("Err: " + elfpath + " not a valid ELF")
         sys.exit(-1)
-    print("not found")
-    return
+    return "not found"
+
+
+def main(log_file):
+    try:
+        with open(log_file, 'r') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        print("Err: " + log_file + " not found!")
+        sys.exit(-1)
+
+    for l in lines:
+        entry = parse("SUCCESS: {file}_0x{offset}_{} - {}", l)
+        if(entry):
+            print(entry["file"] + " " + get_section(entry["file"], int(entry["offset"], 16)))
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 2:
         print("Illegal number of parameters")
         print("section_find.py <path_to_elf> <offset>")
         sys.exit(-1)
-    main(sys.argv[1], int(sys.argv[2]))
+    main(sys.argv[1])
