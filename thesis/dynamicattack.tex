@@ -1,17 +1,34 @@
 %%%%%% Dynamic Data Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on Dynamic Data}\label{sec:automate}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+In this chapter we want to take a look at data created at the runtime of the
+program, we will go into details about OpenSSL and how bitflips can make attacks
+like a nonce-misuse possible. We want to apply a similar attack as Böck~\etal
+describe in their work about "practical nonce misusage
+attacks"~\cite{gcmnonceattack}. We also want to show how other attacks published
+could be reintroduced by rowhammer.
 
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+We want to look at the implementation of AES-GCM inside OpenSSL. Therefore we
+take a look at the structures used by it in listing~\ref{lst:aesstruct}.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Struct used by OpenSSL to describe AES.},
+                   label={lst:aesstruct}]
+#include <stdio.h>
+int main(void)
+{
+  int x = 0;
+  if(x == 1)
+    printf("success.\n");
+  else
+    printf("fail.\n");
+  return 0;
+}
+\end{lstlisting}
+\end{minipage}
 
 \subsection{Possible Nonce Reuse in AES-GCM with a single Bitflip}
 
