@@ -462,7 +462,13 @@ Table~\ref{tab:sudores} shows the number of found flips per file. We see that
 the possible flips are spread over multiple files.  The \texttt{sudoers} library
 contains most of them, whereas we also can find flips affecting a privilege
 change in the linker (\texttt{ld-linux}) and the threading library
-(\texttt{libpthread}).
+(\texttt{libpthread}). As expected, most flips are in the \texttt{.text}
+section. Additionally, other main sections such as \texttt{.rodata} contain
+flips. The \texttt{.plt} section refers to the Procedure Linkage Table, which is
+used to resolve mappings between position-independent functions and their
+absolute addresses. Close to the same is the \texttt{.got.plt} section, which
+represents the Global Offset Table, which resolves mappings for position
+independent code parts.
 
 \begin{table}[]
 \begin{tabular}{c|cccc|c}
@@ -484,10 +490,10 @@ number of flips causing privilege escalation listed per section.}
 
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+For the basic authentication bypass in \texttt{nginx} we can report that only
+flips inside the program's binary itself were useable. Table~\ref{tab:nginxres}
+shows the number of flips found and that all flips are inside the \texttt{.text}
+section of the binary.
 
 \begin{table}[]
 \centering
