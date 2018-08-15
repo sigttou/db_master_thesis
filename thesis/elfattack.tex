@@ -488,6 +488,25 @@ number of flips causing privilege escalation listed per section.}
 \label{tab:sudores}
 \end{table}
 
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=diff,
+                   caption={Diff for a bitflip applied to \texttt{libnss} in
+order to bypass a user privilege check. The call to \texttt{strcmp} is
+replaced because of the offset in the lookuptable being one off.},
+label=lst:sudoex]
+     351b:      0f 84 90 00 00 00       je     35b1
+     3521:      48 89 ee                mov    %rbp,%rsi
+-    3524:      e8 47 dc ff ff          callq  1170 <strcmp@plt>
++    3524:      e8 c7 dc ff ff          callq  11f0 <malloc@plt>
+     3529:      85 c0                   test   %eax,%eax
+     352b:      0f 85 3e ff ff ff       jne    346f
+\end{lstlisting}
+\end{minipage}
+
+In listing~\ref{lst:sudoex}, we show a diff for \texttt{libnss} where a call to
+\texttt{strcmp} is replaced with a call to \texttt{malloc} by a single bitflip,
+causing the later \texttt{jne} instruction to behave differently.
+
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
@@ -506,6 +525,29 @@ basic authentication bypass, whereas all of them were in the \texttt{.text}
 section.}
 \label{tab:nginxres}
 \end{table}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=diff,
+                   caption={Diff for a bitflip applied to the \texttt{nginx}
+binary in order to bypass a credential check. The call to \texttt{test} is
+replaced by \texttt{add} which doesn't chage a register the \texttt{setne}
+instruction would check.},
+label=lst:nginxex]
+    3c935:      48 83 c0 01             add    $0x1,%rax
+    3c939:      0f b6 10                movzbl (%rax),%edx
+-   3c93c:      84 d2                   test   %dl,%dl
++   3c93c:      04 d2                   add    $0xd2,%al
+    3c93e:      0f 95 c1                setne  %cl
+    3c941:      80 fa 24                cmp    $0x24,%dl
+\end{lstlisting}
+\end{minipage}
+
+In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary
+itself, the flip in this example changes a call to \texttt{test} to
+\texttt{add}. The instruction afterwards is \texttt{setn}, used to set a byte if
+the condition, "not equal" in this case, is met. As \texttt{add} does not affect
+the "zero flag"-register, which the \texttt{setn} checks, the code is likely to
+behave differently.
 %}}}
 
 %% vim:foldmethod=expr
