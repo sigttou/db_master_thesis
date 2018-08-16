@@ -1,30 +1,31 @@
 %%%%%% Static Data Flips %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on ELF Files}\label{sec:bitflip}
 
-In this chapter, we will discuss our approach to automate the finding bitflips
-in ELF files to gain privilege escalation. This is an approach which
+In this chapter, we discuss our approach to automate the finding bitflips in ELF
+files to gain privilege escalation. This is an approach which
 Gruss~\etal~\cite{flipinthewall} already have shown by disassembling binaries
-and manually looking for them. We start by describing the impact of a single
-bitflip. Then, we look at our work and the framework we created to find bitflips
-in binaries to change their behaviour to a pre-defined state. We take a look at
-the framework design in general. Then we look at the details on how we find bits
-to check, how the definition for searching works, how we test the bitflips and
-how results are captured and verified.
+and manually looking for suitable flips. We start by describing the impact of a
+single bitflip on the execution path. Then, we look at our work and the
+framework we created to find bitflips in binaries to change their behaviour to a
+pre-defined state. We start with a general overview of the framework design and
+go on with discussing the details on how we find bits to check, how the
+definition for searching works, how we test the bitflips and how results are
+captured and verified.
 
 \section{Changing the Execution Path with a Single Bitflip}
 
-The task of our thesis was to find a bit in an ELF file which we can flip to
-change the behaviour in a way that it benefits us. See the code in
-listing~\ref{lst:csimbranch} for example. We want to change the binary in a way
-it will print \texttt{success.} instead of \texttt{fail.}, and all this by just
-toggling a single bit. For this, we look at the disassembly of the code in
-listing~\ref{lst:disasmsimplebranch}. From this, we first mention that we can
-change the \texttt{1} can to a \texttt{0} at the \texttt{mov} instruction on
-address \texttt{0x0642}. Besides that, also the opcode of \texttt{jnz}, namely
-\texttt{0x75 (1110101)}, can be changed into a \texttt{jz}, as this is
-\texttt{0x74 (1110100)}, at address \texttt{0x064d}. For compiling we
-used~\texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}~\cite{gccubuntu}, for
-disassembling~\texttt{radare2 2.3.0-git 17214}~\cite{radare2web}.
+Our task is to find a bit in an ELF file which we can flip to change the
+behaviour in a way that it benefits us. See the code
+in listing~\ref{lst:csimbranch} for example. We want to change the binary in a
+way that it will print \texttt{success.} instead of \texttt{fail.}, by just
+toggling a single bit in the binary executing this code. We look at the
+disassembly of the code in listing~\ref{lst:disasmsimplebranch}. From this, we
+point out that we can start with changing the \texttt{1} to a \texttt{0} at
+the \texttt{mov} instruction on address \texttt{0x0642}. Besides that, also the
+opcode of \texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a
+\texttt{jz}, as this is \texttt{0x74 (1110100)}, at address \texttt{0x064d}. For
+compiling we used~\texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}~\cite{gccubuntu},
+for disassembling~\texttt{radare2 2.3.0-git 17214}~\cite{radare2web}.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -69,10 +70,10 @@ inside the ELF file, starting at \texttt{0x063a}.},
 
 To line out what other possible changes could be done when changing the
 \texttt{jnz}, we flip each bit in the \texttt{0x75}-byte and look at the output
-of the resulting binary. The flips and results are pointed out in
-table~\ref{tab:jnzflips}. We see that in three cases the program would print
-\texttt{success.}, in one case the output would not change and in four cases the
-program would crash for different reasons.
+of the resulting binary. Table~\ref{tab:jnzflips} shows the flips and results.
+We can see that in three cases the program would print \texttt{success.}, in one
+case the output would not change and in four cases the program would crash for
+different reasons.
 
 \begin{table}[]
 \begin{tabular}{|l|l|l|l|}
@@ -104,8 +105,8 @@ listing~\ref{lst:disasmsimplebranch}.}
 
 From this, we gain the knowledge that at least three bitflips to the opcode give
 us our desired behaviour. Additionally, we can add the bitflip to the $1$, which
-makes it four, which we can find manually quite fast. Now, the question arises
-how do we automate this searching process?
+makes it four. These flips we can find manually quite fast. Now, the question
+arises how do we automate this searching process?
 
 \section{Automating the Finding of Feasible Bitflips}
 
