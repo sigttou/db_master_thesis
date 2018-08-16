@@ -10,32 +10,75 @@ could be reintroduced by rowhammer.
 
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
 
-We want to look at the implementation of AES-GCM inside OpenSSL. Therefore we
-take a look at the structures used by it in listing~\ref{lst:aesstruct}.
+We want to look at the implementation of AES-GCM inside OpenSSL. We see the
+general AES-GCM context struct in listing~\ref{lst:aesstruct}. Additional to
+that we take a look at the cypher context struct in listing~\ref{lst:ciphctx}.
+The connection between those two is the initialisation vector \texttt{iv} which
+is updated on each call to the GCM function. The \texttt{GCM128\_CONTEXT}
+provides the hashing and multiplying function in the Galois field.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
-                   caption={Struct used by OpenSSL to describe AES.},
+                   caption={Struct used by OpenSSL to describe the AES-GCM
+context. The IV used is stored in the memory pointed to by \texttt{iv}. Source
+is taken from OpenSSL version $1.1.0g$},
                    label={lst:aesstruct}]
-#include <stdio.h>
-int main(void)
-{
-  int x = 0;
-  if(x == 1)
-    printf("success.\n");
-  else
-    printf("fail.\n");
-  return 0;
-}
+typedef struct {
+  union {
+    double align;
+    AES_KEY ks;
+  } ks;                       /* AES key schedule to use */
+  int key_set;                /* Set if key initialised */
+  int iv_set;                 /* Set if an iv is set */
+  GCM128_CONTEXT gcm;
+  unsigned char *iv;          /* Temporary IV store */
+  int ivlen;                  /* IV length */
+  int taglen;
+  int iv_gen;                 /* It is OK to generate IVs */
+  int tls_aad_len;            /* TLS AAD length */
+  ctr128_f ctr;
+} EVP_AES_GCM_CTX;
 \end{lstlisting}
 \end{minipage}
 
-\subsection{Possible Nonce Reuse in AES-GCM with a single Bitflip}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Context struct describing the Cipher used in TLS.
+This struct is used as the SSL context inside OpenSSL. Source is taken from
+OpenSSL version $1.1.0g$},
+                   label={lst:ciphctx}]
+struct evp_cipher_ctx_st {
+  const EVP_CIPHER *cipher;
+  ENGINE *engine;     /* functional reference if
+                       * 'cipher' is ENGINE-provided */
+  int encrypt;        /* encrypt or decrypt */
+  int buf_len;        /* number we have left */
+  unsigned char oiv[EVP_MAX_IV_LENGTH]; /* original iv */
+  unsigned char iv[EVP_MAX_IV_LENGTH]; /* working iv */
+  unsigned char buf[EVP_MAX_BLOCK_LENGTH]; /* saved partial
+                                            * block */
+  int num;           /* used by cfb/ofb/ctr mode */
+  /* FIXME: Should this even exist? It appears unused */
+  void *app_data;    /* application stuff */
+  int key_len;       /* May change for variable length cipher */
+  unsigned long flags; /* Various flags */
+  void *cipher_data; /* per EVP data */
+  int final_used;
+  int block_mask;
+  unsigned char final[EVP_MAX_BLOCK_LENGTH]; /* possible final
+                                              * block */
+} /* EVP_CIPHER_CTX */ ;
+\end{lstlisting}
+\end{minipage}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+For the attack to work, we would need the IV to be used, as described by
+Böck~\etal~\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
+instead of a random value, flipping back a lower bit would cause a reset of the
+counter which makes reuse very likely. As the described attack states, this
+would cause a break of the cryptography for future messages and the attacker
+could even craft valid ciphertexts and overtake sessions. For the attack with
+rowhammer, we would target the \texttt{iv} array in the
+\texttt{EVP\_CIPHER\_CTX} struct, as seen in the listing~\ref{lst:ciphctx}.
 %}}}
 
 %% vim:foldmethod=expr
