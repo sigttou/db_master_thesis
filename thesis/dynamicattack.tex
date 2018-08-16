@@ -127,23 +127,22 @@ client open and sent some string every second. Listing~\ref{lst:ssltestcode}
 shows the code parts used in both cases. The code makes sure the connection will
 send the reply every second, as long as the client accepts the write.
 
-We force the client to use AES-GCM by using the \texttt{netcat} tool with the
-parameter \texttt{--ssl-ciphers ECDHE-RSA-AES256-GCM-SHA384}, which will make
-sure AES256-GCM is used for data encryption. During the connections, we can
-apply bitflips to the processes memory.
+We force the server to use AES-GCM by using the \texttt{netcat} tool with the
+parameter \texttt{--ssl-ciphers ECDHE-RSA-AES256-GCM-SHA384} as client.
+During the connections, we can apply bitflips to the processes memory.
 
 For our experiments, we had a memory increase of about 5440 bytes for each
 forked process. With threading, the increase was slightly less. We never
 achieved filling a major part of the memory with TLS structs so that we came
-near the 1.5%, the probability in practical implementations might, therefore, be
-way less. If it is possible to get a thousand parallel connections, with 5440
-bytes each, with 32 bytes in initialisation vectors, it will result in 5.19
-megabytes of memory representing TLS connections, with 0.59% of this being IVs.
-In a setup with four gigabyte DRAM, the IVs would only make $74.5\cdot10^{-6}$
-per cent. Even if an attacker could gain knowledge about the four-kilobyte pages
-used to store TLS structs, it would be tough to hit IVs. With this knowledge, we
-can conclude that a remote attack with nethammer is improbable to succeed in
-nonce misusage.
+near the 1.5 per cent, the probability in practical implementations might,
+therefore, be way less. If it is possible to get a thousand parallel
+connections, with 5440 bytes each, with 32 bytes in initialisation vectors, it
+will result in 5.19 megabytes of memory representing TLS connections, with 0.59%
+of this being IVs. In a setup with four gigabyte DRAM, the IVs would only make
+$74.5\cdot10^{-6}$ per cent. Even if an attacker could gain knowledge about the
+four-kilobyte pages used to store TLS structs, it would be tough to hit IVs.
+With this knowledge, we can conclude that a remote attack with nethammer is
+improbable to succeed in nonce misusage.
 %}}}
 
 %% vim:foldmethod=expr
