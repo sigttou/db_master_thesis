@@ -885,16 +885,14 @@ positioning is stored. Some systems allow huge pages, where two megabytes of
 memory are used contiguously. These two megabytes will use more than one row,
 other than normal pages with the size of four kilobytes. In the paper,
 Kim~\etal~\cite{rowhammergeneral} use addresses calculated based on their
-knowledge of physical address mapping used by common CPU vendors.
-
-Project Zero~\cite{projectzerorow} show how it is possible to use rowhammer to
+knowledge of physical address mapping used by common CPU vendors. Project
+Zero~\cite{projectzerorow} show how it is possible to use rowhammer to
 gain privilege escalation on a standard \texttt{x86\_64} CPU and an escape from
 a sandbox. After vendors of operating systems started to introduce
-countermeasures, scientists like Gruss~\etal\cite{rowhammerjs}, came up with
-further, improved attacks making use of the rowhammer bug. They show that it is
-not only possible to use rowhammer to gain privilege escalation by flips in
-page-tables but also by targeting bits in the file-cache of the operating
-system.
+countermeasures, scientists like Gruss~\etal\cite{rowhammerjs, flipinthewall},
+came up with further, improved attacks making use of the rowhammer bug. They
+show more possible targets for flips and also show that rowhammer is possible in
+JavaScript.
 %}}}
 
 %% vim:foldmethod=expr
