@@ -558,11 +558,11 @@ label=lst:nginxex]
 \end{lstlisting}
 \end{minipage}
 
-In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary
-itself, the flip in this example changes a call to \texttt{test} to
-\texttt{add}. The instruction afterwards is \texttt{setn}, used to set a byte if
-the condition, "not equal" in this case, is met. As \texttt{add} does not affect
-the "zero flag"-register, which the \texttt{setn} checks, the code is likely to
+In listing~\ref{lst:nginxes}, we show a diff for the \texttt{nginx} binary, the
+flip in this example changes a call to \texttt{test} to \texttt{add}. The
+instruction afterwards is \texttt{setn}, used to set a byte if the condition,
+"not equal" in this case, is met. As \texttt{add} does not affect the
+\texttt{ZF} register, which the \texttt{setn} checks, the code is likely to
 behave differently.
 %}}}
 
