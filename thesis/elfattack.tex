@@ -254,35 +254,13 @@ reports successful flips to the framework
 
 \subsubsection{Instrumenting the Program}
 
-We use Intel Pin~\cite{pintool} for instrumentation. The instrumentation is used
-to log every memory access during execution of the program, whereas we want to
-log all accesses which happen inside of ELF files, which means the program's
-binary and all libraries used by it during runtime. The used pintool is the same
-for all test runs. It adds instrumenter calls to all memory accesses. The tools
-stores all accesses per file and what base offsets are used. This information is
-needed to determine if the accessed area is mapped to a file later on.
-
-We instrument the program with a run defining a failed state, after the run, we
-filter the accessed memory areas for each file and check if areas were written
-before reading. If so, we can also skip testing those bits, as the program would
-overwrite the flips again. Listing~\ref{lst:pinlogcode} shows an example code
-snippet of a pintool which logs all memory accesses as it instruments each
-instruction and logs the opcode position and its parameters if they address
-memory. The listing~\ref{lst:pinlogcode} also shows some API-calls for the PIN
-framework. In Pin, the Image~\texttt{img} refers to files. These are most of the
-time dynamically loaded libraries. The \texttt{INS\_InsertPredicatedCall}
-function is used to insert a function call on the machine code layer. The
-function can have an arbitrary number of parameters, as the user have to define
-the function with each parameter and the type. Pin then inserts a call to the
-given function pointer and manages the handling of the parameters and return
-values in a way that the instrumented binary's execution is not affected.
-
-Instrumentation is done via the configured \texttt{instrumenter\_call}. That
-entry is executed and expected to generate a file named in the
-\texttt{instrumenter\_outfile} configuration parameter. This file needs to
-follow an output format for the accesses as in \texttt{<hex:position\_in\_file>
-- str:filename}. The framework then applies a filter to that before it tests the
-actual bitflips.
+We use Intel Pin~\cite{pintool} for instrumentation.  We log every memory access
+during execution of the program using Pin. Whereas we want to log all accesses
+which happen inside of ELF files, which means the program's binary and all
+libraries it uses during runtime. We use the same pintool for all test runs. It
+simply adds instrumenter calls to all memory accesses. The tools stores all
+accesses per file and what base-offsets are used. This information is needed to
+determine if the accessed area is mapped to a file later on.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -326,22 +304,45 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 \end{lstlisting}
 \end{minipage}
 
+We instrument the program with a run resulting in a failed state, after the run,
+we filter the accessed memory areas for each file and check if areas were
+written before reading. If so, we can also skip testing those bits, as the
+program would overwrite the flips again. Listing~\ref{lst:pinlogcode} shows a
+code snippet of the used pintool which logs all memory accesses as it
+instruments each instruction and logs the opcode position and its parameters if
+they address memory. The listing~\ref{lst:pinlogcode} also shows some API-calls
+for the PIN framework. In Pin, the Image~\texttt{img} refers to files. In most
+cases, these refer to dynamically loaded libraries. The
+\texttt{INS\_InsertPredicatedCall} function is used to insert a function call on
+the machine code layer. The function can have an arbitrary number of parameters,
+as the user have to define the function with each parameter and the type. Pin
+then inserts a call to the given function pointer and manages the handling of
+the parameters and return values in a way that the instrumented program's
+execution is not affected.
+
+Instrumentation is done via the configured \texttt{instrumenter\_call}. That
+entry is executed and expected to generate a file named in the
+\texttt{instrumenter\_outfile} configuration parameter. This file needs to
+follow an output format for the accesses as in \texttt{<hex:position\_in\_file>
+- str:filename}. The framework then applies a filter to that before it tests the
+actual bitflips.
+
 \subsubsection{Filtering Memory Accesses reported by the Instrumentation}
 
 We apply a filter to the memory accesses at two different points. At first, we
-already filter inside the written pintool. As we log reading and writing
-accesses to memory separately, we can check on reading accesses if the program
+already filter inside the pintool. As we log reading and writing accesses to
+memory separately, we can check on reading accesses if the program
 has written to the position before, if so, there is no need to flip this
 location in the binary.
 
 At second, after the program run, we translate all reported accessed addresses
 to positions in ELF files. At this point, every access which does not refer to
 the file content is thrown away. We can find this as we know the base address
-from the loaded library from the pintool report.
+from the loaded library from the report.
 
 Additionally, we add addresses of ELF structure headers, as remapping sections
 or change other property bits inside the ELF structure can affect the way the
-binary runs. After applying the filters, we gain a list of bytes to flip.
+binary runs. After applying the filters, we gain a list of bytes to test.
 
 \subsubsection{Generating and Testing the Flips}
 
@@ -352,8 +353,8 @@ configured number of parallel checks, chroots are created in the \texttt{tmpfs}
 too. The framework makes sure the number of created ELF files does not need more
 than the memory available. If there are more files to test than the available
 memory allows, the framework takes multiple runs, as seen in
-figure~\ref{fig:frameworkdesign}. A test run starts configured
-\texttt{CR\_exec\_file} which will copy a flipped file from
+figure~\ref{fig:frameworkdesign} describing the design. A test run starts
+configured \texttt{CR\_exec\_file} which will copy a flipped file from
 \texttt{CR\_flip\_folder} to the original position, then run it and check if the
 output matches a defined success state. If the flipped file reaches the success
 state, the framework writes the flipped address to \texttt{CR\_log\_file} and
