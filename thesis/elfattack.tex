@@ -68,12 +68,12 @@ inside the ELF file, starting at \texttt{0x063a}.},
 \end{lstlisting}
 \end{minipage}
 
-To line out what other possible changes could be done when changing the
-\texttt{jnz}, we flip each bit in the \texttt{0x75}-byte and look at the output
-of the resulting binary. Table~\ref{tab:jnzflips} shows the flips and results.
-We can see that in three cases the program would print \texttt{success.}, in one
-case the output would not change and in four cases the program would crash for
-different reasons.
+We flip each bit of the instruction opcode \texttt{jnz} to line out what other
+outcomes are possible with a single flip. We apply all possible eight flips and
+check the resulting output of the binary. Table~\ref{tab:jnzflips} shows the
+flips and results. We can see that in three cases the program would print
+\texttt{success.}, in one case the output would not change and in four cases the
+program would crash for different reasons.
 
 \begin{table}[]
 \begin{tabular}{|l|l|l|l|}
@@ -111,26 +111,27 @@ arises how do we automate this searching process?
 \section{Automating the Finding of Feasible Bitflips}
 
 Testing all possible bitflips inside the binary and report each output would be
-a way to gain all of those which would result in the printing of
+a way to gain all a list of all flips which would result in the printing of
 \texttt{success.}. The binary resulting from the compilation of the small
 branching code from listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
 which means there are $66304$ bitflips to test. With an execution time of
 $0,003$ seconds per run, this means that it would take close to $200$ seconds to
-test all bits inside the binary. For our automation, we want a drastically lower
-number.
+test all bits inside the binary. For our automation, we want to need less time
+than that as we target larger binaries.
 
 \subsection{Design of the Testing Framework}
 
-We implemented a framework to search bits to flip in binaries.
-Figure~\ref{fig:frameworkdesign} shows a diagram describing the framework. The
-framework is split into multiple parts:
+We have implemented a framework to search bits to flip in binaries.
+Figure~\ref{fig:frameworkdesign} shows a diagram describing the framework's
+design. We split it into multiple parts:
 
 \begin{enumerate}
-\item We log the accessed memory areas from all the ELF files the binary uses.
-\item We apply pre-defined filters to the results.
-\item We generate ELF files for each of the bit flips
-\item We execute each ELF file and check if the output fits a pre-defined
-success state
+  \item Accessed memory areas are logged from all the ELF files the program
+uses.
+  \item Pre-defined filters are applied to the results.
+  \item ELF files for each of the bit flips are generated.
+  \item Each ELF file gets executed, and the behaviour is checked  against a
+pre-defined success state
 \end{enumerate}
 
 \begin{figure}
@@ -176,37 +177,6 @@ success state
   \label{fig:frameworkdesign}
 \end{figure}
 
-Each part of the framework is designed to work on its own and has a clearly
-defined input and output. The parts can quickly be adopted or used for other
-testing purposes. The configuration file for the framework defines how each step
-is applied to the program as instrumentation and verification differ for each
-application. The file in listing~\ref{lst:expconfig} shows an example config
-file for the framework. Figure~\ref{fig:framfilesys} shows the layout of the
-framework in the file system. The configuration file tells the framework where
-to find each of the needed files. The template chroot describes the system used
-for testing.
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[style=nasm,
-                   caption={JSON style config file for the framework, showing
-all parameters used to tweak each part of the framework. Entries
-starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
-                   label={lst:expconfig}]
-{
-  "instrumenter_call": "./instr_tool.sh",
-  "instrumenter_outfile": "tool.out",
-  "chroot_template": "chroot_tmpl/bionic",
-  "tmp_chroot_folder": "/media/ramdisk/chroot/",
-  "folder_with_flips": "/media/ramdisk/flips/",
-  "num_of_parallel_checks": 1,
-  "CR_exec_file": "./run_tool_chroot.sh",
-  "CR_flip_folder": "/media/flips",
-  "CR_success_folder": "/media/success/",
-  "CR_log_file": "/tmp/succ.file"
-}
-\end{lstlisting}
-\end{minipage}
-
 \begin{figure}
 \centering
 \begin{tikzpicture}[%
@@ -240,6 +210,47 @@ runs, whereas the chroot is created from a templated loaded from the
 created chroot.}
 \label{fig:framfilesys}
 \end{figure}
+
+Each part of the framework is designed to work on its own and has a clearly
+defined input and output interface. The parts can be adopted or easily used for
+other testing purposes. The configuration file for the framework defines how
+each step is applied to the application as instrumentation and verification may
+differ for each program. The file in listing~\ref{lst:expconfig} shows an
+example config file for the framework. Figure~\ref{fig:framfilesys} shows the
+layout of the framework in the file system. The configuration file tells the
+framework where to find each of the needed files. The template chroot describes
+the system used for testing.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=nasm,
+                   caption={JSON style config file for the framework, showing
+all parameters used to tweak each part of the framework. Entries
+starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
+                   label={lst:expconfig}]
+{
+  "instrumenter_call": "./instr_tool.sh",
+  "instrumenter_outfile": "tool.out",
+  "chroot_template": "chroot_tmpl/bionic",
+  "tmp_chroot_folder": "/media/ramdisk/chroot/",
+  "folder_with_flips": "/media/ramdisk/flips/",
+  "num_of_parallel_checks": 1,
+  "CR_exec_file": "./run_tool_chroot.sh",
+  "CR_flip_folder": "/media/flips",
+  "CR_success_folder": "/media/success/",
+  "CR_log_file": "/tmp/succ.file"
+}
+\end{lstlisting}
+\end{minipage}
+
+The framework starts with executing \texttt{instr\_tool.sh} to generate a report
+showing all bitflips, additional it can also filter them. After the script's
+execution, the \texttt{tool.out}-file should contain a list of all byte
+positions to flip and test. Afterwards, the defined number of chroots are
+created by copying the template from \texttt{chroot\_tmpl}. The configured flips
+are split and separately copied to each \texttt{/media/flips} folder in the
+testing chroot. The \texttt{run\_tool\_chroot.sh} file is copied to each testing
+environment and executed there. This script runs the tests with all flips and
+reports successful flips to the framework
 
 \subsubsection{Instrumenting the Program}
 
