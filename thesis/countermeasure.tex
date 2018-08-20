@@ -1,10 +1,37 @@
 %%%%%% Countermeasures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Countermeasures}\label{sec:countermeasure}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+For the countermeasures against rowhammer, we can only repeat what
+Gruss~\etal~\cite{nethammer, flipinthewall} already said. It is a hardware fault
+which vendors have to fix.
+
+When looking at binary analysis and how we find the bitflips, it would help if
+systems would use different ELF files per device, this would make it harder to
+find flips working on all installed systems and each target would have to be
+analysed on its own. This step would break with a lot of other security
+properties. It is therefore not a recommended step to take as a countermeasure.
+Compiler developers and developers of wide-spread software are currently working
+on reproducible builds. Whereas the Debian close organisation
+reproducible-builds~\cite{reprobuilds} is one of the most significant
+contributors to this field. The advantage of reproducible builds is that all
+binaries compiled with the same compiler, same configuration and same
+source-code will not differ, this makes detection of changes very easy. The
+technology allows a bit-by-bit compared verification of the full build chain
+used for the program. So, also changes or backdoors introduces by a malformed
+compiler or linker could be detected.
+
+Reproducible builds could also help to define other countermeasures to bit flips
+in the binary memory. Whereas the operating system can verify ELF files by using
+stored checksums, it would also be possible to use similar techniques to do this
+with in-memory code or data at runtime. As Suh~\etal~\cite{memintegrity} have
+shown in their work about memory integrity verification and encryption for
+secure processors. Other work that could be looked at as countermeasure is
+DRIVE~\cite{drive} by Rein or SPEE~\cite{spee} by Gelbart~\etal. Those apply
+code verification to binaries before execution and during runtime.
+
+Encrypting ELF content and only decrypt it during execution would also fix the
+problem of flips in the ELF file, as encryption would fail and execution would
+be halted if a bitflip has occurred.
 %}}}
 
 %% vim:foldmethod=expr
