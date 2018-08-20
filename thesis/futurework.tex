@@ -1,10 +1,38 @@
 %%%%%% Future Work %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Future Work}\label{sec:futurework}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Based on the current releases in the area of rowhammer and microarchitectural
+attacks in general it will get more interesting to automate attacks on this
+layer to make it possible to target multiple programs and systems without
+in-depth knowledge about the target. With automated attacks and vulnerability
+search not only the number of attacks rises but also security measures, as
+techniques like fuzzing allow testing without knowing too much about the code,
+developers can have their code tested and improve stability.
+
+In general, we can see a more connecting work between microarchitectural attacks
+and classic exploitation or testing techniques. With improved attacks also
+awareness of vulnerabilities such as cache attacks or other side-channels is
+improved as more users are affected. Latest attacks such as
+Meltdown~\cite{meltdown} and Spectre~\cite{spectre} by Lipp and Gruss~\etal have
+shown this already.
+
+Automated exploit technologies will influence this vector even more in this
+field. As machine learning is another fast-growing field in computer science, we
+can see that testing and exploitation can learn more and more from already found
+bugs. This data can be used to find bugs in new code. There are also bug
+prediction models in place and this is an active research topic, such as
+Puranik~\etal~\cite{bugprediction} showed in their work. We can see that these
+prediction models will influence microarchitectural attacks, as new bugs in the
+CPU's microcode are coming up increasingly in the last months. Fuzzing on this
+level and advanced black-box testing would help researchers and vendors to make
+our systems more secure.
+
+For attacks based on memory accesses, we can take away that tools such as
+Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for
+analysis. The work of Chabbi~\etal\cite{pincallpaths} could also be taken to
+improve our attack as they provide an even more in-depth view of execution paths
+in binaries. Using such detailed graphs, more bytes to test could be filtered,
+speeding up our framework even more.
 %}}}
 
 %% vim:foldmethod=expr
