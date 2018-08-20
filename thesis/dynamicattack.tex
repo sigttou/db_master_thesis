@@ -139,12 +139,12 @@ achieved filling a major part of the memory with TLS structs so that we came
 near the 1.5 per cent, the probability in practical implementations is therefore
 even lower. If it is possible to get a thousand parallel connections, with 5440
 bytes each, with 32 bytes in initialisation vectors, it will result in 5.19
-megabytes of memory representing TLS connections, with 0.59% of this being IVs.
-In a setup with four gigabyte DRAM, the IVs would only make $74.5\cdot10^{-6}$
-per cent. Even if an attacker could gain knowledge about the four-kilobyte pages
-used to store TLS structs, it would be tough to hit IVs with rowhammer. Given
-this knowledge, we can conclude that a remote attack with nethammer is very
-unlikely to succeed in nonce misusage.
+megabytes of memory representing TLS connections, with 0.59 percent of this
+being IVs. In a setup with four gigabyte DRAM, the IVs would only make
+$74.5\cdot10^{-8}$ per cent. Even if an attacker could gain knowledge about the
+four-kilobyte pages used to store TLS structs, it would be tough to hit IVs
+with rowhammer. Given this knowledge, we can conclude that a remote attack with
+nethammer is very unlikely to succeed in nonce misusage.
 %}}}
 
 %% vim:foldmethod=expr
