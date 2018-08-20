@@ -460,7 +460,9 @@ credentials, a successful state is if the web server returns the protected site
 to a request with wrong credentials. For requesting the protected site, we would
 use \texttt{netcat} instead of \texttt{curl} or \texttt{wget}, as we only want
 to make sure the content is delivered to us and not if the HTTP reply got
-malformed in any way by the bitflip.
+malformed in any way by the bitflip. We use different HTTP ports per server,
+equal to the ID of the chroot, to avoid startup problems during testing as the
+same port would be used more often otherwise, which is not possible.
 
 \subsection{Results given by the Framework}
 
@@ -471,6 +473,11 @@ instructions will point to code executed only in a successful state. We can also
 see flips causing a success which change bits in other sections than the code
 one. We want to show which ELF files have bits where flips would cause
 successes and what areas in ELF files are most promising for flips to be found.
+
+We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
+the testing chroot we have chosen the same system. The CPU used was a
+\texttt{Intel(R) Core(TM) i7 CPU 960 } and the system provided a total of 16
+gigabyte DRAM memory.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
@@ -523,6 +530,10 @@ In listing~\ref{lst:sudoex}, we show a diff for \texttt{libnss} where a call to
 \texttt{strcmp} is replaced with a call to \texttt{malloc} by a single bitflip,
 causing the later \texttt{jne} instruction to behave differently.
 
+Testing the \texttt{sudo} ELF files took a total of about eight hours time.
+This is less than half of the time it would need to test all possible bytes. We
+have used twenty-four parallel test runs on our described environment.
+
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
@@ -564,6 +575,11 @@ instruction afterwards is \texttt{setn}, used to set a byte if the condition,
 "not equal" in this case, is met. As \texttt{add} does not affect the
 \texttt{ZF} register, which the \texttt{setn} checks, the code is likely to
 behave differently.
+
+Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
+The timing is that high cause we had to make sure the server is up and ready to
+reply to our requests. For testing, we have used eight parallel testing
+instances.
 %}}}
 
 %% vim:foldmethod=expr
