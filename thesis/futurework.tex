@@ -2,7 +2,7 @@
 \chapter{Future Work}\label{sec:futurework}
 
 Based on the current releases in the area of rowhammer and microarchitectural
-attacks in general it will get more interesting to automate attacks on this
+attacks, in general, it will get more interesting to automate attacks on this
 layer to make it possible to target multiple programs and systems without
 in-depth knowledge about the target. With automated attacks and vulnerability
 search not only the number of attacks rises but also security measures, as
@@ -10,25 +10,45 @@ techniques like fuzzing allow testing without knowing too much about the code,
 developers can have their code tested and improve stability.
 
 In general, we can see a more connecting work between microarchitectural attacks
-and classic exploitation or testing techniques. With improved attacks also
-awareness of vulnerabilities such as cache attacks or other side-channels is
-improved as more users are affected. Latest attacks such as
-Meltdown~\cite{meltdown} and Spectre~\cite{spectre} by Lipp and Gruss~\etal have
-shown this already.
+and classic exploitation techniques. With improved attacks also awareness of
+vulnerabilities such as cache attacks or other side-channels is improved as more
+users are affected. Latest attacks such as Meltdown~\cite{meltdown} and
+Spectre~\cite{spectre} by Lipp and Gruss~\etal have shown this already. Another
+example of a famous microarchitectural attack Foreshadow~\cite{foreshadow},
+released in August 2018 by Bulck~\etal. The three attacks are related as they
+target the CPU internal code used to execute machine code given to it.
 
-Automated exploit technologies will influence this vector even more in this
-field. As machine learning is another fast-growing field in computer science, we
-can see that testing and exploitation can learn more and more from already found
-bugs. This data can be used to find bugs in new code. There are also bug
-prediction models in place and this is an active research topic, such as
-Puranik~\etal~\cite{bugprediction} showed in their work. We can see that these
-prediction models will influence microarchitectural attacks, as new bugs in the
-CPU's microcode are coming up increasingly in the last months. Fuzzing on this
-level and advanced black-box testing would help researchers and vendors to make
-our systems more secure.
+\todo{add details about Meltdown, Spectre, Foreshadow}
+
+Attacks like these show a real-world threat and need to be patched on a
+low-system level. Vendors need to publish fixes for the microcode. Operating
+systems then need to push these fixes to its users and update the CPU's internal
+code. Operating System vendors fixed other bugs, like Meltdown and Spectre by
+kernel code changes, which caused a performance drop for the users.
+
+With more attacks in this field targeting end-users, cloud environments, servers
+and mobile devices. We can see the number of published work rising in the near
+future. Automated exploit technologies will, therefore, influence
+microarchitecture attacks even more. We can see researchers pushing more on
+fuzzying on hardware-level and microcode-level. As knowledge on about how CPUs
+work rises, we predict an increasing number of similar attacks on various other
+architectures.
+
+\todo{Add paragraph about CPU vendors and Free Sofwate CPUS}
+
+As machine learning is another fast-growing field in computer science, we can
+see that testing and exploitation can learn more and more from already found
+bugs. This data can be used to find errors in new code. There also exist bug
+prediction models, like Puranik~\etal~\cite{bugprediction} showed in their work.
+These models can be applied to code and predict if there is a bug. We can see
+that these prediction models will influence microarchitectural attacks, as the
+behaviour of the CPU in certain states could be analysed and conclusions about
+faulty behaviour could be drawn.
+
+\todo{write about fuzzying on CPU level/opcode level}
 
 For attacks based on memory accesses, we can take away that tools such as
-Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for
+Pin~\cite{pintools} or angr~\cite{angr} will be a significant factor for
 analysis. The work of Chabbi~\etal\cite{pincallpaths} could also be taken to
 improve our attack as they provide an even more in-depth view of execution paths
 in binaries. Using such detailed graphs, more bytes to test could be filtered,
