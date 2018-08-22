@@ -89,7 +89,32 @@ see adaptions of it for other architectures in the near future. Also besides
 only fuzzying instructions, we can also see similar tools being introduced for
 memory accesses to fuzz cache behaviour for example.
 
-\section{Possible Attacks against Cryptography using rowhammer}
+\section{Possible Attacks against Cryptography using Rowhammer}
+
+We showed how nonce misusage could be introduced by single bitflips to target
+AES-GCM implementations. Attackers could use this idea to target other
+cryptographic implementations too. Especially those using a counter nonce. Also,
+from our work and research inside the OpenSSL source code, we can see other
+memory areas to be attacked, such as session reuse by flipping bits, or changing
+used cyphers if identifiers are enumerated. Such attacks could not only break
+encryption or allow key-recovery but also allow to break authenticity and
+confidentiality when an attacker flips bits in tags inside message
+authentication codes.
+
+Dobraunig~\etal~\cite{noncestat} showed statistical attacks against nonce-based
+authenticated encryption schemes. They show fault attacks on various modes of
+AES, such as GCM, CCM, EAX or OCB. They show how faults would affect the
+algorithm when they are introduced before the MixColumn step of AES. Work on
+faults in memory, like rowhammer, could be used as a fault source here and work
+like this could be used to show future attacks using single bitflips. We can see
+more upcoming work in that regard in the future of fault attack research.
+
+We already saw a combination between microarchitectural attacks and
+cryptographic attacks. Such as Yarom~\etal~\cite{noncerec} showed, that it is
+possible to use FLUSH+RELOAD cache attacks to recover ECDSA nonces in OpenSSL.
+They show an attack which allows a partial key-recovery in they Elliptic Curve
+Algorithm implementation with only observing a single signing process. With a
+key recovery on this level, it allows forgery for future data transmissions.
 
 \section{Improving and Reusing our Testing-Framework}
 
