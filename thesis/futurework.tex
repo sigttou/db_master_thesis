@@ -34,7 +34,24 @@ fuzzying on hardware-level and microcode-level. As knowledge on about how CPUs
 work rises, we predict an increasing number of similar attacks on various other
 architectures.
 
-\todo{Add paragraph about CPU vendors and Free Sofwate CPUS}
+While CPU vendors need to improve their architecture and fix parts of their
+CPU's microcode, researchers and developers will try to avoid bugs and CPU based
+exploits by pushing open architectures and open implementations more. The most
+popular Free Software instruction set architecture is RISC-V. It is built on the
+principles of reduced instruction set computing (RISC). RISC-V started in 2010,
+and lots of researchers have contributed since then. There are implementations
+in place, which implement System-on-Chip designs of RISC-V, such as
+lowRISC~\cite{lowrisc}. Other research areas use RISC-V  to implement CPU
+designs to improve systems, by adding security or optimising options. Such as
+Ming~\etal~\cite{smarts} showed in their work of introducing a memory protection
+unit (MPU) in a RISC-V SOC. The MPU is used to encrypt and verify memory in
+DRAM, where they use a Rocket core with tagged memory based on a lowRISC
+implementation. Tagged memory is a technology where bedsides pointers to memory
+also information is stored about the referenced memory. For example, in a 64bit
+system, one could use 48 bits for addressing memory and use the other 16 bits to
+store information, like access rights, encryption information or a checksum of
+the referenced memory area. With increasing attacks on memory safety such as
+rowhammer, we can see an increase in such countermeasures like tagged memory.
 
 As machine learning is another fast-growing field in computer science, we can
 see that testing and exploitation can learn more and more from already found
@@ -48,7 +65,7 @@ faulty behaviour could be drawn.
 \todo{write about fuzzying on CPU level/opcode level}
 
 For attacks based on memory accesses, we can take away that tools such as
-Pin~\cite{pintools} or angr~\cite{angr} will be a significant factor for
+Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for
 analysis. The work of Chabbi~\etal\cite{pincallpaths} could also be taken to
 improve our attack as they provide an even more in-depth view of execution paths
 in binaries. Using such detailed graphs, more bytes to test could be filtered,
