@@ -62,7 +62,22 @@ that these prediction models will influence microarchitectural attacks, as the
 behaviour of the CPU in certain states could be analysed and conclusions about
 faulty behaviour could be drawn.
 
-\todo{write about fuzzying on CPU level/opcode level}
+With the increasing complexity of CPUs and their design including more
+dependency on microcode, we see an increasing number of bugs coming from this
+area. Finding bugs by automation is already a topic in security research, for
+microarchitectural attacks we can see this trend continuing.
+Domas~\cite{sandsifter} already showed how fuzzying is applied to the x86 ISA in
+his work, named \texttt{sandsifter}. The tool is open-source and published on
+GitHub~\cite{sandsifterurl}. \texttt{sandsifter} is written in Python, and the
+developer built it to audit x86 CPUs. It can be used to find hidden instructions
+or hardware bugs. The tool generates machine code, executes it and checks the
+behaviour of the CPU during execution. The tool already succeeded in finding
+undocumented opcodes, bugs in disassembles and hypervisors which also were
+security related. The results and whitepaper were released at the Blackhat
+conference in 2017~\cite{sandsifter}. With such a tool already in place, we can
+see adaptions of it for other architectures in the near future. Also besides
+only fuzzying instructions, we can also see similar tools being introduced for
+memory accesses to fuzz cache behaviour for example.
 
 For attacks based on memory accesses, we can take away that tools such as
 Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for
