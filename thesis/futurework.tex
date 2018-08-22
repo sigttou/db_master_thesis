@@ -1,6 +1,16 @@
 %%%%%% Future Work %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Future Work}\label{sec:futurework}
 
+In this chapter we want to present an outlook for attacks in the field of
+microarchitectural attacks, we want to look at these attacks in general first
+and then derive possible future outcomes from current trends. We also want to
+look at the combination of these attacks with testing techniques used in other
+areas. Also, we also want to look at attacks in cryptography which rowhammer
+could reintroduce. In the end, we want to find some possibilities for how future
+projects or research could use our work.
+
+\section{Microarchitectural Attacks}
+
 Based on the current releases in the area of rowhammer and microarchitectural
 attacks, in general, it will get more interesting to automate attacks on this
 layer to make it possible to target multiple programs and systems without
@@ -78,6 +88,10 @@ conference in 2017~\cite{sandsifter}. With such a tool already in place, we can
 see adaptions of it for other architectures in the near future. Also besides
 only fuzzying instructions, we can also see similar tools being introduced for
 memory accesses to fuzz cache behaviour for example.
+
+\section{Possible Attacks against Cryptography using rowhammer}
+
+\section{Improving and Reusing our Testing-Framework}
 
 For attacks based on memory accesses, we can take away that tools such as
 Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for
