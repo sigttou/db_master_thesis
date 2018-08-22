@@ -124,6 +124,32 @@ analysis. The work of Chabbi~\etal\cite{pincallpaths} could also be taken to
 improve our attack as they provide an even more in-depth view of execution paths
 in binaries. Using such detailed graphs, more bytes to test could be filtered,
 speeding up our framework even more.
+
+On the other side, we can see our framework working as a base implementation for
+other test environments for parallel testing use cases. The environment it very
+adaptable and developers can exchange single components without much effort.
+Testing inside \texttt{chroot} could be changed to container environments like
+Docker~\cite{docker}, to provide more safety or better abstraction of the host
+operating system. Also, virtual machines could be used, if the software has to
+be tested on other kernels or operating systems. The testing scripts could also
+be replaced to work with multiple input files for a program instead of different
+binaries. This would make it possible to use the framework as a basis for a
+fuzzer. Even a combination with fuzzers would be possible, as the framework
+could be combined with \texttt{afl}~\cite{aflweb} to provide a parallel fuzzing
+framework, which would either allow fuzzing in multiple environments or as a
+general way to parallelise \texttt{afl}.
+
+Also for the part where binaries are instrumented with Intel Pin at the moment,
+replacements or other sources for analysis could be used. Like the
+QBDI~\cite{qbdi} tool for dynamic instrumentation could be used instead, which
+provides a wider range for software architectures, such as ARM or AArch64.
+Additional a complete open source solution for instrumentation is available in
+DynamoRIO~\cite{dynrio}, which could replace Pin.
+
+As other use cases for our framework, we could also see it being used as a basis
+for malware research, to track the behaviour of malware in different
+environments, as it allows setting up many different systems in a short time and
+tracks events inside those systems.
 %}}}
 
 %% vim:foldmethod=expr
