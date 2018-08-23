@@ -701,12 +701,38 @@ desired memory first will answer before the others. Caches get updated with
 each request.} \label{fig:intelcache}
 \end{figure}
 
-\paragraph{Cache Attacks} are part of microarchitectural attacks, where
-scientists have shown that caching also introduces security risks to systems.
+\subsubsection{Cache Attacks}
+
+Cache Attacks are part of microarchitectural attacks, where scientists have
+shown that caching also introduces security risks to systems.
 Gruss~\etal\cite{gruss2015cache} showed how caches provide information by
 measuring memory access-timings. They also showed how to automate attacks on
 last-level caches. Knowledge gained from this kind of attack has also played
-a role in the exploitation of the rowhammer bug.
+a role in the exploitation of the rowhammer bug or other hardware bugs, such as
+Meltdown~\cite{meltdown} and Spectre~\cite{spectre}.
+
+\paragraph{FLUSH+RELOAD} is a low noise, L3 cache side-channel attack, released
+by Yarom~\etal~\cite{flushreload}. The attack provides a possibility of leaking
+information about memory accesses on shared pages between two processes. As the
+attack targets the last-level cache, it does not require the two processes to
+run on the same core. Pages are either shared when actively mapped with such
+property or mapped as shared with copy-on-write when a process is forked. One
+process is referred to as spy and the other as victim. The attack consists of
+three phases.
+
+\begin{enumerate}
+\item The spy uses the instruction \texttt{clflush} to remove the given address
+from the CPU caches.
+\item The spy waits a pre-defined time.
+\item The spy accesses the flushed memory with reading access. If it takes less
+than a defined time, the victim has accessed the memory in this timespan.
+\end{enumerate}
+
+With this attack, certain information can be leaked to the spy processes. For
+example, in cryptographic algorithms, accessed code lines could leak the private
+key to the attacker.
+
+\paragraph{FLUSH+FLUSH}
 
 \subsection{Rowhammer}
 
@@ -745,7 +771,7 @@ design, but it is usually a multiple of the word size. In modern systems, rows
 are larger than 64 kilobytes. The CPU sends requests for memory to the
 controller which then translates it to a sequence, where first the column
 entries to read are set via the bit lines and then the desired row via the word
-lines. DRAM chips have many memory arrays and controllers which a data bus
+lines. DRAM chips contain many memory arrays and controllers which a data bus
 connects with the processor.
 
 A one-transistor (1-T) memory cell, as seen in figure~\ref{fig:1Tstorage}, is
