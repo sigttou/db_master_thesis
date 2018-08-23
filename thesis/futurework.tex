@@ -80,7 +80,15 @@ if(x < array1_size)
 \end{lstlisting}
 \end{minipage}
 
-\todo{add details about Foreshadow}
+\paragraph{Foreshadow} is an attack by van Bulck~\etal~\cite{foreshadow}.  The
+attack targets the Guard eXtension (SGX) in current Intel CPUs. The researchers
+use already known speculative execution bugs to gain knowledge of secret memory
+used inside the SGX environment which is transferred to the CPU's cache. The
+attack works similar to the Meltdown attack, but it is more challenging because
+of the SGX and its additional memory protection layers. With this attack, the
+security promises on the hardware layer made by Intel are broken.
+Countermeasures against this attack cannot be applied to the kernel layer. Intel
+needs to patch their microcode in order to prevent the Foreshadow attack.
 
 Attacks like these show a real-world threat and need to be patched on a
 low-system level. Vendors need to publish fixes for the microcode. Operating
