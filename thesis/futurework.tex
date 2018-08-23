@@ -96,13 +96,32 @@ systems then need to push these fixes to its users and update the CPU's internal
 code. Operating System vendors fixed other bugs, like Meltdown and Spectre by
 kernel code changes, which caused a performance drop for the users.
 
-With more attacks in this field targeting end-users, cloud environments, servers
-and mobile devices. We can see the number of published work rising in the near
-future. Automated exploit technologies will, therefore, influence
+We can see that the number of published work in this field will rise, with more
+attacks in this field targeting end-users, cloud environments, servers and
+mobile devices. Automated exploit technologies will, therefore, influence
 microarchitecture attacks even more. We can see researchers pushing more on
 fuzzying on hardware-level and microcode-level. As knowledge on about how CPUs
 work rises, we predict an increasing number of similar attacks on various other
 architectures.
+
+With the increasing complexity of CPUs and their design including more
+dependency on microcode, we see an increasing number of bugs coming from this
+area. Finding bugs by automation is already a topic in security research, for
+microarchitectural attacks we can see this trend continuing.
+Domas~\cite{sandsifter} already showed how fuzzying is applied to the x86 ISA in
+his work, named \texttt{sandsifter}. The tool is open-source and published on
+GitHub~\cite{sandsifterurl}. \texttt{sandsifter} is written in Python, and the
+developer built it to audit x86 CPUs. It can be used to find hidden instructions
+or hardware bugs. The tool generates machine code, executes it and checks the
+behaviour of the CPU during execution. The tool already succeeded in finding
+undocumented opcodes, bugs in disassembles and hypervisors which also were
+security related. The results and whitepaper were released at the Blackhat
+conference in 2017~\cite{sandsifter}. With such a tool already in place, we can
+see adaptions of it for other architectures in the near future. Also besides
+only fuzzying instructions, we can also see similar tools being introduced for
+memory accesses to fuzz cache behaviour for example.
+
+\subsection{Open Source Architectures}
 
 While CPU vendors need to improve their architecture and fix parts of their
 CPU's microcode, researchers and developers will try to avoid bugs and CPU based
@@ -123,6 +142,8 @@ store information, like access rights, encryption information or a checksum of
 the referenced memory area. With increasing attacks on memory safety such as
 rowhammer, we can see an increase in such countermeasures like tagged memory.
 
+\subsection{Using Machine Learning to Detect Bugs}
+
 As machine learning is another fast-growing field in computer science, we can
 see that testing and exploitation can learn more and more from already found
 bugs. This data can be used to find errors in new code. There also exist bug
@@ -131,23 +152,6 @@ These models can be applied to code and predict if there is a bug. We can see
 that these prediction models will influence microarchitectural attacks, as the
 behaviour of the CPU in certain states could be analysed and conclusions about
 faulty behaviour could be drawn.
-
-With the increasing complexity of CPUs and their design including more
-dependency on microcode, we see an increasing number of bugs coming from this
-area. Finding bugs by automation is already a topic in security research, for
-microarchitectural attacks we can see this trend continuing.
-Domas~\cite{sandsifter} already showed how fuzzying is applied to the x86 ISA in
-his work, named \texttt{sandsifter}. The tool is open-source and published on
-GitHub~\cite{sandsifterurl}. \texttt{sandsifter} is written in Python, and the
-developer built it to audit x86 CPUs. It can be used to find hidden instructions
-or hardware bugs. The tool generates machine code, executes it and checks the
-behaviour of the CPU during execution. The tool already succeeded in finding
-undocumented opcodes, bugs in disassembles and hypervisors which also were
-security related. The results and whitepaper were released at the Blackhat
-conference in 2017~\cite{sandsifter}. With such a tool already in place, we can
-see adaptions of it for other architectures in the near future. Also besides
-only fuzzying instructions, we can also see similar tools being introduced for
-memory accesses to fuzz cache behaviour for example.
 
 \section{Possible Attacks against Cryptography using Rowhammer}
 
