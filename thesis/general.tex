@@ -641,6 +641,8 @@ only cryptography was affected by side-channel attacks. As
 Weinberg~\etal\cite{weinberg2011still} showed, it is also possible to gather
 information about a users browser history by using side-channels.
 
+\subsection{Low Level Performance Measuring}
+
 \subsection{Caches}
 
 Vendors of processors introduced the principle of caching to memory management
@@ -732,7 +734,30 @@ With this attack, certain information can be leaked to the spy processes. For
 example, in cryptographic algorithms, accessed code lines could leak the private
 key to the attacker.
 
-\paragraph{FLUSH+FLUSH}
+\paragraph{FLUSH+FLUSH} is a cache attack designed by
+Gruss~\etal~\cite{flushflush} to circumvent detection of cache attacks such as
+FLUSH+RELOAD. This attack only uses only the \texttt{clflush} instruction and no
+memory accesses. With this idea, the attack bypasses cache attack detection by
+performance counters. Instead of the three phases in FLUSH+RELOAD, this attack
+only has one phase. The spy process gains a memory address to target, will call
+\texttt{clflush} on it and measure the time needed to flush the cache. There are
+two possible outcomes for this instruction call:
+
+\begin{itemize}
+\item The CPU has not loaded the memory into the cache and the \texttt{clflush}
+results in a cache-miss. Therefore the instruction can return immediately and
+not flush any other cache levels.
+\item The victim process has caused the CPU to load the memory into the cache.
+Therefore the flush needs to be applied to all cache levels, which results in
+longer execution time for the \texttt{clflush} instruction.
+\end{itemize}
+
+With measuring the execution time of \texttt{clflush}, the spy process can again
+tell when a victim has accessed targeted memory, as the timing will be higher in
+such cases. Besides the leakages similar to the FLUSH+RELOAD results,
+Gruss~\etal also built a side-channel with this principle to transmit
+information between two processes, according to their paper~\cite{flushflush},
+they reach a transmission speed of $496$ kilobytes per second.
 
 \subsection{Rowhammer}
 
