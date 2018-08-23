@@ -28,7 +28,28 @@ example of a famous microarchitectural attack Foreshadow~\cite{foreshadow},
 released in August 2018 by Bulck~\etal. The three attacks are related as they
 target the CPU internal code used to execute machine code given to it.
 
-\todo{add details about Meltdown, Spectre, Foreshadow}
+\paragraph{Meltdown} is an attack presented by Lipp~\etal~\cite{meltdown}. The
+attack targets the memory isolation between the operating system's kernel and
+the userland memory and shows how the CPU's out-of-order execution can lead to a
+leak of information from kernel memory to a user program. Meltdown makes use of
+a side-effect of this execution method. The CPU wants to use as many computing
+units as possible. It will execute code as soon as all dependencies are
+resolved. So inside a program computing could happen ahead of other code parts.
+In a simplified view, the attacker accesses kernel memory, which the CPU reads
+out-of-order, the CPU executes other code and receives an exception because of
+the disallowed memory access, which already happened before. This execution
+order still makes accesses to caches and DRAM as it would normally access the
+memory. Therefore the cache could be used to transmit the information. Meltdown
+makes use of the Flush+Reload cache attack, as they use the read kernel memory
+to flush certain cache lines. Access times to memory then tells which cache
+lines the program cleaned. Hence it leaks the kernel memory content. Lipp~\etal
+propose the KAISER countermeasure as a fix for this vulnerability. This work by
+Gruss~\etal~\cite{kaiserpaper} is used to separate kernel and user memory
+addresses. Their proof-of-concept implements a complete separation of the two
+memory spaces inside the Linux kernel, which makes sure no information about the
+kernel execution is leaked to the userspace.
+
+\todo{add details about Spectre, Foreshadow}
 
 Attacks like these show a real-world threat and need to be patched on a
 low-system level. Vendors need to publish fixes for the microcode. Operating
