@@ -466,6 +466,53 @@ current protocols and technologies still face problems with nonces, like
 Vanhoef~\etal showed in their work in 2017, that it is possible to force nonce
 reuse in WPA2\cite{wpanoncereuse}.
 
+\subsection{Advanced Encryption Standard (AES)}
+
+The Advanced Encryption Standard is a block cypher proposed to the US National
+Institute of Standards and Technology  (NIST) by Vincent Rijmen and Joan Daemen
+in 1999~\cite{aesproposal}. In 2001 NIST released AES as a specification for
+encryption of electronic data. It is the successor of the Data Encryption
+Standard (DES). AES is also part of ISO/IEC 18033-3~\cite{iso18033}, the ISO
+standard related to Security techniques and encryption algorithms.
+
+\subsubsection{Design of AES}
+
+AES is a block cypher, it is applied to data blocks, as the plaintext and a
+given key are permutated together to create the ciphertext. The permutation is
+done as the algorithm applies some steps to the data. These steps are repeated
+as so-called rounds. Depending on the key length used the number of rounds
+differs. Usually, in AES these steps are:
+
+\begin{itemize}
+\item \texttt{AddRoundKey} -
+\item \texttt{SubBytes} -
+\item \texttt{ShiftRows} -
+\item \texttt{MixColumns} -
+\end{itemize}
+
+The algorithm applies these steps in the following order:
+
+\begin{enumerate}
+\item Key expansion -
+\item pre-round
+\begin{itemize}
+\item \texttt{AddRoundKey}
+\end{itemize}
+\item Encryption rounds
+\begin{itemize}
+\item \texttt{SubBytes}
+\item \texttt{ShiftRows}
+\item \texttt{MixColumns}
+\item \texttt{AddRoundKey}
+\end{itemize}
+\item last-round
+\begin{itemize}
+\item \texttt{SubBytes}
+\item \texttt{ShiftRows}
+\item \texttt{AddRoundKey}
+\end{itemize}
+\end{enumerate}
+
 \subsection{AES-GCM}
 
 Galois Counter Mode (GCM) in combination with Advanced Encryption Standard (AES)
