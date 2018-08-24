@@ -96,6 +96,8 @@ systems then need to push these fixes to its users and update the CPU's internal
 code. Operating System vendors fixed other bugs, like Meltdown and Spectre by
 kernel code changes, which caused a performance drop for the users.
 
+\subsection{Future of Microarchitectural Attacks}
+
 We can see that the number of published work in this field will rise, with more
 attacks in this field targeting end-users, cloud environments, servers and
 mobile devices. Automated exploit technologies will, therefore, influence
@@ -103,6 +105,26 @@ microarchitecture attacks even more. We can see researchers pushing more on
 fuzzying on hardware-level and microcode-level. As knowledge on about how CPUs
 work rises, we predict an increasing number of similar attacks on various other
 architectures.
+
+\subsubsection{Microarchitectural Attacks in JavaScript}
+
+With already a high number of side-channel attacks coming to JavaScript and
+attacks like Spectre being run inside web browsers, we can see the number of
+microarchitectural attacks in JavaScript rising. Gruss~\etal~\cite{rowhammerjs}
+have already shown how the attack of rowhammer can be ported to JavaScript. With
+attacks like this the possible targets for this kind of attack rises. Victims
+only need to open a website and are targeted with Spectre, rowhammer and other
+attacks. In this way, the need for native code execution is not given any more
+to run the exploit code. Additional, attacks could also be ported to mobile
+devices and browsers running on Android and iOS operating systems.
+Gruss~\etal~\cite{keytimejs} already showed how timing attacks ported to
+JavaScript could affect end users on mobile devices. With the rising numbers of
+attack vectors in the field and the number of victims, we can see an increasing
+awareness of the issue in the wider user base. Therefore, also more pressure is
+building against vendors of operating systems, processing units or DRAM chips to
+address these issues and give users a feeling of security back.
+
+\subsubsection{Using Fuzzing to find more Microarchitectural Flaws}
 
 With the increasing complexity of CPUs and their design including more
 dependency on microcode, we see an increasing number of bugs coming from this
