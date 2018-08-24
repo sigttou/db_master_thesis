@@ -643,6 +643,43 @@ information about a users browser history by using side-channels.
 
 \subsection{Low Level Performance Measuring}
 
+Many side-channel attacks are based on timings. Like, predicting what a machine
+currently does because of the time needed to compute something. To measure
+timings in a high resolution, researchers need as precise time stamp as
+possible.
+
+\subsubsection{Native Timing Measurement}
+
+In native code, researchers use the highly precise timestamp counter (TSC)
+provided on x86 architectures since the first Pentium CPU~\cite{intelsys}. The
+CPU stores this time stamp in a 64-bit register. The TSC counts the number of
+execution cycles since the last resetting of the CPU. As CPUs tend to change
+their clock frequency during runtime, the TSC might deliver different results
+depending on the current frequency. Therefore, vendors changed the behaviour of
+the TSC so that it is increased in the same way as it would on maximum
+frequency. The instruction \texttt{RDTSC} provides the TSC's value in the
+\texttt{EDX:EAX} CPU registers. With out-of-order execution, problems occurred
+with measuring timings, as the CPU read the TSC at the wrong time. This issue
+can be resolved by calling serialising instructions such as \texttt{CPUID} or
+use the serialising \texttt{RDTSCP} instruction, which reads the timestamp
+counter to \texttt{EDX:EAX} and the processor ID into \texttt{EXC}.
+
+\subsubsection{JavaScript Timing Measurement}
+
+Calls to the \texttt{RDTSC} instruction are generally only possible in native
+code, but as Gruss~\etal~\cite{memdedupjs} and Lipp~\etal~\cite{keytimejs}
+showed, it is also possible to receive highly precise timestamps in JavaScript.
+In their work, we see another countermeasure by browser vendors defeated by
+researchers. In JavaScript, a time stamp function exists, namely
+\texttt{performance.now()}. As researchers started to use the JavaScript time
+stamp counter in their side-channel attacks, browser vendors were forced to
+reduce the resolution of the reported value, which was nanosecond precise in the
+past and is only milliseconds precise now. Browser vendors thought with this
+countermeasures JavaScript is more secure, but researchers like
+Gruss~\etal~\cite{memdedupjs} and Vila~\etal~\cite{loophole} showed that there
+are ways to bring back highly-precise timestamps in the area of single-digit
+microseconds.
+
 \subsection{Caches}
 
 Vendors of processors introduced the principle of caching to memory management
