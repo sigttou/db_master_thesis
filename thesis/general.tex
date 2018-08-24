@@ -45,6 +45,7 @@ $x86$, mostly referred to as \texttt{x86\_64} or \texttt{AMD64}, and ARM ISA
 which is used by most mobile processors.
 
 \begin{table}[]
+\centering
 \begin{tabular}{ccccccc}
 \cline{2-7}
 \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{Prefix} &
@@ -478,40 +479,122 @@ standard related to Security techniques and encryption algorithms.
 \subsubsection{Design of AES}
 
 AES is a block cypher, it is applied to data blocks, as the plaintext and a
-given key are permutated together to create the ciphertext. The permutation is
-done as the algorithm applies some steps to the data. These steps are repeated
-as so-called rounds. Depending on the key length used the number of rounds
-differs. Usually, in AES these steps are:
+given key are permutated together to create the ciphertext.
+
+\paragraph{Substitution Boxes} so-called S-boxes are a significant part of the
+AES algorithm. In a simplified view, they can be seen as a lookup table which
+shows which value has to be replaced which what other value. These lookup tables
+are designed in a way that there is no mathematical analysis possible, based on
+linear or differential dependencies between values. In AES the Rijndael S-box is
+used, the lookup-table describing this S-box can be seen in
+table~\ref{tab:sbox}. A lookup in the S-box for a byte works as the least
+significant nibble (four bytes) determines the column to be used, and the most
+significant nibble determines the row. For example, the entry byte of  0x3C
+would output 0xEB, using the given S-box.
+
+\begin{table}[]
+\centering
+\begin{tabular}{c|cccccccccccccccc}
+   & 00 & 01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 0a & 0b & 0c & 0d & 0e &
+0f \\ \hline
+00 & 63 & 7c & 77 & 7b & f2 & 6b & 6f & c5 & 30 & 01 & 67 & 2b & fe & d7 & ab &
+76 \\
+10 & ca & 82 & c9 & 7d & fa & 59 & 47 & f0 & ad & d4 & a2 & af & 9c & a4 & 72 &
+c0 \\
+20 & b7 & fd & 93 & 26 & 36 & 3f & f7 & cc & 34 & a5 & e5 & f1 & 71 & d8 & 31 &
+15 \\
+30 & 04 & c7 & 23 & c3 & 18 & 96 & 05 & 9a & 07 & 12 & 80 & e2 & eb & 27 & b2 &
+75 \\
+40 & 09 & 83 & 2c & 1a & 1b & 6e & 5a & a0 & 52 & 3b & d6 & b3 & 29 & e3 & 2f &
+84 \\
+50 & 53 & d1 & 00 & ed & 20 & fc & b1 & 5b & 6a & cb & be & 39 & 4a & 4c & 58 &
+cf \\
+60 & d0 & ef & aa & fb & 43 & 4d & 33 & 85 & 45 & f9 & 02 & 7f & 50 & 3c & 9f &
+a8 \\
+70 & 51 & a3 & 40 & 8f & 92 & 9d & 38 & f5 & bc & b6 & da & 21 & 10 & ff & f3 &
+d2 \\
+80 & cd & 0c & 13 & ec & 5f & 97 & 44 & 17 & c4 & a7 & 7e & 3d & 64 & 5d & 19 &
+73 \\
+90 & 60 & 81 & 4f & dc & 22 & 2a & 90 & 88 & 46 & ee & b8 & 14 & de & 5e & 0b &
+db \\
+a0 & e0 & 32 & 3a & 0a & 49 & 06 & 24 & 5c & c2 & d3 & ac & 62 & 91 & 95 & e4 &
+79 \\
+b0 & e7 & c8 & 37 & 6d & 8d & d5 & 4e & a9 & 6c & 56 & f4 & ea & 65 & 7a & ae &
+08 \\
+c0 & ba & 78 & 25 & 2e & 1c & a6 & b4 & c6 & e8 & dd & 74 & 1f & 4b & bd & 8b &
+8a \\
+d0 & 70 & 3e & b5 & 66 & 48 & 03 & f6 & 0e & 61 & 35 & 57 & b9 & 86 & c1 & 1d &
+9e \\
+e0 & e1 & f8 & 98 & 11 & 69 & d9 & 8e & 94 & 9b & 1e & 87 & e9 & ce & 55 & 28 &
+df \\
+f0 & 8c & a1 & 89 & 0d & bf & e6 & 42 & 68 & 41 & 99 & 2d & 0f & b0 & 54 & bb &
+16
+\end{tabular}
+\caption{The S-box for AES as a lookup-table for single bytes. The least
+significant nibble determines the column the most significant one the row.}
+\label{tab:sbox}
+\end{table}
+
+The permutation of plaintext is done as the algorithm applies some steps to the
+data. These steps are repeated as so-called rounds. Depending on the key length
+the used the number of rounds differs. Usually, in AES these steps are:
 
 \begin{itemize}
-\item \texttt{AddRoundKey} -
-\item \texttt{SubBytes} -
-\item \texttt{ShiftRows} -
-\item \texttt{MixColumns} -
+\item \texttt{AddRoundKey} - In this step, the round-key is added to the block
+via the XOR operation.
+\item \texttt{SubBytes} - In the substitute bytes step, every byte inside the
+block is substituted with the equivalent S-box entry. This is an alphabetic
+replace encryption.
+\item \texttt{ShiftRows} - Blocks can be seen as two-dimensional arrays. In this
+phase, the rows of the arrays are shifted to the left. The number of shifts
+depends on the block-size and the number of rows. The overflowing rows are
+re-added on the right side.
+\item \texttt{MixColumns} - In this phase, the data in the columns get changed.
+This happens with a matrix multiplication where each column-vector is multiplied
+with a constant matrix to form a new vector. The multiplication happens in the
+modulo of a Galois-Field polynomial, making this operation irreversible.
 \end{itemize}
 
 The algorithm applies these steps in the following order:
 
 \begin{enumerate}
-\item Key expansion -
-\item pre-round
+\item Key expansion - In this phase the round keys are generated to be later
+applied in the repeating steps. Those keys are derived from the main key. The
+round keys have the same size as the blocks used.
+\item Pre-round - In the first round only the key is added, no S-box lookup or
+shifting is applied.
 \begin{itemize}
 \item \texttt{AddRoundKey}
 \end{itemize}
-\item Encryption rounds
+\item Encryption rounds - These are the default round, which can be applied
+multiple times. The number of repetitions depends on the keysize.
 \begin{itemize}
 \item \texttt{SubBytes}
 \item \texttt{ShiftRows}
 \item \texttt{MixColumns}
 \item \texttt{AddRoundKey}
 \end{itemize}
-\item last-round
+\item Last-round - The last round  does not include the call to
+\texttt{MixColumns}, it was removed because of implementation reasons and with
+the ommiting the security was still provided, this matter is discussed in the
+Rijnadael design document~\cite{aesproposal}.
 \begin{itemize}
 \item \texttt{SubBytes}
 \item \texttt{ShiftRows}
 \item \texttt{AddRoundKey}
 \end{itemize}
 \end{enumerate}
+
+AES is used in most encryption schemes and protocols.  Like WPA2 adapts it to
+secure wireless networks. SSH uses it to have secure communication between
+computers. Intel CPUs even include AES instructions in their architectures,
+which speeds up encryption and decryption for libraries as OpenSSL.
+
+\subsubsection{Attacks on AES}
+
+\paragraph{Side-channel Attacks}
+
+\paragraph{Theoretical Attacks}
 
 \subsection{AES-GCM}
 
