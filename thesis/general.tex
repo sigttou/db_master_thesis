@@ -620,7 +620,12 @@ In their work they compare both methods as they try to recover cypher keys from
 the \texttt{AddRoundKey} and \texttt{SubBytes} function calls. Their work was
 done with widespread hardware, the Arduino Uno, making it possible for more
 people to learn from such attacks, as they can replicate such attacks with cheap
-hardware.
+hardware. With an increasing number of side-channel attacks on software and
+hardware, vendors increased the key-size of AES in their implementations. In
+their work, Neve~\etal~\cite{sidecomplex}, show that increasing the key-size
+does not increase the complexity of side-channel attacks in the same manner.
+They show for cache-based side-channel attacks an upgrade from 128 bits to 256
+only increases the complexity of an attack by a factor of 6 to 7.
 
 \subsection{AES-GCM}
 
