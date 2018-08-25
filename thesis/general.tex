@@ -585,6 +585,12 @@ Rijnadael design document~\cite{aesproposal}.
 \end{itemize}
 \end{enumerate}
 
+Decryption happens in the same manner as encryption with just the order of
+function calls reversed. The only thing is that a different S-box is used, but
+that one can be derived from the encryption one. All other operations usually
+have an inverse implementation or use the same, as for example, XOR calls do not
+differ in that regard.
+
 AES is used in most encryption schemes and protocols.  Like WPA2 adapts it to
 secure wireless networks. SSH uses it to have secure communication between
 computers. Intel CPUs even include AES instructions in their architectures,
@@ -592,9 +598,18 @@ which speeds up encryption and decryption for libraries as OpenSSL.
 
 \subsubsection{Attacks on AES}
 
-\paragraph{Side-channel Attacks}
+Since AES was released, researchers and attackers targeted the cypher and tried
+to find weak spots in it. Most of these attacks targeted a smaller number of
+rounds than the algorithm describes. In 2011, Bogdanov~\etal~\cite{bicliqueaes}
+showed an attack against AES which targets the whole number of rounds. Their
+attack weakens the security of AES slightly, where for 128-bit key recovery the
+computational complexity drops to $2^{126.1}$ and for 256-bit keys to
+$2^{254.4}$. As these are still very high complexities, the attack does not
+affect real-world usages of AES.
 
-\paragraph{Theoretical Attacks}
+Way more common than such cryptoanalysis attacks on AES are attacks targeting
+software and hardware implementations.
+
 
 \subsection{AES-GCM}
 
