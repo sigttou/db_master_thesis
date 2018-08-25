@@ -608,8 +608,19 @@ $2^{254.4}$. As these are still very high complexities, the attack does not
 affect real-world usages of AES.
 
 Way more common than such cryptoanalysis attacks on AES are attacks targeting
-software and hardware implementations.
-
+software and hardware implementations. For example,
+O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in a bootloader.
+Whereas most attacks target 128 bits, they showed one against 256. They use a
+Correlation Power Analysis (CPA) on a bootloader which loads an AES-256-CBC
+encrypted firmware. Besides recovering the full key, they also achieve recovery
+of the initialisation vector. Another hardware side-channel attack was made by
+Lo~\etal~\cite{sboxpoweranal}. They target the implementation of the S-box used
+in AES-128 besides using CPA, they also use differential power analysis (DPA).
+In their work they compare both methods as they try to recover cypher keys from
+the \texttt{AddRoundKey} and \texttt{SubBytes} function calls. Their work was
+done with widespread hardware, the Arduino Uno, making it possible for more
+people to learn from such attacks, as they can replicate such attacks with cheap
+hardware.
 
 \subsection{AES-GCM}
 
