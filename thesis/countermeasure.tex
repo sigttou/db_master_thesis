@@ -1,6 +1,34 @@
 %%%%%% Countermeasures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Countermeasures}\label{sec:countermeasure}
 
+In this chapter, we want to look at countermeasures. At first, we look at
+measures against rowhammer and microarchitectural attacks in general. Then we
+want to look at measures which would reduce the impact of our work. In the end,
+we want to close with measures which could be applied to computer systems, in
+general, to make them more secure.
+
+\section{Microarchitectural Attacks}
+
+For this kind of bugs, it is vital to check who is to blame for it, to know who
+needs to define the countermeasure. For attacks like
+Foreshadow~\cite{foreshadow}, Meltdown~\cite{meltdown} and
+Spectre~\cite{spectre} it is clear that that bug is caused by the CPUs
+manufactured by Intel and AMD. Even if there are countermeasures like
+Kaiser~\cite{kaiserpaper}, which would prevent leakage of kernel memory by
+Meltdown, the bug remains in the microcode, and other processes' memory can
+still be leaked. Vendors need to address such problems directly, by either
+deprecating CPUs or patch the bugs with microcode updates. Countermeasures
+applied to other layers might not be as effective and bring a performance drop
+with them.
+
+\subsection{Cache Attacks}
+
+\subsection{Rowhammer}
+
+\section{Reducing the Impact of Bit-Flip Testing}
+
+\section{Improving System Security}
+
 For the countermeasures against rowhammer, we can only repeat what
 Gruss~\etal~\cite{nethammer, flipinthewall} already said. It is a hardware fault
 which vendors have to fix.
