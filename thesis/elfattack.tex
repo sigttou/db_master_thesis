@@ -10,7 +10,8 @@ framework we created to find bitflips in binaries to change their behaviour to a
 pre-defined state. We start with a general overview of the framework design and
 go on with discussing the details on how we find bits to check, how the
 definition for searching works, how we test the bitflips and how results are
-captured and verified.
+captured and verified. In the end we discuss how these flips can be triggered
+by using rowhammer.
 
 \section{Changing the Execution Path with a Single Bitflip}
 
@@ -582,6 +583,25 @@ Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
 The timing is that high cause we had to make sure the server is up and ready to
 reply to our requests. For testing, we have used eight parallel testing
 instances.
+
+\subsection{Flipping bits in Binaries using Rowhammer}
+
+Targeting files with rowhammer is an improved attack on previously shown usages
+of the vulnerability. Gruss~\etal~\cite{flipinthewall} showed, that besides
+targeting page table entries, it is also possible to target shared libraries or
+ELF files directly. With this work, the possible attack vector for rowhammer
+grew. To flip the bit in the binary using rowhammer an attacker needs to make
+sure the file is loaded to DRAM. The operating system loads the ELF file in a
+defined structure to the memory. Targeting this loaded memory might be hard for
+an attacker, as offsets inside the memory might be randomised. As we tested ELF
+files directly and not loaded program images, the flips might be best directly
+applied to the ELF file. As of now, there exists no known attack which applies
+rowhammer to storage devices. Most operating systems use a disk cache. Meaning
+the OS will keep file content in DRAM as long as the memory is not used
+elsewhere. When a file is opened the system loads the content to the memory,
+which in case of loading an ELF would put the whole file into the DRAM, making
+it possible to apply bitflips. Therefore a later call to the program would load
+the flipped version already cached in DRAM.
 %}}}
 
 %% vim:foldmethod=expr
