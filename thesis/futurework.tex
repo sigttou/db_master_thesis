@@ -175,7 +175,21 @@ that these prediction models will influence microarchitectural attacks, as the
 behaviour of the CPU in certain states could be analysed and conclusions about
 faulty behaviour could be drawn.
 
-\section{Possible Attacks against Cryptography using Rowhammer}
+\section{Future Work regarding Rowhammer}
+
+We see rowhammer as a still open field of research, while vendors could fix the
+exploitation in DRAM chips, by increasing refresh rates or built
+non-load-leaking chips, there is other hardware which already faces similar
+issues, as Kurmus~\etal~\cite{rowssdhammer} showed for SSDs. We can see more
+devices and techniques targeted with such attacks.
+
+Also, an in-depth analysis of the rowhammer is still an open issue in the
+research of microarchitectural attacks. Analysing this issue might bring better
+knowledge of the hardware and why it faults. With this kind of knowledge is
+might be possible to target bits better in the DRAM, allowing the rowhammer
+attack to gain more attention and increase their attack vector even more.
+
+\subsection{Possible Attacks against Cryptography using Rowhammer}
 
 We showed how nonce misusage could be introduced by single bitflips to target
 AES-GCM implementations. Attackers could use this idea to target other
@@ -202,7 +216,7 @@ They show an attack which allows a partial key-recovery in they Elliptic Curve
 Algorithm implementation with only observing a single signing process. With a
 key recovery on this level, it allows forgery for future data transmissions.
 
-\section{Improving and Reusing our Testing-Framework}
+\section{Improving and Reusing our Framework}
 
 For attacks based on memory accesses, we can take away that tools such as
 Pin~\cite{pintool} or angr~\cite{angrpaper} will be a significant factor for

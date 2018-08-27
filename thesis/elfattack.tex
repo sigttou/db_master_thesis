@@ -595,13 +595,21 @@ sure the file is loaded to DRAM. The operating system loads the ELF file in a
 defined structure to the memory. Targeting this loaded memory might be hard for
 an attacker, as offsets inside the memory might be randomised. As we tested ELF
 files directly and not loaded program images, the flips might be best directly
-applied to the ELF file. As of now, there exists no known attack which applies
-rowhammer to storage devices. Most operating systems use a disk cache. Meaning
-the OS will keep file content in DRAM as long as the memory is not used
-elsewhere. When a file is opened the system loads the content to the memory,
-which in case of loading an ELF would put the whole file into the DRAM, making
-it possible to apply bitflips. Therefore a later call to the program would load
-the flipped version already cached in DRAM.
+applied to the ELF file.
+
+Another idea would be to use rowhammer on storage devices. As
+Kurmus~\etal~\cite{rowssdhammer} showed it is possible to find a similar
+behaviour as rowhammer for solid-state drives (SSD). They refer to a problem in
+MLC NAND chips, showing the possibility of a similar attack. They show that
+corrupting a block inside the SSD is enough to gain privilege escalation. Such
+an attack could also be used to flip bits inside the stored ELF files.
+
+Most operating systems use a disk cache. Meaning the OS will keep file content
+in DRAM as long as the memory is not used elsewhere. When a file is opened the
+system loads the content to the memory, which in case of loading an ELF would
+put the whole file into the DRAM, making it possible to apply bitflips.
+Therefore a later call to the program would load the flipped version already
+cached in DRAM.
 %}}}
 
 %% vim:foldmethod=expr
