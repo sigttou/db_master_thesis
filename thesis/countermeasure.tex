@@ -54,6 +54,7 @@ countermeasures. Tools like the Micro-Architectural Side Channel Attack Trapper
 prevent users from executing software making use of cache-attacks. With a
 physical memory separation of kernel memory and user memory, privilege
 escalation by applying bitflips to page-tables can be prevented.
+
 Brasser~\etal~\cite{canttouch} showed how such a separation could be built
 inside an OS, by changing the code for the physical memory allocator. Another
 way to prevent rowhammer would be to detect an ongoing attack during the runtime
@@ -63,6 +64,12 @@ measures and check for frequently accessed row to detect the so-called
 aggressors. As prevention, they refresh nearby rows to make them secure against
 possible flipping. Their benchmarking shows that they have less than one per
 cent false-positives and an average performance drop of about one per cent.
+
+Operating system vendors could implement another countermeasure for the file
+cache. Our work relies on the file cache to be used when we execute the ELF
+file. Operating systems could either recheck file contents before execution, as
+in recheck some checksum, or force loading binaries from the disk instead of
+using the cache. In such cases, the performance drop would be rather small.
 
 \section{Reducing the Impact of Bit-Flip Testing}
 
