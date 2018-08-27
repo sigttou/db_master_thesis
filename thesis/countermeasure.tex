@@ -66,19 +66,14 @@ cent false-positives and an average performance drop of about one per cent.
 
 \section{Reducing the Impact of Bit-Flip Testing}
 
-\section{Improving System Security}
-
-For the countermeasures against rowhammer, we can only repeat what
-Gruss~\etal~\cite{nethammer, flipinthewall} already said. It is a hardware fault
-which vendors have to fix.
-
-When looking at binary analysis and how we find the bitflips, it would help if
-systems would use different ELF files per device, this would make it harder to
-find flips working on all installed systems and each target would have to be
-analysed on its own. This step would break with a lot of other security
-properties. It is therefore not a recommended step to take as a countermeasure.
-Compiler developers and developers of wide-spread software are currently working
-on reproducible builds. Whereas the Debian close organisation
+From looking at our binary analysis and the impact, we get from knowing that
+operating system ship the same ELF files to all their users, we can conclude
+that having different ELF files per instance would drastically lower our impact.
+Doing so would mean, an attacker would need to analyse bitflips per target.
+Whereas this would be a valid countermeasure, it is not practical. Also, having
+different ELF files per system breaks other security properties. Compiler
+developers and developers of wide-spread software currently push the technique
+of reproducible builds. Whereas the Debian close organisation
 reproducible-builds~\cite{reprobuilds} is one of the most significant
 contributors to this field. The advantage of reproducible builds is that all
 binaries compiled with the same compiler, same configuration and same
@@ -96,9 +91,40 @@ secure processors. Other work that could be looked at as countermeasure is
 DRIVE~\cite{drive} by Rein or SPEE~\cite{spee} by Gelbart~\etal. Those apply
 code verification to binaries before execution and during runtime.
 
-Encrypting ELF content and only decrypt it during execution would also fix the
-problem of flips in the ELF file, as encryption would fail and execution would
-be halted if a bitflip has occurred.
+The encryption of binaries could in general seen as a countermeasure to this if
+encryption happens on each access to the file content based in DRAM if the whole
+file is stored decrypted it would not improve security. If a bit is flipped
+inside an encrypted ELF file, decryption is likely to fail, meaning the binary
+could not continue execution and the program would crash in case of an applied
+bitflip.
+
+\section{Improving General System Security}
+
+There is no unbreakable, unhackable, totally secure system. Users and vendors
+need to be aware of this. If vulnerabilities are found vendors should react to
+provide possibilities for their users to be secure like patched for either their
+microcode, operating system kernels or programs itself. Users should be informed
+about updates and apply them to their environment. For updates to be in place on
+time, it is vital for vendors to work closely with operating system developers,
+to push patches very soon after or even before a bug-release or public
+disclosure.
+
+As systems should generally be seen as unsafe and programs running cannot be
+trusted, a defensive approach for operating system development might be a right
+approach. Defensive coding is usually based on a multiple wall approach. This
+allows having defensive structures in place even if some defences get broken.
+Whereas developers should find motivation in writing secure code, mistakes
+happen, and old software is sometimes needed to run. Bugs like buffer-overflow
+often lead to code execution. Operating systems introduced techniques like
+address space layout randomisation (ASLR), to make attacks abusing
+buffer-overflow harder as an attacker would not know positions of injected code
+anymore. From this other attack were designed, using return-oriented programming
+(ROP) and using known positions inside shared libraries to craft code from
+code-pieces inside those. In their work Ruan~\etal~\cite{ropsur}, show a survey
+of ROP defence mechanisms. They point out the effectiveness of randomisation in
+memory, which would also increase the defence for rowhammer. Additional there
+are approaches described using instrumentation to detect ROP attacks, which
+could again also be used to detect the usage of rowhammer.
 %}}}
 
 %% vim:foldmethod=expr
