@@ -23,7 +23,46 @@ with them.
 
 \subsection{Cache Attacks}
 
+Cache attacks are mostly timing-attacks, where based on the content of the
+cache, accesses to memory take less time. Vendors cannot, and should not, fix
+this, as the attack is based on the principle of how caches work. Cache-timing
+attacks often try to gain information on other processes, by loading the same
+library and check what parts are accessed. Gruss~\etal~\cite{gruss2015cache}
+showed how such an attack could be used to build a keylogger, as memory accesses
+differ for different keys. They also show how to generate cache-attacks
+automatically without an in-depth knowledge of the targeted program and system.
+They also state that a possible removing of the \texttt{clflush} instruction is
+not a sufficient countermeasure, as there are ways to build cache-attacks with
+Evict+Reload. They propose disabling shared-memory as a countermeasure, but
+operating-systems use this technology a lot to have lower memory-footprints.
+They propose a solution where security relevant functions can be marked as not
+shared, to remain the low memory-footprint but protect functions which could
+leak sensitive information. It would be down to developers of libraries and
+programs to mark these functions then. Overall there might be no perfect
+countermeasure to cache-attacks, but there are ways to lower their impact on
+security.
+
 \subsection{Rowhammer}
+
+Rowhammer is an issue which occurs because of the missing quality checks by
+vendors, the leakage of bit-charges to change other memory areas is a hardware
+fault and needs fixing on this layer. Also, users of current DRAM chips need to
+be protected, and their risk of using their hardware should be minimalised. In
+their work about rowhammer, Gruss~\etal~\cite{flipinthewall} analyse various
+countermeasures. Tools like the Micro-Architectural Side Channel Attack Trapper
+(MASCAT) by Irazoqui~\etal~\cite{mascat} could be used by anti-virus software to
+prevent users from executing software making use of cache-attacks. With a
+physical memory separation of kernel memory and user memory, privilege
+escalation by applying bitflips to page-tables can be prevented.
+Brasser~\etal~\cite{canttouch} showed how such a separation could be built
+inside an OS, by changing the code for the physical memory allocator. Another
+way to prevent rowhammer would be to detect an ongoing attack during the runtime
+of a program. With their work about ANVIL, Aweke~\etal~\cite{anvil} showed such
+a detection technique. They track DRAM accesses using hardware performance
+measures and check for frequently accessed row to detect the so-called
+aggressors. As prevention, they refresh nearby rows to make them secure against
+possible flipping. Their benchmarking shows that they have less than one per
+cent false-positives and an average performance drop of about one per cent.
 
 \section{Reducing the Impact of Bit-Flip Testing}
 
