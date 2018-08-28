@@ -147,6 +147,11 @@ faults in memory, like rowhammer, could be used as a fault source here and work
 like this could be used to show future attacks using single bitflips. We can see
 more upcoming work in that regard in the future of fault attack research.
 
+Another possible field of research would be to check if it is possible to bring
+linear or differential properties to S-box calls via bitflips, or if targeting
+the functionality of shifting and replacing could break cryptographic
+assumptions made for AES.
+
 We already saw a combination between microarchitectural attacks and
 cryptographic attacks. Such as Yarom~\etal~\cite{noncerec} showed, that it is
 possible to use FLUSH+RELOAD cache attacks to recover ECDSA nonces in OpenSSL.
