@@ -190,12 +190,30 @@
 \usepackage{subcaption}
 \usepackage{amsmath,amssymb,amsfonts,xfrac}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows, trees}
+\usetikzlibrary{shapes.geometric, arrows, trees, matrix}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{circuitikz}
 \usepackage{listings}
 \usepackage{xcolor}
+
+\tikzset{
+  matrixstyle/.style={
+    matrix of nodes,
+    nodes in empty cells,
+    column sep      = -\pgflinewidth,
+    row sep         = -\pgflinewidth,
+    nodes={%
+      inner sep=0mm,outer sep=0pt,
+      minimum size=8mm,
+      text height=\ht\strutbox,text depth=\dp\strutbox,
+      draw
+    }
+}}
+
+\newcommand{\rn}[2]{%% "rn": "remember node"
+    \tikz[remember picture,baseline=(#1.base)]\node [inner sep=0] (#1) {$#2$};%
+}
 
 \tikzstyle{block} = [rectangle, minimum width=2cm, minimum height=0.8cm,
 text centered, draw=black]
