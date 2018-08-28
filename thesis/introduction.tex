@@ -12,6 +12,81 @@ was.
 Rowhammer is a side-effect introduced by dynamic random-access memory (DRAM)
 vendors in the past. Yoongnu \etal~\cite{rowhammergeneral} describe this
 phenomenon as an effect where memory could change without accessing it.
+
+\section{Goals and Motivation for the Thesis}
+
+\section{Contribution of this Work}
+
+\section{Outline of this Work}
+
+We present this work separated into different chapters. We start with a general
+overview of topics in this field. We begin by describing how programs get
+executed on modern computers and how operating systems handle application. For
+this, we also dig deeper into the general design for executables on Unix like
+systems, as we discuss the executable and linkable format (ELF) in more detail.
+As ELF files hold machine code executed by CPUs and our work relies heavily on
+how machine code is built, we also discuss the design of instructions in modern
+CPU architectures.  We then go on and look at different testing techniques in
+software development, where we compare and describe several options and check
+their advantages and disadvantages. In particular, we work out details about
+fuzzing, symbolic execution and instrumentation. For our work, we try to change
+the behaviour of programs by modifying their execution path, most of the time
+this behaviour is changed to gain improved privilege. Therefore we discuss the
+permission model used by Unix-based systems. Also, we also look at details of
+how permission switches work on these systems, especially of how the
+\texttt{setuid} property works. For permission separation and testing purposes
+we also take a look at the \texttt{chroot} provided by most Unix-like operating
+systems. We do not only target behaviour changes to gain a higher privilege but
+also target changes to bypass permission checks. And besides local attacks, we
+also look at remote possibilities. Therefore, we describe the networking and
+security principles used by most computers. We look at common web servers and
+TLS libraries and how these provide security. As our work targets cryptographic
+implementations, we take a detailed look at the advanced encryption standard
+(AES) and a variant of it using Galois/counter mode (AES-GCM). Our work relies
+heavily on rowhammer, which is a software-based microarchitectural attack.
+Therefore, we take a look at these attacks in general and give an overview of
+state of the art attacks using similar techniques. As timing plays a vital role
+in exploiting side-channels in this area, we take a look at precise timing
+measurement methods. We look at recent cache attacks and the impact those have
+on modern systems. We close our background overview with a details description
+of the rowhammer bug.
+
+We continue with describing our distribution. This is split into two parts, one
+being our testing of bitflips in ELF files and the other being attacks against
+cryptographic functions during runtime. We start with the ELF analysis and
+describe what impact a single bitflip can have to the execution path of a
+program. We go on with outlining possibilities to find bitflips which would
+change the behaviour in a manner so that it would benefit an attacker. We
+describe the design of our automated bitflip-search framework and how we applied
+it to real-world applications. We resume by showing the results of our tests for
+the applications of \texttt{sudo} and \texttt{nginx}. We also mention how we
+would apply these bitflips to a systems by using the rowhammer bug.
+
+In the second part of our contribution we describe the influence of bitflips on
+cryptographic implementations, we discuss the problems of nonce misuse and how
+this problem could be introduced to AES-GCM implemented in OpenSSL with
+bitflips. We give numbers for a likelihood of such a nonce-misuse introduced by
+a single bit flip. Also, we show how we tested this issue in a practical setup
+with a simple web server using OpenSSL.
+
+We go on with looking at countermeasures for issues in the field of
+microarchitectural attacks. We look at possible ways to prevent cache attacks
+and rowhammer. Also, we line out ways of reducing the impact of our tests on
+real-world setups. We close this section by describing how general system
+security could be improved.
+
+As microarchitectural attacks are an on-going and growing research field, we
+also look at possible future works. We look at the future of these attacks in
+general, how open source architectures could help to prevent some of them. We
+also talk about a possible attribution of machine learning to help to find new
+attack vectors. We also find possibilities to improve the impact of rowhammer,
+by looking at new attacks coming by applying it to further implementations of
+cryptography. In the end, we talk about how our framework could be helpful for
+future work and how it can be used in various testing and research environments
+with just little adaptions.
+
+We close our thesis by giving a conclusion describing our results and provide a
+summary of the outcome of our work.
 %}}}
 
 %% vim:foldmethod=expr
