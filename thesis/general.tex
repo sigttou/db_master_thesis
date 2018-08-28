@@ -994,6 +994,81 @@ Gruss~\etal also built a side-channel with this principle to transmit
 information between two processes, according to their paper~\cite{flushflush},
 they reach a transmission speed of $496$ kilobytes per second.
 
+\subsection{Impact of Microarchitectural Attacks}
+
+With growing knowledge on the CPU and caching level, researchers found major
+security vulnerabilities in modern CPUs. Attacks like Meltdown, Spectre and
+Foreshadow were reported by many newspapers and influenced the awareness of
+microarchitectural attacks by the general public a lot.
+
+\subsubsection{Meltdown}
+
+Lipp~\etal~\cite{meltdown} presented an attack targeting the memory isolation
+between the operating system's kernel and the userland memory and shows how the
+CPU's out-of-order execution can lead to a leak of information from kernel
+memory to a user program. Meltdown makes use of a side-effect of this execution
+method. The CPU wants to use as many computing units as possible. It will
+execute code as soon as all dependencies are resolved. So inside a program
+computing could happen ahead of other code parts. In a simplified view, the
+attacker accesses kernel memory, which the CPU reads out-of-order, the CPU
+executes other code and receives an exception because of the disallowed memory
+access, which already happened before. This execution order still makes
+accesses to caches and DRAM as it would normally access the memory. Therefore
+the cache could be used to transmit the information. Meltdown makes use of the
+Flush+Reload cache attack, as they use the read kernel memory to flush certain
+cache lines. Access times to memory then tells which cache lines the program
+cleaned. Hence it leaks the kernel memory content. Lipp~\etal propose the
+KAISER countermeasure as a fix for this vulnerability. This work by
+Gruss~\etal~\cite{kaiserpaper} is used to separate kernel and user memory
+addresses. Their proof-of-concept implements a complete separation of the two
+memory spaces inside the Linux kernel, which makes sure no information about the
+kernel execution is leaked to the userspace.
+
+\subsubsection{Spectre}
+
+Kocher~\etal~\cite{spectre} presented this attack also targeting information
+leakage by features modern CPUs provide. The attack gained its name form
+exploiting speculative execution which makes use of the branch-prediction unit
+inside the CPU. The CPU executes code which maybe needs execution, later on,
+the CPU executes multiple branches and results are either thrown away or
+reported to the program later on. Spectre uses this behaviour to leak
+information to an attacker by using side-channels inside the predicted code.
+The attack breaks multiple security measures which would usually be in place in
+modern operating systems. In their work, the researchers show multiple variants
+of exploiting the different behaviours caused by speculative execution. For
+example see the code in Listing~\ref{lst:spectre1}, as shown in their work. The
+speculative execution executes the array access before the if condition check.
+The \texttt{array1[x]} can point to kernel memory, for example, returning some
+secret, then the \texttt{array2} is accessed at a page which refers to the
+secret. This can later be checked again using cache accesses timings using
+Prime+Probe or Flush+Reload again. The attacker can see the outcome of the
+accesses after the condition check, even if it fails, as it was executed
+speculatively. Other variants make use of similar behaviours of the CPU. The
+researchers also show how the Spectre attack can be applied using JavaScript.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Code for Spectre variant one, showing a
+conditional branch example, as seen by the work done by
+Kocher~\etal~\cite{spectre}.},
+                   label={lst:spectre1}]
+if(x < array1_size)
+  y = array2[array1[x] * 4096];
+\end{lstlisting}
+\end{minipage}
+
+\subsubsection{Foreshadow}
+
+An attack by van Bulck~\etal~\cite{foreshadow}, targeting the Guard eXtension
+(SGX) in current Intel CPUs. The researchers use already known speculative
+execution bugs to gain knowledge of secret memory used inside the SGX
+environment which is transferred to the CPU's cache. The attack works similar
+to the Meltdown attack, but it is more challenging because of the SGX and its
+additional memory protection layers. With this attack, the security promises on
+the hardware layer made by Intel are broken. Countermeasures against this
+attack cannot be applied to the kernel layer. Intel needs to patch their
+microcode in order to prevent the Foreshadow attack.
+
 \subsection{Rowhammer}
 
 Technology is steadily changing and improving, with vendors of computer parts
