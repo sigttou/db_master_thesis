@@ -299,6 +299,43 @@ instrumenting a binary are called pintools, the framework provides their API
 calls for C++, but also bindings for Python can be found in
 \texttt{python-pin}~\cite{pythonpin}.
 
+In the paper about Pin, Luk~\etal~\cite{pintool} describe the system of Pin and
+how the written pintool is combined with the application in more detail. When
+instrumenting a program, three binaries are being used. One is the application
+to instrument, one is the compiled pintool, and one is Pin itself. Pin can be
+seen as a userland virtual machine. When the instrumentation starts Pin is
+loaded into the address space of the application, then the \texttt{ptrace}
+system-call is used to capture the program's behaviour. When Pin has initialised
+itself the tool overtakes the entry point of the program, or the current program
+counter if it was attached to a running application, and uses its just-in-time
+(JIT) compiler to continue the execution. They state that their approach of
+loading Pin has various advantages over other instrumentation tools, as those
+mostly use \texttt{LD\_PRELOAD}, which would not work on statically linked
+binaries and also using an additional library, the address space would be
+changed from a normal execution.
+
+The JIT compiler inside Pin is used to inject the instrumentation API into the
+application and then the pintool to use it. The code is loaded into a preserved
+code-cache and then executed. Pin always tries to execute as many instructions
+as possible without interfering it for debugging. That is why they state,
+execution of the code happens one trace at a time. Whereas a trace is either
+till a control change happens, like branching, a call or return, or a
+pre-defined API call is needed for the instruction. With this approach, they
+gain better performance than other instrumentation techniques. In their paper,
+they also state that the JIT is not the bottleneck but the instrumenting code
+inside the application. That is the reason why Pin tries to optimise the
+injected code as good as possible. As their first routine, they inline all
+analysis functions. This is faster as no calls happen, which would cause
+registers to be used for the arguments. Most other debugging tools use the so
+\texttt{eflags} registers, which is not ideal, as storing and restoring these
+flags is time-consuming, and an extra stack has to be used, as the original
+stack is not allowed to be modified. Pin detects in their JIT if the
+\texttt{eflag} content is needed later on, and only if it is, saving routines
+are called. Another optimisation for their framework is the API call
+\texttt{IPOINT\_ANYWHERE}, which specifies that the analysis call can happen
+anywhere in the instrumentation context, which allows better optimisation of the
+instruction order.
+
 \section{Permission Model in Unix-based Systems}
 
 The POSIX standard~\cite{posix} defines many properties for operating systems,
