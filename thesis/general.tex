@@ -579,7 +579,8 @@ the used the number of rounds differs. Usually, in AES these steps are:
 \begin{itemize}
 \begin{samepage}
 \item \texttt{AddRoundKey} - In this step, the round-key is added to the block
-via the XOR operation.
+via the XOR operation. Figure~\ref{fig:addroundkey} shows how the byte blocks
+are combined to craft the new encrypted one.
 \item \texttt{SubBytes} - In the substitute bytes step, every byte inside the
 block is substituted with the equivalent S-box entry. This is an alphabetic
 replace encryption. Figure~\ref{fig:subbytes} illustrates how the function
@@ -587,13 +588,54 @@ works on an example block.
 \item \texttt{ShiftRows} - Blocks can be seen as two-dimensional arrays. In this
 phase, the rows of the arrays are shifted to the left. The number of shifts
 depends on the block-size and the number of rows. The overflowing rows are
-re-added on the right side.
+re-added on the right side. Figure~\ref{fig:shiftrows} shows how this function
+is applied to the matrix-blocks.
 \item \texttt{MixColumns} - In this phase, the data in the columns get changed.
 This happens with a matrix multiplication where each column-vector is multiplied
 with a constant matrix to form a new vector. The multiplication happens in the
 modulo of a Galois-Field polynomial, making this operation irreversible.
+Figure~\ref{fig:mixcolumns} shows this function application. The multiplication
+happens modulo $x^4 + 1$ and the polynomial of $c(x) = 3x^3 + x^2 + x + 2$ is
+multiplied.
 \end{samepage}
 \end{itemize}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[remember picture]
+\matrix(m1)[matrixstyle]
+{
+$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
+$a_{1,0}$ & $a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$  \\
+$a_{2,0}$ & |[draw, fill=red!20]|\rn{a1}{a_{2,1}} & $a_{2,2}$ & $a_{2,3}$  \\
+$a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
+};
+\matrix(km)[matrixstyle, below of=m1, yshift=-3cm]
+{
+$k_{0,0}$ & $k_{0,1}$ & $k_{0,2}$ & $k_{0,3}$  \\
+$k_{1,0}$ & $k_{1,1}$ & $k_{1,2}$ & $k_{1,3}$  \\
+$k_{2,0}$ & |[draw, fill=red!20]|\rn{k1}{k_{2,1}} & $k_{2,2}$ & $k_{2,3}$  \\
+$k_{3,0}$ & $k_{3,1}$ & $k_{3,2}$ & $k_{3,3}$  \\
+};
+\node (xorbox) [XOR, right of=m1, scale=2, xshift=1cm, yshift=-0.5cm] {};
+\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
+{
+$b_{0,0}$ & $b_{0,1}$ & $b_{0,2}$ & $b_{0,3}$  \\
+$b_{1,0}$ & $b_{1,1}$ & $b_{1,2}$ & $b_{1,3}$  \\
+$b_{2,0}$ & |[draw, fill=red!20]|\rn{b1}{b_{2,1}} & $b_{2,2}$ & $b_{2,3}$  \\
+$b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
+};
+  \end{tikzpicture}
+  \begin{tikzpicture}[overlay, remember picture]
+\draw [arrow] (a1) -- (xorbox.west);
+\draw [arrow] (k1) -- (xorbox.south);
+\draw [arrow] (xorbox.east) -- (b1);
+  \end{tikzpicture}
+  \caption{Design of the \texttt{AddRoundKey} function inside AES, according to
+the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is XORed with
+one byte of the key-block and placed in the $b$-block.}
+  \label{fig:addroundkey}
+\end{figure}
 
 \begin{figure}
   \centering
@@ -606,7 +648,7 @@ $a_{2,0}$ & |[draw, fill=red!20]|\rn{b1}{a_{2,1}} & $a_{2,2}$ & $a_{2,3}$  \\
 $a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
 };
 \node (sbox) [segblock, right of=m1, xshift=2cm] {S-box};
-\matrix(m2)[matrixstyle, right of=sbox, xshift=2cm]
+\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
 {
 $b_{0,0}$ & $b_{0,1}$ & $b_{0,2}$ & $b_{0,3}$  \\
 $b_{1,0}$ & $b_{1,1}$ & $b_{1,2}$ & $b_{1,3}$  \\
@@ -619,9 +661,65 @@ $b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
 \draw [arrow] (sbox) -- (b2);
   \end{tikzpicture}
   \caption{Design of the \texttt{SubBytes} function inside AES, according to
-the AES propsal~cite{aesproposal}. Each byte in the $a$-block is looked up in
+the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is looked up in
 the S-box from table~\ref{tab:sbox} and placed in the $b$-block.}
   \label{fig:subbytes}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[remember picture]
+\matrix(m1)[matrixstyle]
+{
+$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
+$a_{1,0}$ & $a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$  \\
+$a_{2,0}$ & $a_{2,1}$ & $a_{2,2}$ & $a_{2,3}$  \\
+$a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
+};
+\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
+{
+$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
+$a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$ & $a_{1,0}$  \\
+$a_{2,2}$ & $a_{2,3}$ & $a_{2,0}$ & $a_{2,1}$  \\
+$a_{3,3}$ & $a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$  \\
+};
+  \end{tikzpicture}
+  \begin{tikzpicture}[overlay, remember picture]
+\draw [arrow] (m1) -- (m2);
+  \end{tikzpicture}
+  \caption{Design of the \texttt{ShiftRows} function inside AES, according to
+the AES propsal~\cite{aesproposal}. Each row is shifted according to their
+Y-axis index.}
+  \label{fig:shiftrows}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[remember picture]
+\matrix(m1)[matrixstyle]
+{
+$a_{0,0}$ & $a_{0,1}$ & |[draw, fill=red!20]|\rn{b11}{a_{0,2}} & $a_{0,3}$  \\
+$a_{1,0}$ & $a_{1,1}$ & |[draw, fill=red!20]|\rn{b12}{a_{1,2}} & $a_{1,3}$  \\
+$a_{2,0}$ & $a_{2,1}$ & |[draw, fill=red!20]|\rn{b13}{a_{2,2}} & $a_{2,3}$  \\
+$a_{3,0}$ & $a_{3,1}$ & |[draw, fill=red!20]|\rn{b14}{a_{3,2}} & $a_{3,3}$  \\
+};
+\node (cxmul) [segblock, right of=m1, xshift=2cm] {$\otimes c(x)$};
+\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
+{
+$b_{0,0}$ & $b_{0,1}$ & |[draw, fill=red!20]|\rn{b21}{b_{0,2}} & $b_{0,3}$  \\
+$b_{1,0}$ & $b_{1,1}$ & |[draw, fill=red!20]|\rn{b22}{b_{1,2}} & $b_{1,3}$  \\
+$b_{2,0}$ & $b_{2,1}$ & |[draw, fill=red!20]|\rn{b23}{b_{2,2}} & $b_{2,3}$  \\
+$b_{3,0}$ & $b_{3,1}$ & |[draw, fill=red!20]|\rn{b24}{b_{3,2}} & $b_{3,3}$  \\
+};
+  \end{tikzpicture}
+  \begin{tikzpicture}[overlay, remember picture]
+  \draw [arrow] (b12) -- (cxmul);
+  \draw [arrow] (cxmul) -- (b22);
+  \end{tikzpicture}
+  \caption{Design of the \texttt{MixColumns} function inside AES, according to
+the AES propsal~\cite{aesproposal}. Each column-vector in the $a$-block is
+multiplied with a polynomial matrix $c(x)$ and then placed in the $b$-block.}
+  \label{fig:mixcolumns}
 \end{figure}
 
 The algorithm applies these steps in the following order:
