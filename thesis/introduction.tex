@@ -30,11 +30,11 @@ rowhammer in the position of one of the most popular microarchitectural attacks.
 
 Testing and debugging were always a significant part of software technology, and
 with rising sizes of projects and an increasing number of old code bases, it is
-more vital than ever. Not only developers are putting a lot of work into these
+more vital than ever. Not only developers are put much work into these
 topics but also researchers releasing new ways of testing regularly. With modern
 approaches for testing like fuzzying, bug searching in unknown code got more
-successful. Besides testing, also the field of proving software correct got a
-lot of attention. With symbolic execution techniques, the possibility to prove
+successful. Besides testing, also the field of proving software correct got
+much attention. With symbolic execution techniques, the possibility to prove
 each software state on its own got more practical. The popularity of the
 symbolic execution framework \texttt{angr}~\cite{angrpaper} proves this point.
 This tool mostly gets used in testing, with the combination of fuzzing but also
@@ -120,16 +120,17 @@ permission model used by Unix-based systems.
 
 Also, we also look at details of how permission switches work on these systems,
 especially of how the \texttt{setuid} property works. For permission separation
-and testing purposes we also take a look at the \texttt{chroot} provided by most
-Unix-like operating systems. We do not only target behaviour changes to gain a
-higher privilege but also target changes to bypass permission checks.
+and testing purposes we also take a look at the \texttt{chroot}
+environment provided by most Unix-like operating systems. We do not only target
+behaviour changes to gain a higher privilege but also target changes to bypass
+permission checks.
 
-Besides local attacks, we also look at remote possibilities. Therefore, we
-describe the networking and security principles used by most computers. We look
-at common web servers and TLS libraries and how these provide security. As our
-work targets cryptographic implementations, we take a detailed look at the
-advanced encryption standard (AES) and a variant of it using Galois/counter
-mode (AES-GCM).
+Moreover, besides local attacks, we also look at remote possibilities.
+Therefore, we describe the networking and security principles used by most
+computers. We look at common web servers and TLS libraries and how these
+provide security. As our work targets cryptographic implementations, we take a
+detailed look at the advanced encryption standard (AES) and a variant of it
+using Galois/counter mode (AES-GCM).
 
 Our work relies heavily on rowhammer, which is a software-based
 microarchitectural attack. Therefore, we take a look at these attacks in general
