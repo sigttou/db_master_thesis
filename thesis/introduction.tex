@@ -4,50 +4,67 @@
 Microarchitectural attacks are becoming more and more popular. With the latest
 contribution in this field, releases like Meltdown~\cite{meltdown} and
 Spectre~\cite{spectre} made the topic known to the general public. Many media
-outlets reported on the issues of modern CPUs and their design. Where it was
-mostly x86 vendors like Intel or AMD, also ARM was affected by such exploiting
-techniques.
+outlets reported on these issues of modern CPUs and their design. Where it was
+mostly vendors of x86-architecture CPUs like Intel or AMD, also ARM, and with
+it, most mobile devices were affected by such exploiting techniques.
 
-Issues like these show one more time that vendors set performance above security
-for their users. The demand for better releases of hardware is rising all the
-time, and not only vendors of CPUs are affected by this demand. Another field of
-silicon chip design ran into similar problems in the past, namely DRAM chip
-vendors. In 2015 Kim~\etal~\cite{rowhammergeneral} released their paper
-"RowHammer", showing how specially crafted memory access routines can cause bits
-in the DRAM to flip, without accessing these directly. This work showed how the
-demand for higher memory density caused vendors to lower quality management,
-causing interfering voltages and currents to influence other memory storage
-transistors. Whereas this was just seen as a stability issue, Google's Project
-Zero showed how rowhammer could be used for privilege escalation and sandbox
-escapes~\cite{projectzerorow}. With results like this research in the field of
-rowhammer kicked off, where Gruss~\etal~\cite{nethammer} showed how bitflips
-could be triggered by just specially crafted network requests and Van der
-Veen~\etal~\cite{drammer} showed how rowhammer could be applied to mobile
-platforms.
+Issues like these show one more time that vendors set performance above
+security. The demand for better releases of hardware is rising all the time, and
+not only vendors of CPUs are affected by this demand. Another field of silicon
+chip design ran into a similar problem in the past, namely DRAM chip vendors. In
+2015 Kim~\etal~\cite{rowhammergeneral} released their paper "RowHammer", showing
+how specially crafted memory access routines can cause bits in DRAM chips to
+flip, without accessing them directly. This work showed how the demand for
+higher memory density caused vendors to lower quality management, causing
+interfering voltages and leaking currents to influence other memory storage
+cells. Whereas this at first was just seen as a stability issue, Google's
+Project Zero showed how rowhammer could be used for privilege escalation and
+sandbox escapes~\cite{projectzerorow}. With results like this, the interest in
+researching the field of rowhammer increased. Where Gruss~\etal~\cite{nethammer}
+showed how bitflips could be triggered by just specially crafted network
+requests, they also showed that bitflips could be triggered by using JavaScript
+inside modern web browsers~\cite{rowhammerjs}. Van der Veen~\etal~\cite{drammer}
+showed that not only users of personal computers are affected by rowhammer, but
+it is also an issue for mobile platforms. Releases like these papers put
+rowhammer in the position of one of the most popular microarchitectural attacks.
 
-Testing and debugging always has been a significant part of software technology,
-with rising sizes of projects and an increasing number of old code bases it is
-more vital than ever. With modern approaches for testing like fuzzying, bug
-searching in unknown code got more successful. With techniques like symbolic
-execution and instrumentation understanding what programs do at machine code
-layer got easier, allowing researchers to either see what happens to the
-computing environment or prove that a state of a program is secure.
+Testing and debugging were always a significant part of software technology, and
+with rising sizes of projects and an increasing number of old code bases, it is
+more vital than ever. Not only developers are putting a lot of work into these
+topics but also researchers releasing new ways of testing regularly. With modern
+approaches for testing like fuzzying, bug searching in unknown code got more
+successful. Besides testing, also the field of proving software correct got a
+lot of attention. With symbolic execution techniques, the possibility to prove
+each software state on its own got more practical. The popularity of the
+symbolic execution framework \texttt{angr}~\cite{angrpaper} proves this point.
+This tool mostly gets used in testing, with the combination of fuzzing but also
+security researchers use \texttt{angr} to find exploitable code parts.
+
+Understanding what programs do and how they work on machine layer gets harder
+with every release of new computing mechanisms. Instrumentation is a technique
+to inject code to programs providing the possibility to collect runtime
+information. With tools like Intel Pin~\cite{pintool} it gets possible to check
+changes to processor registers, log accessed memory and performance measuring at
+machine code level.
 
 \section{Goals and Motivation for the Thesis}
 
 With our work, we want to increase the awareness about rowhammer and making the
-issue better known. Gruss~\etal~\cite{flipinthewall} have already shown that
-current rowhammer defences are not suitable for attackers They show, that the
-countermeasures do not prevent them from still abusing bitflips to gain
-privilege escalation. We want to take this approach further to present an easy
-way to find dangerous bitflips in programs. With our work, we want to increase
-the impact of rowhammer once more, supporting the research in better
+issue better known to the public. We want to use the attention given to
+microarchitectural attacks to improve the knowledge about other work in this
+field. For rowhammer, Gruss~\etal~\cite{flipinthewall} already showed that
+current defences are not suitable. Attackers can still use bitflips to gain
+privilege escalation or use them to do other things threatening the security of
+users. We want to take this approach further to present an easy way to find
+bitflips in programs which cause them to behave differently. With our work, we
+want to increase the impact of rowhammer, supporting the research of better
 countermeasures and forcing vendors to built secure and higher quality DRAM
 chips again.
 
 With the knowledge gained from already released rowhammer attacks and the
-knowledge gained from modern testing approaches, we want to combine the two
-fields to get the best possible outcome for finding feasible bitflips.
+knowledge gained from modern testing approaches, like fuzzing, we want to
+combine these two fields to get the best possible outcome for finding feasible
+bitflips.
 
 Whereas securing systems is something wanted by most users and vendors, we want
 to show that without flawless hardware components security claims on other
@@ -59,20 +76,29 @@ internet connections.
 \section{Contribution of this Work}
 
 Our contribution to the field of microarchitectural attacks and rowhammer is
-providing a practical analysis of real-world applications and how bitflips could
+providing a practical analysis of real-world applications and how bitflips
 affect them. We present a framework which can be used to find bitflips suitable
-to change a program's behaviour in a given way. This framework is extensible and
-adaptable to multiple purposes. We show example use cases by finding bitflips
-bypassing the password check in the \texttt{sudo} program and bitflips bypassing
-HTTP authentication in the very popular \texttt{nginx} web server. We present
-the achieving bitflips not only in the main executable file but also in loaded
-dynamic libraries.
+to change a program's behaviour in a desired way. The structure of the framework
+is designed to be extensible and adaptable for multiple purposes.
+
+We apply our tool to real-world applications to show the impact bitflips could
+have on users of personal computers. On one hand, we show how privilege
+escalation bitflips can be found in the \texttt{sudo} program. Where we
+successfully find flips allowing us to skip the password check. On the other
+hand, we also analyse the popular \texttt{nginx} web server. Here we show bits
+which when toggled permit an attacker to bypass the HTTP authentication
+measures. We present results for these two applications and show all possible
+flips allowing us to achieve our set goals. Besides analysing the bits inside
+the program's executable, we also examine any dynamically loaded library it
+uses.
 
 In addition to that, we contributed to rowhammer research by looking at possible
-cryptographic vulnerabilities introduced by bitflips. We look at the work of
-Böck~\etal~\cite{gcmnonceattack}, who showed how web servers were reusing nonces
-when using AES-GCM. We took their approach to bypass the fixes applied by server
-software to re-introduce this nonce misusage via bitflips.
+cryptographic vulnerabilities introduced by bitflips. As a basis, we look at the
+work by Böck~\etal~\cite{gcmnonceattack}, who showed how web servers were
+misusing nonces when using AES-GCM. We took their approach to bypass the fixes
+applied by server software to re-introduce this nonce misusage via bitflips.
+Here we look at the current implementation of AES-GCM in the TLS library
+OpenSSL, used by most web servers.
 
 \section{Outline of this Work}
 
@@ -81,6 +107,7 @@ overview of topics in this field. We begin by describing how programs get
 executed on modern computers and how operating systems handle application. For
 this, we also dig deeper into the general design for executables on Unix like
 systems, as we discuss the executable and linkable format (ELF) in more detail.
+
 As ELF files hold machine code executed by CPUs and our work relies heavily on
 how machine code is built, we also discuss the design of instructions in modern
 CPU architectures.  We then go on and look at different testing techniques in
@@ -89,24 +116,28 @@ their advantages and disadvantages. In particular, we work out details about
 fuzzing, symbolic execution and instrumentation. For our work, we try to change
 the behaviour of programs by modifying their execution path, most of the time
 this behaviour is changed to gain improved privilege. Therefore we discuss the
-permission model used by Unix-based systems. Also, we also look at details of
-how permission switches work on these systems, especially of how the
-\texttt{setuid} property works. For permission separation and testing purposes
-we also take a look at the \texttt{chroot} provided by most Unix-like operating
-systems. We do not only target behaviour changes to gain a higher privilege but
-also target changes to bypass permission checks. And besides local attacks, we
-also look at remote possibilities. Therefore, we describe the networking and
-security principles used by most computers. We look at common web servers and
-TLS libraries and how these provide security. As our work targets cryptographic
-implementations, we take a detailed look at the advanced encryption standard
-(AES) and a variant of it using Galois/counter mode (AES-GCM). Our work relies
-heavily on rowhammer, which is a software-based microarchitectural attack.
-Therefore, we take a look at these attacks in general and give an overview of
-state of the art attacks using similar techniques. As timing plays a vital role
-in exploiting side-channels in this area, we take a look at precise timing
-measurement methods. We look at recent cache attacks and the impact those have
-on modern systems. We close our background overview with a details description
-of the rowhammer bug.
+permission model used by Unix-based systems.
+
+Also, we also look at details of how permission switches work on these systems,
+especially of how the \texttt{setuid} property works. For permission separation
+and testing purposes we also take a look at the \texttt{chroot} provided by most
+Unix-like operating systems. We do not only target behaviour changes to gain a
+higher privilege but also target changes to bypass permission checks.
+
+Besides local attacks, we also look at remote possibilities. Therefore, we
+describe the networking and security principles used by most computers. We look
+at common web servers and TLS libraries and how these provide security. As our
+work targets cryptographic implementations, we take a detailed look at the
+advanced encryption standard (AES) and a variant of it using Galois/counter
+mode (AES-GCM).
+
+Our work relies heavily on rowhammer, which is a software-based
+microarchitectural attack. Therefore, we take a look at these attacks in general
+and give an overview of state of the art attacks using similar techniques. As
+timing plays a vital role in exploiting side-channels in this area, we take a
+look at precise timing measurement methods. We look at recent cache attacks and
+the impact those have on modern systems. We close our background overview with a
+details description of the rowhammer bug.
 
 We continue with describing our distribution. This is split into two parts, one
 being our testing of bitflips in ELF files and the other being attacks against
