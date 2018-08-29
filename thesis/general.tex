@@ -145,15 +145,19 @@ ELF header but serve different purposes for the operating system. Figure
 ~\ref{fig:elfstruct} show the connection between sections and segments via the
 two different headers. Sections and segments can be seen as follows:
 
-\paragraph{Sections} describe the binary for the linking view. A section
-contains instructions, data, symbol table and relocation information. Sections
-reserved for the system start with a dot, there might be additional sections
-defined by the user. Sections are created and managed by the linker. Sections
-that are directly loaded into the program's memory image are initialized data
-(\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}) and
-executable instructions (\texttt{.text}).
+\subsubsection{Sections}
 
-\paragraph{Segments} describe the virtual memory layout of a loaded binary.
+These describe the binary for the linking view. A section contains instructions,
+data, symbol table and relocation information. Sections reserved for the system
+start with a dot, there might be additional sections defined by the user.
+Sections are created and managed by the linker. Sections that are directly
+loaded into the program's memory image are initialized data (\texttt{.data,
+.data1}), read-only data (\texttt{.rodata, .rodata1}) and executable
+instructions (\texttt{.text}).
+
+\subsubsection{Segments}
+
+They describe the virtual memory layout of a loaded binary.
 Figure~\ref{fig:elfstruct} shows how segments are applied in an ELF file.
 Usually, the linker splits segments into different behaviours the loader needs
 to apply. For example, all read-only data sections are in the same segment. When
@@ -172,15 +176,17 @@ address. During the loading step, the operating system is free to change the
 base address in the programs virtual address space. The loader then places
 additional memory according to these offsets.
 
-\paragraph{Dynamic Linking} is needed because it is widespread to have multiple
-functions used by different programs. Shared libraries can be used to provide
-such general functions. When deploying programs, developers usually make sure
-all needed shared libraries exist on the target platform or ship their software
-with those included. When depending on libraries by the system, the loader will
-move the shared libraries into memory at the desired entry point. The loader
-fetches the information about the needed library from the ELF file and then
-checks the library paths provided by the operating system if the library is
-available to be loaded.
+\subsubsection{Dynamic Linking}
+
+This technique is needed because it is widespread to have multiple functions
+used by different programs. Shared libraries can be used to provide such
+general functions. When deploying programs, developers usually make sure all
+needed shared libraries exist on the target platform or ship their software with
+those included. When depending on libraries by the system, the loader will move
+the shared libraries into memory at the desired entry point. The loader fetches
+the information about the needed library from the ELF file and then checks the
+library paths provided by the operating system if the library is available to be
+loaded.
 
 \section{Analysis and Testing of Executables}
 
@@ -437,14 +443,16 @@ at most times. The client has to transmit the credentials with every request,
 and there is no logout function as in other techniques using cookies or session
 identifiers.
 
-\paragraph{Access control in Apache and \texttt{nginx}} is done by providing
-Basic Access Authentication in the default configuration. Apache makes use of
-\texttt{ht} files, which are an extension to the usual server configuration for
-users with limited rights, see their documentation~\cite{apacheauthdoc} for
-further details. Apache introduced \texttt{htpasswd}-files to make use of BA,
-which stores the user credentials. \texttt{nginx} later adapted these files for
-their web server implementation. The \texttt{htpasswd}-files keep the data
-either in plaintext or hashed. To create these files Apache provides the tool
+\subsubsection{Access control in Apache and \texttt{nginx}}
+
+Basic Access Authentication is used by these two web servers in the default
+configuration. Apache makes use of \texttt{ht} files, which are an extension to
+the usual server configuration for users with limited rights, see their
+documentation~\cite{apacheauthdoc} for further details. Apache introduced
+\texttt{htpasswd}-files to make use of BA, which stores the user credentials.
+\texttt{nginx} later adapted these files for their web server implementation.
+The \texttt{htpasswd}-files keep the data either in plaintext or hashed. To
+create these files Apache provides the tool
 \texttt{htpasswd}~\cite{htpasswddoc}. This tool uses MD5 hashing per default (as
 of version 2.2.18), but it is possible to change the hashing algorithm to
 something more secure. On a request including BA, the web server will look up
@@ -518,16 +526,18 @@ standard related to Security techniques and encryption algorithms.
 AES is a block cypher, it is applied to data blocks, as the plaintext and a
 given key are permutated together to create the ciphertext.
 
-\paragraph{Substitution Boxes} so-called S-boxes are a significant part of the
-AES algorithm. In a simplified view, they can be seen as a lookup table which
-shows which value has to be replaced which what other value. These lookup tables
-are designed in a way that there is no mathematical analysis possible, based on
-linear or differential dependencies between values. In AES the Rijndael S-box is
-used, the lookup-table describing this S-box can be seen in
-table~\ref{tab:sbox}. A lookup in the S-box for a byte works as the least
-significant nibble (four bytes) determines the column to be used, and the most
-significant nibble determines the row. For example, the entry byte of  0x3C
-would output 0xEB, using the given S-box.
+\subsubsection{Substitution Boxes}
+
+So-called S-boxes are a significant part of the AES algorithm. In a simplified
+view, they can be seen as a lookup table which shows which value has to be
+replaced which what other value. These lookup tables are designed in a way that
+there is no mathematical analysis possible, based on linear or differential
+dependencies between values. In AES the Rijndael S-box is used, the
+lookup-table describing this S-box can be seen in table~\ref{tab:sbox}. A
+lookup in the S-box for a byte works as the least significant nibble (four
+bytes) determines the column to be used, and the most significant nibble
+determines the row. For example, the entry byte of $0x3C$ would output $0xEB$,
+using the given S-box.
 
 \begin{table}[]
 \centering
@@ -923,7 +933,9 @@ C_{n}X^2 + LX + S$, as $g(H) = TAG$. Where $L$ is the combined length of $A$
 and $C$, and $S$ is the nonce plus the counter. We refer to the NIST
 standard about AES-GCM~\cite{gcmnist} for more details.
 
-\paragraph{The OpenSSL source code} is structured in a way that each part of a
+\subsubsection{OpenSSL source code}
+
+The libraries souce code is structured in a way that each part of a
 cypher is implemented on its own. For our thesis and analysation we want to
 refer to version \texttt{1.1.0g} of OpenSSL\cite{opensslsource}. The AES-GCM
 code part is located at \texttt{crypto/evp/e\_aes.c}. The structures used by the
@@ -1086,7 +1098,9 @@ last-level caches. Knowledge gained from this kind of attack has also played
 a role in the exploitation of the rowhammer bug or other hardware bugs, such as
 Meltdown~\cite{meltdown} and Spectre~\cite{spectre}.
 
-\paragraph{FLUSH+RELOAD} is a low noise, L3 cache side-channel attack, released
+\subsubsection{FLUSH+RELOAD}
+
+This cache attack is a low noise, L3 cache side-channel attack, released
 by Yarom~\etal~\cite{flushreload}. The attack provides a possibility of leaking
 information about memory accesses on shared pages between two processes. As the
 attack targets the last-level cache, it does not require the two processes to
@@ -1109,14 +1123,16 @@ With this attack, certain information can be leaked to the spy processes. For
 example, in cryptographic algorithms, accessed code lines could leak the private
 key to the attacker.
 
-\paragraph{FLUSH+FLUSH} is a cache attack designed by
-Gruss~\etal~\cite{flushflush} to circumvent detection of cache attacks such as
-FLUSH+RELOAD. This attack only uses only the \texttt{clflush} instruction and no
-memory accesses. With this idea, the attack bypasses cache attack detection by
-performance counters. Instead of the three phases in FLUSH+RELOAD, this attack
-only has one phase. The spy process gains a memory address to target, will call
-\texttt{clflush} on it and measure the time needed to flush the cache. There are
-two possible outcomes for this instruction call:
+\subsubsection{FLUSH+FLUSH}
+
+This is a cache attack designed by Gruss~\etal~\cite{flushflush} to circumvent
+detection of cache attacks such as FLUSH+RELOAD. This attack only uses only the
+\texttt{clflush} instruction and no memory accesses. With this idea, the attack
+bypasses cache attack detection by performance counters. Instead of the three
+phases in FLUSH+RELOAD, this attack only has one phase. The spy process gains a
+memory address to target, will call \texttt{clflush} on it and measure the time
+needed to flush the cache. There are two possible outcomes for this instruction
+call:
 
 \begin{itemize}
 \begin{samepage}
