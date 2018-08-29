@@ -1,10 +1,48 @@
 %%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Conclusion}\label{sec:conclusion}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
+In conclusion, we have shown that the rowhammer bug is still relevant to system
+engineers and that users and vendors need to be aware of this issue.
+
+We have shown a framework to test any binary to find bitflips which change the
+execution path to a given, pre-defined outcome. We apply this framework to the
+\texttt{sudo} program used to switch privileges at runtime on most Unix-like
+operating systems. We show how many possible bitflips sit inside the binary and
+libraries used by it, which allow bypassing privilege checks such as the
+password prompt for the calling user.
+
+In addition to that, we also apply our testing framework to the popular web
+server \texttt{nginx}. In the server, we want to find all flips allowing to
+bypass HTTP authentication checks. Such a bypass would allow an attacker to
+access pages or files which he could not do before as he was not granted the
+access rights in the original configuration.
+
+Besides analysing the impact of bitflips in programs' binary files, we also look
+at the consequences of flips applied to memory generated and used at runtime by
+programs. As an example of such an attack, we show how bitflips can introduce
+misusage of nonces inside the OpenSSL implementation of AES-GCM. We create nonce
+re-use using rowhammer and with it break the cryptographic security offered by
+the cypher.
+
+With our work, we want to motivate further research in the field of rowhammer
+attacks and microarchitectural attacks in general. This thesis is a basis for
+further improvements in the testing of software being influenced by
+side-channels and hardware faults. We name examples for future topics in this
+field and how other research fields could also play a role in the development of
+microarchitectural software testing.
+
+We present a summary of countermeasures already applied to systems against such
+attacks and how developers need to extend them. We also line out that open
+architectures such as RISC-V could play a vital role in the future of research
+in this field and how researchers can benefit from them.
+
+We want to close with a recommendation for vendors of hardware parts, such as
+CPUs or DRAM chips, that besides looking at performance increasements and space
+reductions, they should not neglect the quality of their hardware. Not only to
+have reliable components in a manner of stability but also to provide
+reliability in the sense of security, so that exploits like Meltdown and Spectre
+are not possible anymore and that rowhammer like attacks do not happen in any
+case because of a higher quality in the chips.
 %}}}
 
 %% vim:foldmethod=expr
