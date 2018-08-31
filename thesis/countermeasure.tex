@@ -2,7 +2,7 @@
 \chapter{Countermeasures}\label{sec:countermeasure}
 
 In this chapter, we want to look at countermeasures. At first, we look at
-measures against rowhammer and microarchitectural attacks in general. Then we
+measures against Rowhammer and microarchitectural attacks in general. Then we
 want to look at measures which would reduce the impact of our work. In the end,
 we want to close with measures which could be applied to computer systems, in
 general, to make them more secure.
@@ -48,7 +48,7 @@ Rowhammer is an issue which occurs because of the missing quality checks by
 vendors, the leakage of bit-charges to change other memory areas is a hardware
 fault and needs fixing on this layer. Also, users of current DRAM chips need to
 be protected, and their risk of using their hardware should be minimalised. In
-their work about rowhammer, Gruss~\etal~\cite{flipinthewall} analyse various
+their work about Rowhammer, Gruss~\etal~\cite{flipinthewall} analyse various
 countermeasures. Tools like the Micro-Architectural Side Channel Attack Trapper
 (MASCAT) by Irazoqui~\etal~\cite{mascat} could be used by anti-virus software to
 prevent users from executing software making use of cache-attacks. With a
@@ -57,7 +57,7 @@ escalation by applying bitflips to page-tables can be prevented.
 
 Brasser~\etal~\cite{canttouch} showed how such a separation could be built
 inside an OS, by changing the code for the physical memory allocator. Another
-way to prevent rowhammer would be to detect an ongoing attack during the runtime
+way to prevent Rowhammer would be to detect an ongoing attack during the runtime
 of a program. With their work about ANVIL, Aweke~\etal~\cite{anvil} showed such
 a detection technique. They track DRAM accesses using hardware performance
 measures and check for frequently accessed row to detect the so-called
@@ -129,9 +129,9 @@ anymore. From this other attack were designed, using return-oriented programming
 (ROP) and using known positions inside shared libraries to craft code from
 code-pieces inside those. In their work Ruan~\etal~\cite{ropsur}, show a survey
 of ROP defence mechanisms. They point out the effectiveness of randomisation in
-memory, which would also increase the defence for rowhammer. Additional there
+memory, which would also increase the defence for Rowhammer. Additional there
 are approaches described using instrumentation to detect ROP attacks, which
-could again also be used to detect the usage of rowhammer.
+could again also be used to detect the usage of Rowhammer.
 %}}}
 
 %% vim:foldmethod=expr

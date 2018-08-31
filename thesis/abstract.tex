@@ -36,13 +36,13 @@ bypassing user privilege checks, allowing super-user permissions without knowing
 the password and in the \texttt{nginx} web server, for bypassing HTTP
 authentication, allowing an attacker to load files which he was not allowed to
 access. In addition to searching for bitflips in static files, we also looked at
-possible other attack vectors for rowhammer. We show that when bitflips are
+possible other attack vectors for Rowhammer. We show that when bitflips are
 applied to the runtime of cryptographic calculations, these could break
 assumptions made by the communicating parties and could even allow key leakage.
 We apply bitflips to the implementation of AES-GCM inside OpenSSL and show how
-rowhammer can be used to cause nonce-reuse.
+Rowhammer can be used to cause nonce-reuse.
 
-With our work, we want to increase the awareness of rowhammer and show how
+With our work, we want to increase the awareness of Rowhammer and show how
 software security is affected by bitflip. We call on to all vendors of hardware
 to not forget to keep their systems secure and do not put competition and
 performance ahead of security, which would harm their users.
@@ -87,7 +87,7 @@ geladenen Software-Bibliotheken. Wir zeigen die gefundenen Bitflips für das
 \texttt{nginx} Web-Server, wobei wir hier die HTTP-Authentication Checks
 umgehen. Zusätzlich zur Untersuchung von statischen Files betracteten wir auch
 die Auswirkung von Bitflips auf kryptographische Algorithmen. Hier betrachteten
-wir, wie rowhammer dazu genutzt werden kann um in der AES-GCM Implementation von
+wir, wie Rowhammer dazu genutzt werden kann um in der AES-GCM Implementation von
 OpenSSL eine falsche Verwendung von Noncen zu verursachen.
 
 Unsere Arbeit soll auf die Sicherheitsriskien die durch Fehler wie Rowhammer

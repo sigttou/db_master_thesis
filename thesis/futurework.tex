@@ -5,13 +5,13 @@ In this chapter we want to present an outlook for attacks in the field of
 microarchitectural attacks, we want to look at these attacks in general first
 and then derive possible future outcomes from current trends. We also want to
 look at the combination of these attacks with testing techniques used in other
-areas. Also, we also want to look at attacks in cryptography which rowhammer
+areas. Also, we also want to look at attacks in cryptography which Rowhammer
 could reintroduce. In the end, we want to find some possibilities for how future
 projects or research could use our work.
 
 \section{Microarchitectural Attacks}
 
-Based on the current releases in the area of rowhammer and microarchitectural
+Based on the current releases in the area of Rowhammer and microarchitectural
 attacks, in general, it will get more interesting to automate attacks on this
 layer to make it possible to target multiple programs and systems without
 in-depth knowledge about the target. With automated attacks and vulnerability
@@ -50,9 +50,9 @@ architectures.
 With already a high number of side-channel attacks coming to JavaScript and
 attacks like Spectre being run inside web browsers, we can see the number of
 microarchitectural attacks in JavaScript rising. Gruss~\etal~\cite{rowhammerjs}
-have already shown how the attack of rowhammer can be ported to JavaScript. With
+have already shown how the attack of Rowhammer can be ported to JavaScript. With
 attacks like this the possible targets for this kind of attack rises. Victims
-only need to open a website and are targeted with Spectre, rowhammer and other
+only need to open a website and are targeted with Spectre, Rowhammer and other
 attacks. In this way, the need for native code execution is not given any more
 to run the exploit code. Additional, attacks could also be ported to mobile
 devices and browsers running on Android and iOS operating systems.
@@ -117,16 +117,16 @@ faulty behaviour could be drawn.
 
 \section{Future Work regarding Rowhammer}
 
-We see rowhammer as a still open field of research, while vendors could fix the
+We see Rowhammer as a still open field of research, while vendors could fix the
 exploitation in DRAM chips, by increasing refresh rates or built
 non-load-leaking chips, there is other hardware which already faces similar
 issues, as Kurmus~\etal~\cite{rowssdhammer} showed for SSDs. We can see more
 devices and techniques targeted with such attacks.
 
-Also, an in-depth analysis of the rowhammer is still an open issue in the
+Also, an in-depth analysis of the Rowhammer is still an open issue in the
 research of microarchitectural attacks. Analysing this issue might bring better
 knowledge of the hardware and why it faults. With this kind of knowledge is
-might be possible to target bits better in the DRAM, allowing the rowhammer
+might be possible to target bits better in the DRAM, allowing the Rowhammer
 attack to gain more attention and increase their attack vector even more.
 
 \subsection{Possible Attacks against Cryptography using Rowhammer}
@@ -145,7 +145,7 @@ Dobraunig~\etal~\cite{noncestat} showed statistical attacks against nonce-based
 authenticated encryption schemes. They show fault attacks on various modes of
 AES, such as GCM, CCM, EAX or OCB. They show how faults would affect the
 algorithm when they are introduced before the MixColumn step of AES. Work on
-faults in memory, like rowhammer, could be used as a fault source here and work
+faults in memory, like Rowhammer, could be used as a fault source here and work
 like this could be used to show future attacks using single bitflips. We can see
 more upcoming work in that regard in the future of fault attack research.
 

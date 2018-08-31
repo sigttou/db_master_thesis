@@ -18,14 +18,14 @@ can cause bits in DRAM chips to flip, without accessing them directly. This
 work showed how the demand for higher memory density caused vendors to lower
 quality management, causing interfering voltages and leaking currents to
 influence other memory storage cells. Whereas this at first was just seen as a
-stability issue, Google\textquotesingle s Project Zero showed how rowhammer
+stability issue, Google\textquotesingle s Project Zero showed how Rowhammer
 could be used for privilege escalation and sandbox
 escapes~\cite{projectzerorow}. With results like this, the interest in
-researching the field of rowhammer increased. Where Gruss~\etal~\cite{nethammer}
+researching the field of Rowhammer increased. Where Gruss~\etal~\cite{nethammer}
 showed how bitflips could be triggered by just specially crafted network
 requests, they also showed that bitflips could be triggered by using JavaScript
 inside modern web browsers~\cite{rowhammerjs}. Van der Veen~\etal~\cite{drammer}
-showed that not only users of personal computers are affected by rowhammer, but
+showed that not only users of personal computers are affected by Rowhammer, but
 it is also an issue for mobile platforms. Releases like these papers put
 Rowhammer in the position of one of the most popular microarchitectural attacks.
 
@@ -50,19 +50,19 @@ machine code level.
 
 \section{Goals and Motivation for the Thesis}
 
-With our work, we want to increase the awareness about rowhammer and making the
+With our work, we want to increase the awareness about Rowhammer and making the
 issue better known to the public. We want to use the attention given to
 microarchitectural attacks to improve the knowledge about other work in this
-field. For rowhammer, Gruss~\etal~\cite{flipinthewall} already showed that
+field. For Rowhammer, Gruss~\etal~\cite{flipinthewall} already showed that
 current defences are not suitable. Attackers can still use bitflips to gain
 privilege escalation or use them to do other things threatening the security of
 users. We want to take this approach further to present an easy way to find
 bitflips in programs which cause them to behave differently. With our work, we
-want to increase the impact of rowhammer, supporting the research of better
+want to increase the impact of Rowhammer, supporting the research of better
 countermeasures and forcing vendors to built secure and higher quality DRAM
 chips again.
 
-With the knowledge gained from already released rowhammer attacks and the
+With the knowledge gained from already released Rowhammer attacks and the
 knowledge gained from modern testing approaches, like fuzzing, we want to
 combine these two fields to get the best possible outcome for finding feasible
 bitflips.
@@ -76,7 +76,7 @@ internet connections.
 
 \section{Contribution of this Work}
 
-Our contribution to the field of microarchitectural attacks and rowhammer is
+Our contribution to the field of microarchitectural attacks and Rowhammer is
 providing a practical analysis of real-world applications and how bitflips
 affect them. We present a framework which can be used to find bitflips suitable
 to change a program\textquotesingle s behaviour in a desired way. The structure
@@ -94,7 +94,7 @@ flips allowing us to achieve our set goals. Besides analysing the bits inside
 the program\textquotesingle s executable, we also examine any dynamically loaded
 library it uses.
 
-In addition to that, we contributed to rowhammer research by looking at possible
+In addition to that, we contributed to Rowhammer research by looking at possible
 cryptographic vulnerabilities introduced by bitflips. As a basis, we look at the
 work by Böck~\etal~\cite{gcmnonceattack}, who showed how web servers were
 misusing nonces when using AES-GCM. We took their approach to bypass the fixes
@@ -134,13 +134,13 @@ provide security. As our work targets cryptographic implementations, we take a
 detailed look at the advanced encryption standard (AES) and a variant of it
 using Galois/counter mode (AES-GCM).
 
-Our work relies heavily on rowhammer, which is a software-based
+Our work relies heavily on Rowhammer, which is a software-based
 microarchitectural attack. Therefore, we take a look at these attacks in general
 and give an overview of state of the art attacks using similar techniques. As
 timing plays a vital role in exploiting side-channels in this area, we take a
 look at precise timing measurement methods. We look at recent cache attacks and
 the impact those have on modern systems. We close our background overview with a
-details description of the rowhammer bug.
+details description of the Rowhammer bug.
 
 We continue with describing our distribution. This is split into two parts, one
 being our testing of bitflips in ELF files and the other being attacks against
@@ -151,7 +151,7 @@ change the behaviour in a manner so that it would benefit an attacker. We
 describe the design of our automated bitflip-search framework and how we applied
 it to real-world applications. We resume by showing the results of our tests for
 the applications of \texttt{sudo} and \texttt{nginx}. We also mention how we
-would apply these bitflips to a systems by using the rowhammer bug.
+would apply these bitflips to a systems by using the Rowhammer bug.
 
 In the second part of our contribution we describe the influence of bitflips on
 cryptographic implementations, we discuss the problems of nonce misuse and how
@@ -162,7 +162,7 @@ with a simple web server using OpenSSL.
 
 We go on with looking at countermeasures for issues in the field of
 microarchitectural attacks. We look at possible ways to prevent cache attacks
-and rowhammer. Also, we line out ways of reducing the impact of our tests on
+and Rowhammer. Also, we line out ways of reducing the impact of our tests on
 real-world setups. We close this section by describing how general system
 security could be improved.
 
@@ -170,7 +170,7 @@ As microarchitectural attacks are an on-going and growing research field, we
 also look at possible future works. We look at the future of these attacks in
 general, how open source architectures could help to prevent some of them. We
 also talk about a possible attribution of machine learning to help to find new
-attack vectors. We also find possibilities to improve the impact of rowhammer,
+attack vectors. We also find possibilities to improve the impact of Rowhammer,
 by looking at new attacks coming by applying it to further implementations of
 cryptography. In the end, we talk about how our framework could be helpful for
 future work and how it can be used in various testing and research environments

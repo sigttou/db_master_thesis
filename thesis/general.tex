@@ -1108,7 +1108,7 @@ shown that caching also introduces security risks to systems.
 Gruss~\etal\cite{gruss2015cache} showed how caches provide information by
 measuring memory access-timings. They also showed how to automate attacks on
 last-level caches. Knowledge gained from this kind of attack has also played
-a role in the exploitation of the rowhammer bug or other hardware bugs, such as
+a role in the exploitation of the Rowhammer bug or other hardware bugs, such as
 Meltdown\cite{meltdown} and Spectre\cite{spectre}.
 
 \subsubsection{FLUSH+RELOAD}
@@ -1254,10 +1254,10 @@ to use changes of charges in memory rows to interfere with data of nearby cells.
 This interference resulted in a change of bits in other memory rows.
 
 This behaviour and bug then caused researchers to dig deeper into the
-possibilities, and several attacks were found based on the rowhammer bug. For
+possibilities, and several attacks were found based on the Rowhammer bug. For
 example, Google\textquotesingle s \textquotedbl Project
 Zero\textquotedbl\cite{projectzerorow} showed,
-it is possible to use rowhammer for privilege escalation and sandbox escapes.
+it is possible to use Rowhammer for privilege escalation and sandbox escapes.
 Van der Veen~\etal\cite{drammer} state that this attack not only affects
 desktop computers but also memory in mobile devices. In their work,
 Gruss~\etal\cite{flipinthewall} show that flipping bits in memory has further
@@ -1396,7 +1396,7 @@ capacitors hold enough voltage.
 \begin{lstlisting}[
   label={lst:rowhammercode},
   style=nasm,
-  caption={Code to trigger the rowhammer bug, as of
+  caption={Code to trigger the Rowhammer bug, as of
 Kim~\etal\cite{rowhammergeneral}. The preating accesses to the aggressor
 locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
 neededed to make sure the DRAM rows are accessed directly. According to
@@ -1419,12 +1419,12 @@ memory are used contiguously. These two megabytes will use more than one row,
 other than normal pages with the size of four kilobytes. In the paper,
 Kim~\etal\cite{rowhammergeneral} use addresses calculated based on their
 knowledge of physical address mapping used by common CPU vendors. Project
-Zero\cite{projectzerorow} show how it is possible to use rowhammer to
+Zero\cite{projectzerorow} show how it is possible to use Rowhammer to
 gain privilege escalation on a standard \texttt{x86\_64} CPU and an escape from
 a sandbox. After vendors of operating systems started to introduce
 countermeasures, scientists like Gruss~\etal\cite{rowhammerjs, flipinthewall},
-came up with further, improved attacks making use of the rowhammer bug. They
-show more possible targets for flips and also show that rowhammer is possible in
+came up with further, improved attacks making use of the Rowhammer bug. They
+show more possible targets for flips and also show that Rowhammer is possible in
 JavaScript.
 %}}}
 

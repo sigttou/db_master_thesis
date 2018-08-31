@@ -1,7 +1,7 @@
 %%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Conclusion}\label{sec:conclusion}
 
-In conclusion, we have shown that the rowhammer bug is still relevant to system
+In conclusion, we have shown that the Rowhammer bug is still relevant to system
 engineers and that users and vendors need to be aware of this issue.
 
 We have shown a framework to test any binary to find bitflips which change the
@@ -21,10 +21,10 @@ Besides analysing the impact of bitflips in programs\textquotesingle binary
 files, we also look at the consequences of flips applied to memory generated
 and used at runtime by programs. As an example of such an attack, we show how
 bitflips can introduce misusage of nonces inside the OpenSSL implementation of
-AES-GCM. We create nonce re-use using rowhammer and with it break the
+AES-GCM. We create nonce re-use using Rowhammer and with it break the
 cryptographic security offered by the cypher.
 
-With our work, we want to motivate further research in the field of rowhammer
+With our work, we want to motivate further research in the field of Rowhammer
 attacks and microarchitectural attacks in general. This thesis is a basis for
 further improvements in the testing of software being influenced by
 side-channels and hardware faults. We name examples for future topics in this
@@ -41,7 +41,7 @@ CPUs or DRAM chips, that besides looking at performance increasements and space
 reductions, they should not neglect the quality of their hardware. Not only to
 have reliable components in a manner of stability but also to provide
 reliability in the sense of security, so that exploits like Meltdown and Spectre
-are not possible anymore and that rowhammer like attacks do not happen in any
+are not possible anymore and that Rowhammer like attacks do not happen in any
 case because of a higher quality in the chips.
 %}}}
 
