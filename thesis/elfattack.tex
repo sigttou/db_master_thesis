@@ -1,32 +1,32 @@
 %%%%%% Static Data Flips %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on ELF Files}\label{sec:bitflip}
 
-In this chapter, we discuss our approach to automate the finding bitflips in ELF
-files to gain privilege escalation. This is an approach which
-Gruss~\etal\cite{flipinthewall} already have shown by disassembling binaries
+In this chapter, we discuss our approach to automate the finding of bitflips in
+ELF files to gain useable execution path changes. This is an idea which
+Gruss~\etal\cite{flipinthewall} already have realised by disassembling binaries
 and manually looking for suitable flips. We start by describing the impact of a
 single bitflip on the execution path. Then, we look at our work and the
 framework we created to find bitflips in binaries to change their behaviour to a
-pre-defined state. We start with a general overview of the framework design and
-go on with discussing the details on how we find bits to check, how the
-definition for searching works, how we test the bitflips and how results are
-captured and verified. In the end we discuss how these flips can be triggered
+pre-defined state. We go on with a general overview of the framework design and
+continue with discussing the details on how we find bits to check, how the
+definition for searching works, how we test the bitflips, and how results are
+captured and verified. In the end, we discuss how these flips can be triggered
 by using Rowhammer.
 
 \section{Changing the Execution Path with a Single Bitflip}
 
 Our task is to find a bit in an ELF file which we can flip to change the
-behaviour in a way that it benefits us. See the code
-in listing~\ref{lst:csimbranch} for example. We want to change the binary in a
-way that it will print \texttt{success.} instead of \texttt{fail.}, by just
+behaviour in a way that it benefits us. As an example, see the code in
+listing~\ref{lst:csimbranch}. We want to change the binary in a
+way that it will print \texttt{success.} instead of \texttt{fail.} by just
 toggling a single bit in the binary executing this code. We look at the
 disassembly of the code in listing~\ref{lst:disasmsimplebranch}. From this, we
 point out that we can start with changing the \texttt{1} to a \texttt{0} at
 the \texttt{mov} instruction on address \texttt{0x0642}. Besides that, also the
 opcode of \texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a
 \texttt{jz}, as this is \texttt{0x74 (1110100)}, at address \texttt{0x064d}. For
-compiling we used~\texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}\cite{gccubuntu},
-for disassembling~\texttt{radare2 2.3.0-git 17214}\cite{radare2web}.
+compiling we used \texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}\cite{gccubuntu},
+for disassembling \texttt{radare2 2.3.0-git 17214}\cite{radare2web} was used.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -70,11 +70,11 @@ inside the ELF file, starting at \texttt{0x063a}.},
 \end{minipage}
 
 We flip each bit of the instruction opcode \texttt{jnz} to line out what other
-outcomes are possible with a single flip. We apply all possible eight flips and
-check the resulting output of the binary. Table~\ref{tab:jnzflips} shows the
-flips and results. We can see that in three cases the program would print
-\texttt{success.}, in one case the output would not change and in four cases the
-program would crash for different reasons.
+outcomes are possible with just a single flip. We apply all possible eight
+flips and check the resulting output of the binary. Table~\ref{tab:jnzflips}
+shows the flips and results. We can see that in three cases the program would
+print \texttt{success.}, in one case the output would not change and in four
+cases the program would crash for various reasons.
 
 \begin{table}[]
 \centering
@@ -113,13 +113,13 @@ arises how do we automate this searching process?
 \section{Automating the Finding of Feasible Bitflips}
 
 Testing all possible bitflips inside the binary and report each output would be
-a way to gain all a list of all flips which would result in the printing of
+a way to gain a list of all flips which would result in the printing of
 \texttt{success.}. The binary resulting from the compilation of the small
 branching code from listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
-which means there are $66304$ bitflips to test. With an execution time of
-$0,003$ seconds per run, this means that it would take close to $200$ seconds to
-test all bits inside the binary. For our automation, we want to need less time
-than that as we target larger binaries.
+which means there are $66304$ flips to test. With an execution time of
+approximately $0,003$ seconds per run, this means that it would take close to
+$200$ seconds to test all bits inside the binary. For our automation, we want
+to need way less time than that as we target larger binaries.
 
 \subsection{Design of the Testing Framework}
 
@@ -128,12 +128,14 @@ Figure~\ref{fig:frameworkdesign} shows a diagram describing the
 framework\textquotesingle s design. We split it into multiple parts:
 
 \begin{enumerate}
+\begin{samepage}
   \item Accessed memory areas are logged from all the ELF files the program
 uses.
-  \item Pre-defined filters are applied to the results.
+  \item Pre-defined filters are applied to the reported memory areas.
   \item ELF files for each of the bit flips are generated.
-  \item Each ELF file gets executed, and the behaviour is checked  against a
+  \item Each ELF file gets executed, and the behaviour is checked against a
 pre-defined success state
+\end{samepage}
 \end{enumerate}
 
 \begin{figure}
@@ -214,14 +216,14 @@ created chroot.}
 \end{figure}
 
 Each part of the framework is designed to work on its own and has a clearly
-defined input and output interface. The parts can be adopted or easily used for
+defined in- and output-interface. The parts can be adopted or easily used for
 other testing purposes. The configuration file for the framework defines how
 each step is applied to the application as instrumentation and verification may
 differ for each program. The file in listing~\ref{lst:expconfig} shows an
-example config file for the framework. Figure~\ref{fig:framfilesys} shows the
-layout of the framework in the file system. The configuration file tells the
-framework where to find each of the needed files. The template chroot describes
-the system used for testing.
+example configuration file for the framework. Figure~\ref{fig:framfilesys} shows
+the layout of the framework in the file system. The configuration file tells the
+framework where to find each of the required files. The template chroot
+describes the system used for testing.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=nasm,
@@ -252,18 +254,17 @@ chroots are created by copying the template from \texttt{chroot\_tmpl}. The
 configured flips are split and separately copied to each \texttt{/media/flips}
 folder in the testing chroot. The \texttt{run\_tool\_chroot.sh} file is copied
 to each testing environment and executed there. This script runs the tests with
-all flips and reports successful flips to the framework
+all flips and reports successful flips to the framework.
 
 \subsubsection{Instrumenting the Program}
 
 We use Intel Pin\cite{pintool} for instrumentation.  We log every memory access
-during execution of the program using Pin. Whereas we want to log all accesses
-which happen inside of ELF files, which means the program\textquotesingle s
-binary and all libraries it uses during runtime. We use the same pintool for
-all test runs. It simply adds instrumenter calls to all memory accesses. The
-tools stores all accesses per file and what base-offsets are used. This
-information is needed to determine if the accessed area is mapped to a file
-later on.
+during execution of the program. We want to log all accesses which happen
+inside of ELF files, which means the program\textquotesingle s binary and all
+libraries it uses during runtime. We use the same pintool for all test runs. It
+simply adds instrumenter calls to all memory accesses. The tool stores all
+accesses per file and what base-offsets are used. This information is required
+to determine which accessed area is mapped to which file later on.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -314,8 +315,8 @@ program would overwrite the flips again. Listing~\ref{lst:pinlogcode} shows a
 code snippet of the used pintool which logs all memory accesses as it
 instruments each instruction and logs the opcode position and its parameters if
 they address memory. The listing~\ref{lst:pinlogcode} also shows some API-calls
-for the PIN framework. In Pin, the Image~\texttt{img} refers to files. In most
-cases, these refer to dynamically loaded libraries. The
+for the PIN framework. In Pin, the image~\texttt{img} refers to a file on the
+hard drive. In most cases, these refer to dynamically loaded libraries. The
 \texttt{INS\_InsertPredicatedCall} function is used to insert a function call on
 the machine code layer. The function can have an arbitrary number of parameters,
 as the user have to define the function with each parameter and the type. Pin
@@ -340,8 +341,8 @@ location in the binary.
 
 At second, after the program run, we translate all reported accessed addresses
 to positions in ELF files. At this point, every access which does not refer to
-the file content is thrown away. We can find this as we know the base address
-from the loaded library from the report.
+the file content is thrown away. We can do this as we store the base address of
+each loaded library with the pintool.
 
 Additionally, we add addresses of ELF structure headers, as remapping sections
 or change other property bits inside the ELF structure can affect the way the
@@ -371,36 +372,36 @@ structured as \texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}.
 In our thesis, we want to apply our tool to more extensive programs, programs
 used in the real world and with bitflips in mind which an attacker also would
 use. As Gruss~\etal\cite{flipinthewall} already showed, there are bits in the
-\texttt{sudoers} library which when toggled, allow using ~\texttt{sudo} without
-or with a wrong password to still gain super-user privilege. We want to show,
+\texttt{sudoers} library which when toggled, allow using \texttt{sudo} without
+or with a wrong password to still gain super-user privileges. We want to show,
 that our framework can find a more significant number of possible bitflips to
 achieve this. Also, we also want to show how we can search for bitflips in the
-\texttt{nginx} program to bypass HTTP basic authentication.
+\texttt{nginx} web sever to allow bypassing HTTP basic authentication measures.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
 For \texttt{sudo}, the task was to find all possible bitflips which allow
-switching to \texttt{root}, without knowing the correct user\textquotesingle s
-password. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
+switching to \texttt{root}, without knowing the correct password of the base
+user. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
 owner to \texttt{root} when being executed. We ran into problems with our
-framework because of this property of the binary.
+framework because of this property.
 
 \subsubsection{Instrumentation}
 
-For \texttt{sudo} instrumentation became more advanced  than for simple
+For \texttt{sudo}, instrumentation became more advanced than for simple
 programs, because of the way Pin works. Usually, when starting a program with a
 pintool, Pin would modify the program\textquotesingle s memory to add its
 internal instrumenter calls and then execute the program. As \texttt{sudo} is
 owned by \texttt{root}, Pin is not allowed to modify the memory when running as
 regular user. Running \texttt{sudo} with Pin attached as \texttt{root} is
 possible, but starting \texttt{sudo} as super-user would not trigger the
-password dialogue nor trigger any of the authentication check execution paths
+password dialogue nor trigger any of the authentication-check-execution paths
 as there is no need to change the current user.
 
 To bypass this, we use the attach-to-process functionality of Pin, which
-wouldn't change the context of the program and still run it as a regular user.
+would not change the context of the program and still run it as a regular user.
 The problem for this is, finding the program ID and attach to it takes time,
-which allows us only to attach at the point where the password dialogue is
+which allows us only to attach at the point where the password dialogue has
 already popped-up. Pre-loading a wait library which keeps the process sleeping
 resolves this issue, and we can instrument the relevant code of the binary.
 
@@ -426,22 +427,22 @@ __attribute__((constructor)) void init(void)
 Listing~\ref{lst:presleeplib} shows the code used to generate such a pre-loaded
 library. We use the counting while-loop instead of a call to the sleep system
 call because attaching Pin to a process in sleeping state results in a state
-where the process would never wake up again. This is a general problem with
-GNU/Linux environments and also happens to be a problem with other debuggers,
-such as \texttt{gdb}. The number of increments was chosen to have enough time to
+where the process cannot wake up again. This is a general problem with
+GNU/Linux environments and is also a problem for other debuggers, such as
+\texttt{gdb}. The number of increments was chosen to have enough time to
 search the process ID and attach to it. The compiler attribute
 \texttt{constructor} makes sure the program executes this code on loading the
 library before any other code. We use the \texttt{/etc/ld.so.preload} file to
-make our library load for any program, to not have all of them waiting on
-start-up, we check the name of the binary.
+make our library load for any program. To not have all programs waiting on
+start-up, we check the name of the binary before entering the loop.
 
 \subsubsection{Testing}
+
 Checking successful behaviour for the \texttt{sudo} program is easy, we call it
-and give it a wrong password. There are multiple ways to verify a successful
-privilege change. For once, it would be possible to use the \texttt{whoami}
-program to check if the system changed the current user to \texttt{root}. On
-the other side, it is also possible to verify by reading a file owned by the
-other user.
+and provide it a wrong password. There are multiple ways to verify a successful
+privilege change. For once, it is possible to use the \texttt{whoami} program
+to check if the system changed the current user to \texttt{root}. On the other
+side, it is also possible to verify by reading a file owned by the super-user.
 
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
@@ -452,28 +453,29 @@ accessible given a correct user and password credential pair.
 \subsubsection{Instrumentation}
 
 Instrumenting \texttt{nginx} is straightforward. We had to modify the default
-configuration a little to make sure the server runs as a single process. This
-was done by not allowing \texttt{nginx} to run as a system daemon or use their
-master process. We also only want to instrument the code run when an actual
-request to the protected site happens. Therefore, we again use the
-functionality to attach Pin to an already running process. For instrumentation,
-we start the web server, attach Pin, sent a request to the protected site with
-wrong credentials, wait for the denying answer from the server and then end
-instrumentation. This should give us only the bytes accessed during a basic
-authentication request.
+configuration of the web server a little to make sure the server runs as a
+single process. This was done by not allowing \texttt{nginx} to run as a system
+daemon or make use of a master process. We also only want to instrument the code
+run when an actual request to the protected site happens. Therefore, we again
+use the functionality to attach Pin to an already running process. For
+instrumentation, we start the web server, attach Pin, sent a request to the
+protected site with wrong credentials, wait for the denying answer from the
+server and then end instrumentation. This should give us only the memory
+accessed during a basic authentication request.
 
 \subsubsection{Testing}
 
 Verifying successful bitflips in \texttt{nginx} works the same as in the
 instrumentation. We copy the flipped ELF, start the server, verify it is running
 by requesting a standard page, then requesting the protected site with wrong
-credentials, a successful state is if the web server returns the protected site
-to a request with wrong credentials. For requesting the protected site, we would
-use \texttt{netcat} instead of \texttt{curl} or \texttt{wget}, as we only want
-to make sure the content is delivered to us and not if the HTTP reply got
-malformed in any way by the bitflip. We use different HTTP ports per server,
-equal to the ID of the chroot, to avoid startup problems during testing as the
-same port would be used more often otherwise, which is not possible.
+credentials, a successful state is reached if the web server returns the
+protected site to a request with wrong credentials. For requesting the
+protected site, we use \texttt{netcat} instead of \texttt{curl} or
+\texttt{wget}, as we only want to make sure the content is delivered to us and
+not if the HTTP reply got malformed in any way by the bitflip. We use different
+HTTP ports per server, equal to the ID of the chroot, to avoid startup problems
+during testing as the same port would be used more often otherwise, which is
+not possible.
 
 \subsection{Results given by the Framework}
 
@@ -482,18 +484,19 @@ listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
 bypassed in the same way for both programs we looked at. As at some point jump
 instructions will point to code executed only in a successful state. We can also
 see flips causing a success which change bits in other sections than the code
-one. We want to show which ELF files have bits where flips would cause
-successes and what areas in ELF files are most promising for flips to be found.
+one. We want to show which ELF files have bits where flips would cause the
+program to run into a state of success and what areas in ELF files are most
+promising for flips to be found.
 
 We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
-the testing chroot we have chosen the same system. The CPU used was a
-\texttt{Intel(R) Core(TM) i7 CPU 960 } and the system provided a total of 16
+the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
+\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of 16
 gigabyte DRAM memory.
 
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
 Table~\ref{tab:sudores} shows the number of found flips per file. We see that
-the possible flips are spread over multiple files.  The \texttt{sudoers} library
+the possible flips are spread over multiple files. The \texttt{sudoers} library
 contains most of them, whereas we also can find flips affecting a privilege
 change in the linker (\texttt{ld-linux}) and the threading library
 (\texttt{libpthread}). As expected, most flips are in the \texttt{.text}
@@ -501,7 +504,7 @@ section. Additionally, other main sections such as \texttt{.rodata} contain
 flips. The \texttt{.plt} section refers to the Procedure Linkage Table, which is
 used to resolve mappings between position-independent functions and their
 absolute addresses. Close to the same is the \texttt{.got.plt} section, which
-represents the Global Offset Table, which resolves mappings for position
+represents the global offset table, which resolves mappings for position
 independent code parts.
 
 \begin{table}[]
@@ -544,14 +547,14 @@ causing the later \texttt{jne} instruction to behave differently.
 
 Testing the \texttt{sudo} ELF files took a total of about eight hours time.
 This is less than half of the time it would need to test all possible bytes. We
-have used twenty-four parallel test runs on our described environment.
+have used twenty-four parallel test runs on our described testing environment.
 
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
 flips inside the program\textquotesingle s binary itself were useable.
 Table~\ref{tab:nginxres} shows the number of flips found and that all flips are
-inside the \texttt{.text} section of the binary.
+inside the \texttt{.text} section of the \texttt{nginx} binary.
 
 \begin{table}[]
 \centering
@@ -584,14 +587,14 @@ label=lst:nginxex]
 In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
 flip in this example changes a call to \texttt{test} to \texttt{add}. The
 instruction afterwards is \texttt{setn}, used to set a byte if the condition,
-\textquotedbl not equal\textquotedbl  in this case, is met. As \texttt{add}
+in this case\textquotedbl not equal\textquotedbl, is met. As \texttt{add}
 does not affect the \texttt{ZF} register, which the \texttt{setn} checks, the
 code is likely to behave differently.
 
 Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
 The timing is that high cause we had to make sure the server is up and ready to
-reply to our requests. For testing, we have used eight parallel testing
-instances.
+reply to our requests for each test. For testing, we have used eight parallel
+testing instances.
 
 \subsection{Flipping bits in Binaries using Rowhammer}
 
@@ -600,18 +603,11 @@ of the vulnerability. Gruss~\etal\cite{flipinthewall} showed, that besides
 targeting page table entries, it is also possible to target shared libraries or
 ELF files directly. With this work, the possible attack vector for Rowhammer
 grew. To flip the bit in the binary using Rowhammer an attacker needs to make
-sure the file is loaded to DRAM. The operating system loads the ELF file in a
-defined structure to the memory. Targeting this loaded memory might be hard for
-an attacker, as offsets inside the memory might be randomised. As we tested ELF
-files directly and not loaded program images, the flips might be best directly
-applied to the ELF file.
-
-Another idea would be to use Rowhammer on storage devices. As
-Kurmus~\etal\cite{rowssdhammer} showed it is possible to find a similar
-behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
-MLC NAND chips, showing the possibility of a similar attack. They show that
-corrupting a block inside the SSD is enough to gain privilege escalation. Such
-an attack could also be used to flip bits inside the stored ELF files.
+sure the file is loaded to DRAM. For execution, the operating system loads the
+ELF file in a defined structure to the memory. Targeting this loaded memory
+might be hard for an attacker, as offsets inside the memory might be
+randomised by ASLR. As we tested ELF files directly and not loaded program
+images, the flips might be best directly applied to the ELF file.
 
 Most operating systems use a disk cache. Meaning the OS will keep file content
 in DRAM as long as the memory is not used elsewhere. When a file is opened the
@@ -619,6 +615,13 @@ system loads the content to the memory, which in case of loading an ELF would
 put the entire file into the DRAM, making it possible to apply bitflips.
 Therefore, a later call to the program would load the flipped version already
 cached in DRAM.
+
+Another idea would be to use Rowhammer on storage devices. As
+Kurmus~\etal\cite{rowssdhammer} showed it is possible to find a similar
+behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
+MLC NAND chips, showing the possibility of a similar attack. They show that
+corrupting a block inside the SSD is enough to gain privilege escalation. Such
+an attack could also be used to flip bits inside the stored ELF files.
 %}}}
 
 %% vim:foldmethod=expr
