@@ -293,7 +293,7 @@ has its perks. For example, users do not need the source of the program, which
 might not be available in proprietary programs. Also, recompilation of the
 program is not needed if the code for the instrumentation changes. Given enough
 debug information in the binary the instrumentation information might not differ
-much from the source based one. With binary instrumentation it is also possible
+much from the source-based one. With binary instrumentation it is also possible
 to change and read register values before and after CPU instructions are called,
 which might not be possible at source code level, as used registers and memory
 areas are unknown to the instrumenter at this point.
@@ -353,13 +353,14 @@ instruction order.
 \section{Permission Model in Unix-based Systems}
 
 The POSIX standard\cite{posix} defines many properties for operating systems,
-also permissions for users and their groups. For practical reasons, a user can
-be part of multiple groups. A unique integer ID per user and group provides
-identification to the system. The POSIX-defined permission structure applies to
-files, which can have properties like readable, writable, executable. On
-creation, the user can set these properties separately for the owner, the group
-of the owner and others. POSIX also allows users with special privileges to
-suppress such permission checks. Such users are called super-users.
+it includes a description of permissions for users and their groups and how
+they are set. For practical reasons, a user can be part of multiple groups. A
+unique integer ID per user and group provides identification to the system. The
+POSIX-defined permission structure applies to files, which can have properties
+like readable, writable, executable. On creation, the user can set these
+properties separately for the owner, the group of the owner and others. POSIX
+also allows users with special privileges to ignore such permission checks, or
+change them. Such users are called super-users.
 
 Besides permission for files most Unix-based systems also provide permission
 checks for processes and their owners. For example, only processes owned by a
