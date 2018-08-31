@@ -74,7 +74,7 @@ struct evp_cipher_ctx_st {
 \end{minipage}
 
 For the attack to work, we would need the IV to be reused, just as described by
-Böck~\etal~\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
+Böck~\etal\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
 instead of a random value, flipping back a lower bit would probably cause a
 decrement of the counter which makes reuse very likely. As the described attack
 states, this would cause a break of the cryptography for future messages and the
@@ -84,7 +84,7 @@ attack with Rowhammer, we would target the \texttt{iv} array in the
 
 \subsection{Likelihood of a Nonce-Misuse introduced by Rowhammer}
 
-In their work, nethammer, Lipp~\etal~\cite{nethammer}, stated how it is possible
+In their work, nethammer, Lipp~\etal\cite{nethammer}, stated how it is possible
 to send network requests which cause memory accesses in a manner that they
 introduce Rowhammer faults. With this knowledge and the possibility of
 nonce-misuse attacks in OpenSSL by bitflips, an attacker could overtake TLS

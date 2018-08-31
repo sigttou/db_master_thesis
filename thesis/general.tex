@@ -84,7 +84,7 @@ might include a displacement following them.
 parameters.
 \end{itemize}
 
-We refer to the Intel Manual~\cite{intelsys} section 2.1 for further details on
+We refer to the Intel Manual\cite{intelsys} section 2.1 for further details on
 the instruction format used in \texttt{x86\_64}.
 
 \subsection{Executable and Linkable Format (ELF)}
@@ -95,7 +95,7 @@ by the processor without applying changes to the binary-content itself. A
 linker creates ELF files after an assembler turned the program\textquotesingle s
 source code into machine code. Most modern Unix-like operating systems follow
 the ELF specification released by the Tool Interface Standard
-Committee~\cite{elfspec}. Therefore, we need to understand the layout of such
+Committee\cite{elfspec}. Therefore, we need to understand the layout of such
 executable files before introducing bitflips in them.
 
 \subsubsection{Structure of an ELF file}
@@ -260,7 +260,7 @@ a constraint solver to report possible violations of the program\textquotesingle
 s specification. The solver can also be used to find possible paths to reach a
 pre-defined goal inside the binary.
 
-One of the most used symbolic analysis frameworks is angr~\cite{angrpaper}.
+One of the most used symbolic analysis frameworks is angr\cite{angrpaper}.
 Besides the symbolic execution of binaries, it also allows various other
 analysis methods such as control-flow graph recovery, automatic exploit
 generation or automatic binary hardening.
@@ -386,7 +386,7 @@ like \texttt{su} and \texttt{sudo} need this as they require the permission to
 change the current context. It is also practical to allow normal users the usage
 of tools like \texttt{ping} or \texttt{ip}, without allowing them to use
 \texttt{sudo}. We refer to the GNU libc documentation for more
-details~\cite{libcpermission}.
+details\cite{libcpermission}.
 
 Whereas the \texttt{setuid} property might seem practical, it also brings
 security risks. A bug allowing code execution in such a program allows an
@@ -1221,7 +1221,7 @@ researchers also show how the Spectre attack can be applied using JavaScript.
 \begin{lstlisting}[style=CStyle,
                    caption={Code for Spectre variant one, showing a
 conditional branch example, as seen by the work done by
-Kocher~\etal~\cite{spectre}.},
+Kocher~\etal\cite{spectre}.},
                    label={lst:spectre1}]
 if(x < array1_size)
   y = array2[array1[x] * 4096];
