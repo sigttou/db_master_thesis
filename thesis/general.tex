@@ -201,8 +201,8 @@ nowadays ideally provide unit tests inside their code to test single functions
 and make sure they work as intended. On the other hand, sometimes the source
 code is not available to a tester, or it is way too much work to read the entire
 source code to create such tests. Therefore, developers came up with tools
-which can be used to test binaries on their own without knowing the whole source
-code.
+which can be used to test binaries on their own without knowing the entire
+source code.
 
 \subsection{Fuzzing}
 
@@ -792,8 +792,8 @@ which speeds up encryption and decryption for libraries as OpenSSL.
 Since AES was released, researchers and attackers targeted the cypher and tried
 to find weak spots in it. Most of these attacks targeted a smaller number of
 rounds than the algorithm describes. In 2011, Bogdanov~\etal\cite{bicliqueaes}
-showed an attack against AES which targets the whole number of rounds. Their
-attack weakens the security of AES slightly, where for 128-bit key recovery the
+showed an attack against AES which targets all of the rounds. Their attack
+weakens the security of AES slightly, where for 128-bit key recovery the
 computational complexity drops to $2^{126.1}$ and for 256-bit keys to
 $2^{254.4}$. As these are still very high complexities, the attack does not
 affect real-world usages of AES.
