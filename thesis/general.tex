@@ -91,11 +91,11 @@ the instruction format used in \texttt{x86\_64}.
 ELF is an object file format. It is used to describe a program and gives
 instructions on how to load it into memory to make it ready for execution
 by the processor without applying changes to the binary-content itself. A
-linker creates ELF files after an assembler turned the program's source code
-into machine code. Most modern Unix-like operating systems follow the ELF
-specification released by the Tool Interface Standard Committee~\cite{elfspec}.
-Therefore, we need to understand the layout of such executable files before
-introducing bitflips to them.
+linker creates ELF files after an assembler turned the program\textquotesingle s
+source code into machine code. Most modern Unix-like operating systems follow
+the ELF specification released by the Tool Interface Standard
+Committee~\cite{elfspec}. Therefore, we need to understand the layout of such
+executable files before introducing bitflips to them.
 
 \subsubsection{Structure of an ELF file}
 
@@ -153,9 +153,9 @@ These describe the binary for the linking view. A section contains instructions,
 data, symbol table and relocation information. Sections reserved for the system
 start with a dot, there might be additional sections defined by the user.
 Sections are created and managed by the linker. Sections that are directly
-loaded into the program's memory image are initialized data (\texttt{.data,
-.data1}), read-only data (\texttt{.rodata, .rodata1}) and executable
-instructions (\texttt{.text}).
+loaded into the program\textquotesingle s memory image are initialized data
+(\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}) and
+executable instructions (\texttt{.text}).
 
 \subsubsection{Segments}
 
@@ -251,8 +251,9 @@ inputs where they use a logic symbol with less possible states instead. For
 example, a number can be represented by the possible states: maximal value,
 minimum value, positive, negative, zero. The possible symbolic-state inputs then
 run through the program in combination with a constraint solver to report
-possible violations of the program's specification. The solver can also be used
-to find possible paths to reach a pre-defined goal inside the binary.
+possible violations of the program\textquotesingle s specification. The solver
+can also be used to find possible paths to reach a pre-defined goal inside the
+binary.
 
 One of the most famous symbolic analysis frameworks is angr~\cite{angrpaper}.
 Besides the symbolic execution of binaries, it also allows various other
@@ -313,14 +314,14 @@ instrumenting a program, three binaries are being used. One is the application
 to instrument, one is the compiled pintool, and one is Pin itself. Pin can be
 seen as a userland virtual machine. When the instrumentation starts, Pin is
 loaded into the address space of the application, then the \texttt{ptrace}
-system-call is used to capture the program's behaviour. When Pin has initialised
-itself the tool overtakes the entry point of the program, or the current program
-counter if it was attached to a running application. It then uses its
-just-in-time (JIT) compiler to continue the execution. They state that their
-approach of loading Pin has various advantages over other instrumentation
-tools, as those mostly use \texttt{LD\_PRELOAD}, which would not work on
-statically linked binaries and also by using an additional library, the address
-space would be changed from a normal execution.
+system-call is used to capture the program\textquotesingle s behaviour. When Pin
+has initialised itself the tool overtakes the entry point of the program, or
+the current program counter if it was attached to a running application. It
+then uses its just-in-time (JIT) compiler to continue the execution. They state
+that their approach of loading Pin has various advantages over other
+instrumentation tools, as those mostly use \texttt{LD\_PRELOAD}, which would not
+work on statically linked binaries and also by using an additional library, the
+address space would be changed from a normal execution.
 
 The JIT compiler inside Pin is used to inject the instrumentation API into the
 application to allow the pintool to use it. The code is loaded into a preserved
@@ -363,23 +364,23 @@ another time if they need super-user permissions for a task. POSIX compliant
 operating systems, therefore, ship tools such as \texttt{su} or the more
 advanced \texttt{sudo}. \texttt{su} stands for switch user and allows a user to
 change the current context to another user or execute a command with the other
-user's permissions, providing the correct password of the other user.
-\texttt{sudo} includes the same functionality as \texttt{su}. Additionally, it
-has a better management system in the background and given the correct
-permissions the user does not need to know the other user's password to execute
-commands as the target user.
+user\textquotesingle s permissions, providing the correct password of the other
+user. \texttt{sudo} includes the same functionality as \texttt{su}.
+Additionally, it has a better management system in the background and given the
+correct permissions the user does not need to know the other
+user\textquotesingle s password to execute commands as the target user.
 
 \subsection{\texttt{setuid} Binary Property}
 
 \texttt{setuid} stands for "set user identity"~\cite{ogroupsetuid}. It allows an
 executable to change its user ID on execution. An additional bit in the file
 permissions represents the \texttt{setuid} property, namely \texttt{S\_ISUID}.
-This property allows a user to run a program with the permissions of the file's
-owner. Tools like \texttt{su} and \texttt{sudo} need this as they require the
-permission to change the current context. It is also practical to allow normal
-users the usage of tools like \texttt{ping} or \texttt{ip}, without allowing
-them to use \texttt{sudo}. We refer to the GNU libc documentation for more
-details~\cite{libcpermission}.
+This property allows a user to run a program with the permissions of the
+file\textquotesingle s owner. Tools like \texttt{su} and \texttt{sudo} need
+this as they require the permission to change the current context. It is also
+practical to allow normal users the usage of tools like \texttt{ping} or
+\texttt{ip}, without allowing them to use \texttt{sudo}. We refer to the GNU
+libc documentation for more details~\cite{libcpermission}.
 
 Whereas the \texttt{setuid} property might seem practical, it also brings
 security risks. A bug allowing code execution in such a program allows an
@@ -432,7 +433,8 @@ request by sending the desired file or an error, if one occurs during the
 handling of the request. As not all requests and answers should publicly
 visible, web servers adapted TLS for security and privacy reasons to provide
 content over HTTPS. The client, most of the time a web browser, can thereby
-verify the server's identity and apply encryption to the connection if needed.
+verify the server\textquotesingle s identity and apply encryption to the
+connection if needed.
 
 \subsubsection{HTTP - Basic Access Authentication (BA)}
 
@@ -492,10 +494,10 @@ for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
 \texttt{AES256-GCM} is the  symmetric cypher during the communication and
 \texttt{HMAC-SHA1} is used to check the integrity of the transmitted data.
 
-TLS is commonly used in web servers to guarantee user's safety, but also
-applications like Virtual Private Networks (VPNs) and Secure Shell (SSH) make
-use of protocols and cyphers described in the TLS standard. The most commonly
-used TLS implementation is OpenSSL~\cite{opensslweb}.
+TLS is commonly used in web servers to guarantee user\textquotesingle s safety,
+but also applications like Virtual Private Networks (VPNs) and Secure Shell
+(SSH) make use of protocols and cyphers described in the TLS standard. The most
+commonly used TLS implementation is OpenSSL~\cite{opensslweb}.
 
 \subsection{Cryptographic Nonces}
 
@@ -1008,7 +1010,8 @@ execution cycles since the last resetting of the CPU. As CPUs tend to change
 their clock frequency during runtime, the TSC might deliver different results
 depending on the current frequency. Therefore, vendors changed the behaviour of
 the TSC so that it is increased in the same way as it would on maximum
-frequency. The instruction \texttt{RDTSC} provides the TSC's value in the
+frequency. The instruction \texttt{RDTSC} provides the TSC\textquotesingle s
+value in the
 \texttt{EDX:EAX} CPU registers. With out-of-order execution, problems occurred
 with measuring timings, as the CPU read the TSC at the wrong time. This issue
 can be resolved by calling serialising instructions such as \texttt{CPUID} or
@@ -1223,12 +1226,12 @@ if(x < array1_size)
 An attack by van Bulck~\etal~\cite{foreshadow}, targeting the Guard eXtension
 (SGX) in current Intel CPUs. The researchers use already known speculative
 execution bugs to gain knowledge of secret memory used inside the SGX
-environment which is transferred to the CPU's cache. The attack works similar
-to the Meltdown attack, but it is more challenging because of the SGX and its
-additional memory protection layers. With this attack, the security promises on
-the hardware layer made by Intel are broken. Countermeasures against this
-attack cannot be applied to the kernel layer. Intel needs to patch their
-microcode in order to prevent the Foreshadow attack.
+environment which is transferred to the CPU\textquotesingle s cache. The attack
+works similar to the Meltdown attack, but it is more challenging because of the
+SGX and its additional memory protection layers. With this attack, the security
+promises on the hardware layer made by Intel are broken. Countermeasures
+against this attack cannot be applied to the kernel layer. Intel needs to patch
+their microcode in order to prevent the Foreshadow attack.
 
 \subsection{Rowhammer}
 
