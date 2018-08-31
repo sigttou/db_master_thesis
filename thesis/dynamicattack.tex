@@ -2,12 +2,12 @@
 \chapter{Bitflip Attacks on Dynamic Data}\label{sec:automate}
 
 In this chapter, we want to take a look at data created at the runtime of the
-program and how flips to that could benefit an attack. We will go into details
+program and how flips to that could benefit an attacker. We will go into details
 about OpenSSL and how bitflips can make attacks like a nonce-misuse possible. We
 want to apply a similar attack as Böck~\etal describe in their work about
 \textquotedbl practical nonce misusage
 attacks\textquotedbl\cite{gcmnonceattack}. By this, we want to show how
-Rowhammer can reintroduce different previous attacks.
+Rowhammer can reintroduce previous attacks.
 
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
 
@@ -90,7 +90,7 @@ introduce Rowhammer faults. With this knowledge and the possibility of
 nonce-misuse attacks in OpenSSL by bitflips, an attacker could overtake TLS
 sessions with only remote access to the network.
 
-Looking at the OpenSSL source code, we can see that for each TLS connection, at
+Looking at the OpenSSL source code, we can see that for each TLS connection at
 least those two context structs are generated. There is one general SSL struct
 needed, one AES-GCM context struct and two cypher contexts, as one is used for
 sending and one for receiving. The working IVs make 32 bytes of this memory. The
@@ -141,11 +141,11 @@ near the 1.5 per cent, the probability in practical implementations is therefore
 even lower. If it is possible to get a thousand parallel connections, with 5440
 bytes each, with 32 bytes in initialisation vectors, it will result in 5.19
 megabytes of memory representing TLS connections, with 0.59 percent of this
-being IVs. In a setup with four gigabyte DRAM, the IVs would only make
-$74.5\cdot10^{-6}$ per cent. Even if an attacker could gain knowledge about the
-four-kilobyte pages used to store TLS structs, it would be tough to hit IVs
-with Rowhammer. Given this knowledge, we can conclude that a remote attack with
-nethammer is very unlikely to succeed in nonce misusage.
+being IVs. In a server setup with four gigabytes of DRAM, the IVs would only
+make $74.5\cdot10^{-6}$ per cent. Even if an attacker could gain knowledge
+about the four-kilobyte pages used to store TLS structs, it would be tough to
+hit IVs with Rowhammer. Given this knowledge, we can conclude that a remote
+attack with nethammer is very unlikely to succeed in nonce misusage.
 %}}}
 
 %% vim:foldmethod=expr
