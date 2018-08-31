@@ -7,19 +7,19 @@ understand the details of the work in the following chapters. We start by
 showing how modern computers execute programs and code, by looking at file
 formats needed to load programs and how common computing architectures structure
 their machine code. We then look at how programs and code is tested and what new
-technologies evolved in that matter. As we deal with Unix based systems, we take
-a look at the permission system used by those.
+technologies evolved in that matter. As we deal with Unix-based
+operating systems, we take a look at the permission system used by these.
 Additionally, we face topics in secure communication. Therefore we also describe
 the basic principles of network connections, web servers and their security. The
 thesis provides automation for searching for bits to flip with rowhammer,
-because of this we take a look at this kind of attack and how it works and also
+because of this we take a look at this kind of attack, how it works and also
 look at microarchitectural attacks in general.
 
 \section{Executing Programs}
 
 Processing units (PU) execute machine code. Any device running programs contains
-at least one. Usually, the central processing unit (CPU) runs programs and
-triggers other PUs to run other tasks if needed. Often referred to as the main
+at least one PU. Usually, the central processing unit (CPU) runs programs and
+triggers other PUs to run tasks if needed. Often referred to as the main
 processor, the CPU carries out the instruction given to it by the machine code
 representing a program. A PU can only step over single instructions and execute
 them one by one. This is done by moving the instruction pointer to different
@@ -31,13 +31,13 @@ translated to machine language by either a compiler or an interpreter. We refer
 to files created by a compiler as executables or binaries. These files can
 directly be loaded into memory by the OS. Operating Systems use defined
 structures for executables to make this loading possible, for example,
-Unix/Linux systems use ELF and Windows uses PE.
+GNU/Linux systems use ELF and Windows uses PE.
 
 \subsection{CPU Instructions}
 
 Machine code, in general, is a list of instructions, encoded in some binary
 format. Usually, an instruction consists of an operation code (opcode), telling
-the processor what to do, and parameters for the opcode, which the processor
+the PU what to do, and parameters for the opcode, which the processor
 uses for the operation. Instructions can operate on registers or locations in
 memory directly. Available instructions and their design are depending on the
 architecture used. The most common instruction set architectures (ISA) are Intel
@@ -63,20 +63,20 @@ also which parts they may contain.}
 \end{table}
 
 Table~\ref{tab:instrfor} shows the instruction format for Intel 64 and IA-32
-Architectures. The format splits an instruction into the following sections:
+architectures. The format splits an instruction into the following sections:
 
 \begin{itemize}
-  \item Prefix - Used to give the CPU further instructions on how to handle the
+  \item Prefix - Used to give the CPU further information on how to handle the
 opcode. There are prefixes for memory locks in a multi-core environment or
 repeat instructions to apply an operation on each byte in a string or I/O data.
 There are also prefixes overriding the operand sizes or introducing SSE
-instruction calls, or even others give branching hints to the CPU.
+instruction calls, and even others give branching hints to the CPU.
   \item Opcode - Tells the CPU what to do and how to handle the following
 parameters.
   \item ModR/M - This byte is used behind the opcode to tell the CPU what
 addressing mode to use for memory accesses.
-  \item SIB - For some ModR/M addressing-modes, this byte also needs to be
-parsed and evaluated.
+  \item SIB - This byte also needs to be parsed and evaluated for some ModR/M
+addressing-modes.
   \item Displacement - Some addressing-modes referred in the ModR/M or SIB byte
 might include a displacement following them.
   \item Immediate - Immediate data might follow if referred in previous
@@ -88,13 +88,14 @@ the instruction format used in \texttt{x86\_64}.
 
 \subsection{Executable and Linkable Format (ELF)}
 
-ELF is an object file format. It is used to describe a program in a way to load
-a program into memory to make it execution ready for the processor without
-applying changes to the binary itself. A linker creates ELF files after an
-assembler turned the program's source code into machine code. Most modern
-Unix-like operating systems follow the ELF specification released by the Tool
-Interface Standard Committee~\cite{elfspec}. Therefore, we need to understand
-the layout of such executable files before introducing bitflips to them.
+ELF is an object file format. It is used to describe a program and gives
+instructions on how to load it into memory to make it ready for execution
+by the processor without applying changes to the binary-content itself. A
+linker creates ELF files after an assembler turned the program's source code
+into machine code. Most modern Unix-like operating systems follow the ELF
+specification released by the Tool Interface Standard Committee~\cite{elfspec}.
+Therefore, we need to understand the layout of such executable files before
+introducing bitflips to them.
 
 \subsubsection{Structure of an ELF file}
 
@@ -132,18 +133,19 @@ the layout of such executable files before introducing bitflips to them.
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (data);
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (bss);
   \end{tikzpicture}
-  \caption{Structure of an ELF file showing the four main sections inside an
-executable. The Figure shows the connection of between sections and segments via
-the program header table and the section header table. Segments usually are just
-numbers and can refer to multiple sections inside the section header table.}
+  \caption{Schematics of the structure of an ELF file showing the four main
+sections inside an executable. The Figure shows the connection of between
+sections and segments via the program header table and the section header
+table. Segments usually are just numbers and can refer to multiple sections
+inside the section header table.}
 \label{fig:elfstruct}
 \end{figure}
 
 There are two views of an ELF file, the linking view and the execution view.
 Those are also called section and segment view respectively. They share the same
-ELF header but serve different purposes for the operating system. Figure
-~\ref{fig:elfstruct} show the connection between sections and segments via the
-two different headers. Sections and segments can be seen as follows:
+ELF header but serve different purposes for the operating system.
+Figure~\ref{fig:elfstruct} show the connection between sections and segments via
+the two different headers. Sections and segments can be seen as follows:
 
 \subsubsection{Sections}
 
@@ -161,32 +163,32 @@ They describe the virtual memory layout of a loaded binary.
 Figure~\ref{fig:elfstruct} shows how segments are applied in an ELF file.
 Usually, the linker splits segments into different behaviours the loader needs
 to apply. For example, all read-only data sections are in the same segment. When
-loading the image into memory references inside the ELF file need to be resolved
-and loaded into the memory too. After successfully loading the image and its
-dependencies the program can be executed.
+loading the image into memory, references inside the ELF file need to be
+resolved and loaded into the memory too. After successfully loading the image
+and its dependencies the program can be executed.
 
 \subsubsection{Loading ELF files into Memory}
 
 As we focus on GNU/Linux operating systems, we will look at how UNIX System V
 Release 4 based operating systems handle ELF files in order to create running
-programs. Operating systems use no physical addresses for execution, and the OS
-is free to change the position of sections in the virtual address space.
+programs. These systems do not use physical addresses during execution, and
+the OS is free to change the position of sections in the virtual address space.
 Therefore, in an ELF, a section only contains a base address and offsets to that
 address. During the loading step, the operating system is free to change the
 base address in the programs virtual address space. The loader then places
-additional memory according to these offsets.
+additional memory according to the offsets.
 
 \subsubsection{Dynamic Linking}
 
-This technique is needed because it is widespread to have multiple functions
-used by different programs. Shared libraries can be used to provide such
-general functions. When deploying programs, developers usually make sure all
-needed shared libraries exist on the target platform or ship their software with
-those included. When depending on libraries by the system, the loader will move
-the shared libraries into memory at the desired entry point. The loader fetches
-the information about the needed library from the ELF file and then checks the
-library paths provided by the operating system if the library is available to be
-loaded.
+In modern systems it is widespread to have multiple functions used by different
+programs. Shared libraries can be used to provide such general functions. When
+deploying programs, developers usually make sure all needed shared libraries
+exist on the target platform or ship their software with those included. When
+depending on libraries by the system, the loader will move the shared libraries
+into memory at the desired entry point, this is called dynamic linking. The
+loader fetches the information about the needed library from the ELF file and
+then checks the library paths provided by the operating system if the library
+is available to be loaded.
 
 \section{Analysis and Testing of Executables}
 
@@ -196,21 +198,21 @@ to apply input to it and check if the code operates as expected by validating
 the output. With increasing amount of code and an increasing number of bugs
 found, the style of testing changed over the years. On the one hand, developers
 nowadays provide unit tests inside their code to test single functions and make
-sure they work as desired. On the other hand, sometimes the source code is not
+sure they work as intended. On the other hand, sometimes the source code is not
 available to a tester, or it is way too much work to read the whole source code
-to such tests. Therefore, developers came up with tools which can be used to
-test binaries on their own without knowing the source code.
+to create such tests. Therefore, developers came up with tools which can be
+used to test binaries on their own without knowing the whole source code.
 
 \subsection{Fuzzing}
 
 Fuzzing is an approach for testing programs with just a little knowledge about
-the program to test. Such an approach is called black box testing. Fuzzing is a
+the program to test. Such an approach is called black-box testing. Fuzzing is a
 technique to detect erroneous responses of a program by providing different,
 automatically created, mostly random, inputs. Tools applying this technique are
 called fuzzers. Fuzzers try to reach corner cases in programs without knowing
 which exist and detect undefined behaviour or crashes. Generally, fuzzers give
-an overall view on the robustness of a program, they are cheap to apply and even
-can find bugs usual white box tests would miss.
+an overall view on the robustness of a program. They are cheap to apply and even
+can find bugs usual white-box tests would miss.
 
 If a fuzzer only applies random inputs, testing would take a very long time, as
 a lot of unneeded tests would run. Because of this, the technology improved over
@@ -243,7 +245,7 @@ obfuscation is applied.
 
 Fuzzing provides a pseudorandom input to a program to test it. Therefore it
 might not catch all possible execution paths of a program. Scientists developed
-techniques to test all possible paths by simplifying the program,  one of this
+techniques to test all possible paths by simplifying the program, one of these
 techniques is symbolic execution. It makes use of the possible simplification of
 inputs where they use a logic symbol with less possible states instead. For
 example, a number can be represented by the possible states: maximal value,
@@ -279,7 +281,7 @@ and one is binary instrumentation, where so-called instrumenter-calls are either
 added pre-compilation to the source of the program or later added to the binary
 context of the program. The first style might bring the advantage that it is
 easier to apply and the structure of the program is better known to the
-instrumenter, so calls for performance checks over functions are done by adding
+instrumenter, calls for performance checks over functions are done by adding
 timer calls at the entry and exit points. However, binary instrumentation also
 has its perks. For example, users do not need the source of the program, which
 might not be available in proprietary programs. Also, recompilation of the
@@ -305,23 +307,23 @@ instrumenting a binary are called pintools, the framework provides their API
 calls for C++, but also bindings for Python can be found in
 \texttt{python-pin}~\cite{pythonpin}.
 
-In the paper about Pin, Luk~\etal~\cite{pintool} describe the system of Pin and
+In their paper, Luk~\etal~\cite{pintool} describe the system of Pin and
 how the written pintool is combined with the application in more detail. When
 instrumenting a program, three binaries are being used. One is the application
 to instrument, one is the compiled pintool, and one is Pin itself. Pin can be
-seen as a userland virtual machine. When the instrumentation starts Pin is
+seen as a userland virtual machine. When the instrumentation starts, Pin is
 loaded into the address space of the application, then the \texttt{ptrace}
 system-call is used to capture the program's behaviour. When Pin has initialised
 itself the tool overtakes the entry point of the program, or the current program
-counter if it was attached to a running application, and uses its just-in-time
-(JIT) compiler to continue the execution. They state that their approach of
-loading Pin has various advantages over other instrumentation tools, as those
-mostly use \texttt{LD\_PRELOAD}, which would not work on statically linked
-binaries and also using an additional library, the address space would be
-changed from a normal execution.
+counter if it was attached to a running application. It then uses its
+just-in-time (JIT) compiler to continue the execution. They state that their
+approach of loading Pin has various advantages over other instrumentation
+tools, as those mostly use \texttt{LD\_PRELOAD}, which would not work on
+statically linked binaries and also by using an additional library, the address
+space would be changed from a normal execution.
 
 The JIT compiler inside Pin is used to inject the instrumentation API into the
-application and then the pintool to use it. The code is loaded into a preserved
+application to allow the pintool to use it. The code is loaded into a preserved
 code-cache and then executed. Pin always tries to execute as many instructions
 as possible without interfering it for debugging. That is why they state,
 execution of the code happens one trace at a time. Whereas a trace is either
@@ -332,10 +334,10 @@ they also state that the JIT is not the bottleneck but the instrumenting code
 inside the application. That is the reason why Pin tries to optimise the
 injected code as good as possible. As their first routine, they inline all
 analysis functions. This is faster as no calls happen, which would cause
-registers to be used for the arguments. Most other debugging tools use the so
-\texttt{eflags} registers, which is not ideal, as storing and restoring these
-flags is time-consuming, and an extra stack has to be used, as the original
-stack is not allowed to be modified. Pin detects in their JIT if the
+registers to be used for the arguments. Most other debugging tools use the
+\texttt{eflags} CPU registers, which is not ideal, as storing and restoring
+these flags is time-consuming, and an extra stack has to be used, as the
+original stack is not allowed to be modified. Pin detects in their JIT if the
 \texttt{eflag} content is needed later on, and only if it is, saving routines
 are called. Another optimisation for their framework is the API call
 \texttt{IPOINT\_ANYWHERE}, which specifies that the analysis call can happen
@@ -351,21 +353,21 @@ identification to the system. The POSIX-defined permission structure applies to
 files, which can have properties like readable, writable, executable. On
 creation, the user can set these properties separately for the owner, the group
 of the owner and others. POSIX also allows users with special privileges to
-suppress such permission checks. These users are called super-users.
+suppress such permission checks. Such users are called super-users.
 
-Besides permission for files most Unix based systems also provide permission
-checks for processes and their owner. For example, only processes owned by a
+Besides permission for files most Unix-based systems also provide permission
+checks for processes and their owners. For example, only processes owned by a
 super-user might be allowed special syscalls. In most systems, only one
 super-user exists, namely \texttt{root}. Usually, users do not want to login
-another time if they need super-permissions for a task. Therefore, POSIX
-compliant operating systems ship tools such as \texttt{su} or the more advanced
-\texttt{sudo}. \texttt{su} stands for switch user and allows a user to change
-the current context to another user or execute a command with the other user's
-permissions, providing the correct password of the other user. \texttt{sudo}
-includes the same functionality as \texttt{su}. Additionally, it has a better
-management system in the background and given the correct permissions the user
-does not need to know the other user's password to execute commands as the
-target user.
+another time if they need super-user permissions for a task. POSIX compliant
+operating systems, therefore, ship tools such as \texttt{su} or the more
+advanced \texttt{sudo}. \texttt{su} stands for switch user and allows a user to
+change the current context to another user or execute a command with the other
+user's permissions, providing the correct password of the other user.
+\texttt{sudo} includes the same functionality as \texttt{su}. Additionally, it
+has a better management system in the background and given the correct
+permissions the user does not need to know the other user's password to execute
+commands as the target user.
 
 \subsection{\texttt{setuid} Binary Property}
 
@@ -394,7 +396,7 @@ changed, and the program runs inside a completely different system. It is not
 possible to access files from outside the new environment nor to interact with
 processes running in the old environment. The tool is either used for testing
 purposes, to create packages in clean environments, to check compatibility, as
-the chrooted system could be a different system or for sandboxing and privilege
+the chrooted system could be a different system, or for sandboxing and privilege
 separation.
 
 \section{Connecting Computers}
@@ -408,7 +410,7 @@ computers, more universities, companies and private households wanted to be
 connected and exchange data. Many protocols were introduced with the creation of
 the Internet, where Hypertext protocols are shared in the World Wide Web,
 electronic mail is used to transmit messages, and file sharing became common.
-With this growing amount of users, security in the network and the connected
+With the growing amount of users, security in the network and the connected
 devices became more relevant every day. Therefore, protocols to ensure security
 for the participants became standard and regularly improved.
 
@@ -417,53 +419,54 @@ for the participants became standard and regularly improved.
 Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
 such servers available, most of them being open source and free, such as
-Apache\cite{apacheweb} and \texttt{nginx}\cite{nginxweb}. Web servers use the
+Apache~\cite{apacheweb} and \texttt{nginx}~\cite{nginxweb}. Web servers use the
 Hypertext Transfer Protocol (HTTP) to handle requests and deliver the content to
 the client. Web servers usually deliver websites encoded in Hypertext Markup
-Language (HTML) but can also deliver all kind of files such as JavaScript (JS)
-and Content Style Sheet (CSS).
+Language (HTML) but can also deliver all kind of files including JavaScript (JS)
+and Content Style Sheet (CSS), which are rendered together with HTML by web
+browsers on the client.
 
 A client requests content from the server by sending a Uniform Resource Locator
 (URL). The server then looks up the given path in the URL and answers the
-request by sending the desired file or an error if one occurs during the
-handling of the request. As not all requests should publicly visible web servers
-adapted TLS for security and privacy reasons to provide content over HTTPS. The
-client, most of the time a web browser, can thereby verify the server's identity
-and apply encryption to the connection if needed.
+request by sending the desired file or an error, if one occurs during the
+handling of the request. As not all requests and answers should publicly
+visible, web servers adapted TLS for security and privacy reasons to provide
+content over HTTPS. The client, most of the time a web browser, can thereby
+verify the server's identity and apply encryption to the connection if needed.
 
 \subsubsection{HTTP - Basic Access Authentication (BA)}
 
 To allow only authorised users to access specified paths on a web server HTTP
 added access-control to the protocol described in RFC 7617~\cite{rfc7617}. This
 technique makes use of a header field in HTTP, namely \texttt{WWW-Authenticate}.
-RFC 3986~\cite{rfc3986} deprecates the functionality to transmit credentials
-inside the URL. BA is a straightforward access-control technique and does not
-protect the transmitted credentials. Therefore, it is used together with HTTPS
-at most times. The client has to transmit the credentials with every request,
-and there is no logout function as in other techniques using cookies or session
-identifiers.
+Where RFC 3986~\cite{rfc3986} deprecates the functionality to transmit
+credentials inside the requesting URL. BA is a straightforward access-control
+technique and does not protect the transmitted credentials. Therefore, it is
+used together with HTTPS at most times. The client has to transmit the
+credentials with every request, and there is no logout function as in other
+techniques using cookies or session identifiers.
 
 \subsubsection{Access control in Apache and \texttt{nginx}}
 
 Basic Access Authentication is used by these two web servers in the default
 configuration. Apache makes use of \texttt{ht} files, which are an extension to
-the usual server configuration for users with limited rights, see their
-documentation~\cite{apacheauthdoc} for further details. Apache introduced
+the usual server configuration for users with limited permissions, see
+their documentation~\cite{apacheauthdoc} for further details. Apache introduced
 \texttt{htpasswd}-files to make use of BA, which stores the user credentials.
 \texttt{nginx} later adapted these files for their web server implementation.
 The \texttt{htpasswd}-files keep the data either in plaintext or hashed. To
 create these files Apache provides the tool
 \texttt{htpasswd}~\cite{htpasswddoc}. This tool uses MD5 hashing per default (as
 of version 2.2.18), but it is possible to change the hashing algorithm to
-something more secure. On a request including BA, the web server will look up
-the \texttt{htpasswd}-file to verify given credentials and then return the
-requested content or an error according to RFC 7231\cite{rfc7231}.
+something more secure, like bcrypt. On a request including BA, the web server
+will look up the \texttt{htpasswd}-file to verify given credentials and then
+return the requested content or an error according to RFC 7231\cite{rfc7231}.
 
 \subsection{Transport Layer Security}
 
 Transport Layer Security (TLS) describes a collection of cryptographic
 protocols. It is a standard proposed by the Internet Engineering Task Force
-(IETF), RFC 5246\cite{rfc5246} describes the standard in detail. The IETF
+(IETF), RFC 5246\cite{rfc5246} describes this standard in detail. The IETF
 regularly updates the TLS standard by adding new protocols and removing old,
 seen as insecure, ones.
 
@@ -486,8 +489,8 @@ they use for each part of the connection, which happens during the TLS
 Handshake. A common name for a TLS connection protocol would be
 \texttt{ECDHE-RSA-AES256-GCM-HMAC-SHA1}, which contains all three protocols used
 for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
-\texttt{AES256-GCM} is the  symmetric cypher and \texttt{HMAC-SHA1} checks data
-integrity.
+\texttt{AES256-GCM} is the  symmetric cypher during the communication and
+\texttt{HMAC-SHA1} is used to check the integrity of the transmitted data.
 
 TLS is commonly used in web servers to guarantee user's safety, but also
 applications like Virtual Private Networks (VPNs) and Secure Shell (SSH) make
@@ -498,10 +501,10 @@ used TLS implementation is OpenSSL~\cite{opensslweb}.
 
 In the early days of encrypted communication, replay-attacks were a common
 problem, as Syverson showed in his taxonomy of replay attacks in
-1994~\cite{replaytax}. Newer protocols introduced nonces to resolve this issue.
-Cryptographic nonces are one-time, often pseudorandom, numbers used for each
-packet sent. They are combined with the key so that the encryption differs for
-each packet. This technique makes replay-attacks harder.
+1994~\cite{replaytax}. Following protocols introduced nonces to resolve this
+issue. Cryptographic nonces are one-time, often pseudorandom, numbers used for
+each packet sent. They are combined with the key so that the encryption differs
+for each packet. This technique makes replay-attacks harder.
 
 In most cases, nonce reuse is a problem for the protocol and results in breakage
 of the encryption of future or past packages. Hence, most protocol standards
@@ -515,11 +518,11 @@ reuse in WPA2\cite{wpanoncereuse}.
 \subsection{Advanced Encryption Standard (AES)}
 
 The Advanced Encryption Standard is a block cypher proposed to the US National
-Institute of Standards and Technology  (NIST) by Vincent Rijmen and Joan Daemen
+Institute of Standards and Technology (NIST) by Vincent Rijmen and Joan Daemen
 in 1999~\cite{aesproposal}. In 2001 NIST released AES as a specification for
 encryption of electronic data. It is the successor of the Data Encryption
 Standard (DES). AES is also part of ISO/IEC 18033-3~\cite{iso18033}, the ISO
-standard related to Security techniques and encryption algorithms.
+standard related to security techniques and encryption algorithms.
 
 \subsubsection{Design of AES}
 
@@ -529,9 +532,9 @@ given key are permutated together to create the ciphertext.
 \subsubsection{Substitution Boxes}
 
 So-called S-boxes are a significant part of the AES algorithm. In a simplified
-view, they can be seen as a lookup table which shows which value has to be
+view, they can be seen as a lookup table which tells which value has to be
 replaced which what other value. These lookup tables are designed in a way that
-there is no mathematical analysis possible, based on linear or differential
+no mathematical analysis is possible based on linear or differential
 dependencies between values. In AES the Rijndael S-box is used, the
 lookup-table describing this S-box can be seen in table~\ref{tab:sbox}. A
 lookup in the S-box for a byte works as the least significant nibble (four
@@ -583,8 +586,8 @@ significant nibble determines the column the most significant one the row.}
 \end{table}
 
 The permutation of plaintext is done as the algorithm applies some steps to the
-data. These steps are repeated as so-called rounds. Depending on the key length
-the used the number of rounds differs. Usually, in AES these steps are:
+data. These steps are repeated in so-called rounds. Depending on the key length
+the used the number of rounds differs. Usually, in AES the steps are:
 
 \begin{itemize}
 \begin{samepage}
@@ -744,8 +747,8 @@ shifting is applied.
 \begin{itemize}
 \item \texttt{AddRoundKey}
 \end{itemize}
-\item Encryption rounds - These are the default round, which can be applied
-multiple times. The number of repetitions depends on the keysize.
+\item Encryption rounds - These are the default rounds, which can be applied
+multiple times. The number of repetitions depends on the size of key.
 \begin{itemize}
 \item \texttt{SubBytes}
 \item \texttt{ShiftRows}
@@ -788,7 +791,7 @@ affect real-world usages of AES.
 
 Way more common than such cryptoanalysis attacks on AES are attacks targeting
 software and hardware implementations. For example,
-O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in a bootloader.
+O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in the bootloader.
 Whereas most attacks target 128 bits, they showed one against 256. They use a
 Correlation Power Analysis (CPA) on a bootloader which loads an AES-256-CBC
 encrypted firmware. Besides recovering the full key, they also achieve recovery
@@ -798,7 +801,7 @@ in AES-128 besides using CPA, they also use differential power analysis (DPA).
 In their work they compare both methods as they try to recover cypher keys from
 the \texttt{AddRoundKey} and \texttt{SubBytes} function calls. Their work was
 done with widespread hardware, the Arduino Uno, making it possible for more
-people to learn from such attacks, as they can replicate such attacks with cheap
+people to learn from such attacks, as they can replicate it with cheap
 hardware. With an increasing number of side-channel attacks on software and
 hardware, vendors increased the key-size of AES in their implementations. In
 their work, Neve~\etal~\cite{sidecomplex}, show that increasing the key-size
@@ -936,7 +939,7 @@ standard about AES-GCM~\cite{gcmnist} for more details.
 \subsubsection{OpenSSL source code}
 
 The libraries souce code is structured in a way that each part of a
-cypher is implemented on its own. For our thesis and analysation we want to
+cypher is implemented on its own. For our thesis and analysis we want to
 refer to version \texttt{1.1.0g} of OpenSSL\cite{opensslsource}. The AES-GCM
 code part is located at \texttt{crypto/evp/e\_aes.c}. The structures used by the
 cypher are defined in \texttt{crypto/evp/evp\_locl.h},
@@ -955,7 +958,7 @@ needed.
 We look at the simplified attack of Joux\textquotesingle s
 comment~\cite{NISTGCMcomment}, described by Böck~\etal~\cite{gcmnonceattack}.
 Assuming that the same nonce is used for two messages, consisting of just a
-single ciphertext block and no authenticated data. Also,  we note that all
+single ciphertext block and no authenticated data. Also, we note that all
 values besides $S$ are known to the attacker:
 
 \[g_1(X) = C{_{1}X^2 \oplus L_1X \oplus S}\]
@@ -981,7 +984,7 @@ decreases.
 Attacks against desktop computers and mobile devices have been widespread over
 the last couple of years. As programmers and vendors became more aware of
 classic issues in such systems, attackers moved to other layers to find bugs and
-security holes. One of these other layers is side-channel information leakage.
+security issues. One of these other layers is side-channel information leakage.
 Like Kelsey~\etal\cite{kelsey1998side} showed how little information was needed
 to break cryptographic cypher implementations. They used time, processor flags,
 and power consumption as their sources to break various implementations. But not
@@ -993,7 +996,7 @@ information about a users browser history by using side-channels.
 
 Many side-channel attacks are based on timings. Like, predicting what a machine
 currently does because of the time needed to compute something. To measure
-timings in a high resolution, researchers need as precise time stamp as
+timings in a high resolution, researchers need as precise time stamps as
 possible.
 
 \subsubsection{Native Timing Measurement}
@@ -1037,8 +1040,8 @@ there are three or four levels of caching applied. As shown in
 figure~\ref{fig:intelcache}, the design in Intel Kaby Lake assigns caches for
 level one and two (L1, L2) to each core and the cores share the level three
 cache (L3) between each other. L1 caches can be split up in a data and an
-instruction cache. There might also be an L0 cache for micro-operations, as in
-Intel Haswell.
+instruction cache. There might also be an L0 cache for micro-operations, as it
+is implemented in the Intel Haswell architecture.
 
 Caches are updated on each memory access. Inclusive caching is a form of
 managing the caches in a way where data stored on one level is also at lower
@@ -1162,21 +1165,21 @@ microarchitectural attacks by the general public a lot.
 \subsubsection{Meltdown}
 
 Lipp~\etal~\cite{meltdown} presented an attack targeting the memory isolation
-between the operating system's kernel and the userland memory and shows how the
-CPU's out-of-order execution can lead to a leak of information from kernel
-memory to a user program. Meltdown makes use of a side-effect of this execution
-method. The CPU wants to use as many computing units as possible. It will
-execute code as soon as all dependencies are resolved. So inside a program
-computing could happen ahead of other code parts. In a simplified view, the
-attacker accesses kernel memory, which the CPU reads out-of-order, the CPU
-executes other code and receives an exception because of the disallowed memory
-access, which already happened before. This execution order still makes
-accesses to caches and DRAM as it would normally access the memory. Therefore
-the cache could be used to transmit the information. Meltdown makes use of the
-Flush+Reload cache attack, as they use the read kernel memory to flush certain
-cache lines. Access times to memory then tells which cache lines the program
-cleaned. Hence it leaks the kernel memory content. Lipp~\etal propose the
-KAISER countermeasure as a fix for this vulnerability. This work by
+between the operating system\textquotesingle s kernel and the userland memory
+and shows how the CPU\textquotesingle s out-of-order execution can lead to a
+leak of information from kernel memory to a user program. Meltdown makes use of
+a side-effect of this execution method. The CPU wants to use as many computing
+units as possible. It will execute code as soon as all dependencies are
+resolved. So inside a program computing could happen ahead of other code parts.
+In a simplified view, the attacker accesses kernel memory, which the CPU reads
+out-of-order, the CPU executes other code and receives an exception because of
+the disallowed memory access, which already happened before. This execution
+order still makes accesses to caches and DRAM as it would normally access the
+memory. Therefore the cache could be used to transmit the information. Meltdown
+makes use of the Flush+Reload cache attack, as they use the read kernel memory
+to flush certain cache lines. Access times to memory then tells which cache
+lines the program cleaned. Hence it leaks the kernel memory content. Lipp~\etal
+propose the KAISER countermeasure as a fix for this vulnerability. This work by
 Gruss~\etal~\cite{kaiserpaper} is used to separate kernel and user memory
 addresses. Their proof-of-concept implements a complete separation of the two
 memory spaces inside the Linux kernel, which makes sure no information about the
@@ -1187,14 +1190,14 @@ kernel execution is leaked to the userspace.
 Kocher~\etal~\cite{spectre} presented this attack also targeting information
 leakage by features modern CPUs provide. The attack gained its name form
 exploiting speculative execution which makes use of the branch-prediction unit
-inside the CPU. The CPU executes code which maybe needs execution, later on,
+inside the CPU. The CPU executes code which maybe needs execution later on,
 the CPU executes multiple branches and results are either thrown away or
 reported to the program later on. Spectre uses this behaviour to leak
 information to an attacker by using side-channels inside the predicted code.
 The attack breaks multiple security measures which would usually be in place in
 modern operating systems. In their work, the researchers show multiple variants
 of exploiting the different behaviours caused by speculative execution. For
-example see the code in Listing~\ref{lst:spectre1}, as shown in their work. The
+example see the code in listing~\ref{lst:spectre1}, as shown in their work. The
 speculative execution executes the array access before the if condition check.
 The \texttt{array1[x]} can point to kernel memory, for example, returning some
 secret, then the \texttt{array2} is accessed at a page which refers to the
