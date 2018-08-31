@@ -119,7 +119,7 @@ branching code from listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
 which means there are $66304$ flips to test. With an execution time of
 approximately $0,003$ seconds per run, this means that it would take close to
 $200$ seconds to test all bits inside the binary. For our automation, we want
-to need way less time than that as we target larger binaries.
+to require way less time than that as we target larger binaries.
 
 \subsection{Design of the Testing Framework}
 
@@ -354,9 +354,9 @@ Next, we create a new ELF file for each bit for each of the reported bytes. We
 generate those files into a \texttt{tmpfs} file-system placing its memory in the
 DRAM to have lower access times than to the hard drive. Depending on the
 configured number of parallel checks, chroots are created in the \texttt{tmpfs}
-too. The framework makes sure the number of created ELF files does not need more
-than the memory available. If there are more files to test than the available
-memory allows, the framework takes multiple runs, as seen in
+too. The framework makes sure the number of created ELF files does not require
+more than the memory available. If there are more files to test than the
+available memory allows, the framework takes multiple runs, as seen in
 figure~\ref{fig:frameworkdesign} describing the design. A test run starts
 configured \texttt{CR\_exec\_file} which will copy a flipped file from
 \texttt{CR\_flip\_folder} to the original position, then run it and check if the
@@ -447,7 +447,7 @@ side, it is also possible to verify by reading a file owned by the super-user.
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
 For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
-flipping a single bit. This means we need to set up a page which is only
+flipping a single bit. This means we have to set up a page which is only
 accessible given a correct user and password credential pair.
 
 \subsubsection{Instrumentation}

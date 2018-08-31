@@ -4,9 +4,9 @@
 In this chapter, we describe the terms, techniques, tools, and programs used in
 this thesis. It provides a general overview to make it easier to understand the
 details of the work in the following chapters. We start by showing how modern
-computers execute programs and code, by looking at file formats needed to load
-programs and how common computing architectures structure their machine code.
-We then look at how programs and source codes are tested and what new
+computers execute programs and code, by looking at file formats required to
+load programs and how common computing architectures structure their machine
+code. We then look at how programs and source codes are tested and what new
 technologies evolved in that matter. As we deal with Unix-based operating
 systems, we take a look at the permission system used by these. Additionally,
 we discuss topics in secure communication. We describe the basic principles of
@@ -161,8 +161,8 @@ executable instructions (\texttt{.text}).
 
 They describe the virtual memory layout of a loaded binary.
 Figure~\ref{fig:elfstruct} shows how segments are used in an ELF file.
-Usually, the linker splits segments into different behaviours the loader needs
-to apply. For example, all read-only data sections are in the same segment. When
+Usually, the linker splits segments into different behaviours the loader has to
+apply. For example, all read-only data sections are in the same segment. When
 loading the image into memory, references inside the ELF file need to be
 resolved and loaded into the memory too. After successfully loading the image
 and its dependencies the program can be executed.
@@ -222,7 +222,7 @@ time, as a lot of unneeded tests would run. Because of this, the technology
 improved over time and different fuzzers evolved. For simple programs, just
 testing common input mistakes, like negative numbers, newlines, end of file
 characters, format strings, or just very long strings might be enough. Advanced
-software needs better ways of fuzzing, for example, network protocols, file
+software requires better ways of fuzzing, for example, network protocols, file
 systems, or image formats have a very complex structure which makes it hard to
 find possible crashes by random data input. Fuzzers for such kind of software
 generate inputs from given examples and apply small changes to them.
@@ -289,8 +289,8 @@ context of the program. The first style might bring the advantage that it is
 easier to apply and the structure of the program is better known to the
 instrumenter, calls for performance checks over functions are done by adding
 timer calls at the entry and exit points. However, binary instrumentation also
-has its perks. For example, users do not need the source of the program, which
-might not be available in proprietary programs. Also, recompilation of the
+has its perks. For example, users do not require the source of the program,
+which might not be available in proprietary programs. Also, recompilation of the
 program is not needed if the code for the instrumentation changes. Given enough
 debug information in the binary the instrumentation information might not differ
 much from the source-based one. With binary instrumentation it is also possible
@@ -304,13 +304,13 @@ Pin\cite{pintool} is a proprietary, dynamic, binary instrumentation framework
 developed and released by Intel, who supply it for free. The framework provides
 a large number of API calls which abstracts most of the work done by Pin and
 gives easy access to binary analysis. As Pin is a binary instrumentation
-framework, the source of the to be analysed program is not needed, and the
-program does it need to be recompiled if the instrumentation tool changes. The
-framework allows to log and modify the runtime of a program, whereas it is no
-problem to log register values or change those before or after desired
-instruction calls or even inject code to be run before given calls. Programs
-instrumenting a binary are called pintools, the framework provides their API
-calls for C++, but also bindings for Python can be found in
+framework, the source of the to be analysed program is not needed, and
+recompilation of the program is not required if the instrumentation tool
+changes. The framework allows to log and modify the runtime of a program,
+whereas it is no problem to log register values or change those before or after
+desired instruction calls or even inject code to be run before given calls.
+Programs instrumenting a binary are called pintools, the framework provides
+their API calls for C++, but also bindings for Python can be found in
 \texttt{python-pin}\cite{pythonpin}.
 
 In their paper, Luk~\etal\cite{pintool} describe the system of Pin and
@@ -334,7 +334,7 @@ code-cache and then executed. Pin always tries to execute as many instructions
 as possible without interfering it for debugging. That is why they state,
 execution of the code happens one trace at a time. Whereas a trace is either
 till a control change happens, like branching, a call or return, or a
-pre-defined API call is needed for the instruction. With this approach, they
+pre-defined API call is required for the instruction. With this approach, they
 gain better performance than other instrumentation techniques. In their paper,
 they also state that the JIT is not the bottleneck but the instrumenting code
 inside the application. That is the reason why Pin tries to optimise the
@@ -441,7 +441,7 @@ handling of the request. As not all requests and answers should publicly
 visible, web servers adapted TLS for security and privacy reasons to provide
 content over HTTPS. The client, most of the time a web browser, can thereby
 verify the server\textquotesingle s identity and apply encryption to the
-connection if needed.
+connection if required.
 
 \subsubsection{HTTP - Basic Access Authentication (BA)}
 
@@ -1006,7 +1006,7 @@ information about a users browser history by using side-channels.
 
 Many side-channel attacks are based on timings. Like, predicting what a machine
 currently does because of the time needed to compute something. To measure
-timings in a high resolution, researchers need as precise time stamps as
+timings in a high resolution, researchers want as precise time stamps as
 possible.
 
 \subsubsection{Native Timing Measurement}
@@ -1145,7 +1145,7 @@ detection of cache attacks such as FLUSH+RELOAD. This attack only uses only the
 bypasses cache attack detection by performance counters. Instead of the three
 phases in FLUSH+RELOAD, this attack only has one phase. The spy process gains a
 memory address to target, will call \texttt{clflush} on it and measure the time
-needed to flush the cache. There are two possible outcomes for this instruction
+it took to flush the cache. There are two possible outcomes for this instruction
 call:
 
 \begin{itemize}
@@ -1401,7 +1401,7 @@ capacitors hold enough voltage.
 Kim~\etal\cite{rowhammergeneral}. The preating accesses to the aggressor
 locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
 neededed to make sure the DRAM rows are accessed directly. According to
-Project Zero\cite{projectzerorow} the \texttt{mfence} is not needed and even
+Project Zero\cite{projectzerorow} the \texttt{mfence} is not required and even
 lowered the number of flips.},]
 code1a:
   mov (X), %eax
