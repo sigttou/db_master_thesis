@@ -1,19 +1,18 @@
 %%%%%% General %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Background}\label{sec:general}
 
-This chapter describes the terms, techniques, tools and programs used during the
-work for this thesis. It provides a general overview to make it easier to
-understand the details of the work in the following chapters. We start by
-showing how modern computers execute programs and code, by looking at file
-formats needed to load programs and how common computing architectures structure
-their machine code. We then look at how programs and code is tested and what new
-technologies evolved in that matter. As we deal with Unix-based
-operating systems, we take a look at the permission system used by these.
-Additionally, we face topics in secure communication. Therefore we also describe
-the basic principles of network connections, web servers and their security. The
-thesis provides automation for searching for bits to flip with rowhammer,
-because of this we take a look at this kind of attack, how it works and also
-look at microarchitectural attacks in general.
+In this chapter, we describe the terms, techniques, tools, and programs used in
+this thesis. It provides a general overview to make it easier to understand the
+details of the work in the following chapters. We start by showing how modern
+computers execute programs and code, by looking at file formats needed to load
+programs and how common computing architectures structure their machine code.
+We then look at how programs and source codes are tested and what new
+technologies evolved in that matter. As we deal with Unix-based operating
+systems, we take a look at the permission system used by these. Additionally,
+we discuss topics in secure communication. We describe the basic principles of
+network connections, web servers, and their security. The thesis provides
+automation for searching for bits to flip with Rowhammer, we look this kind of
+attack, how it works, and discuss microarchitectural attacks in general.
 
 \section{Executing Programs}
 
@@ -29,9 +28,10 @@ load other programs as processes and manage them. CPUs can only execute machine
 code, but programs usually are written in programming languages which are then
 translated to machine language by either a compiler or an interpreter. We refer
 to files created by a compiler as executables or binaries. These files can
-directly be loaded into memory by the OS. Operating Systems use defined
-structures for executables to make this loading possible, for example,
-GNU/Linux systems use ELF and Windows uses PE.
+directly be loaded into memory by the operating system. Operating Systems use
+defined structures for executables to make this loading possible, for example,
+GNU/Linux systems use the executeable and linkable format (ELF) and Windows
+uses the portable executable format (PE).
 
 \subsection{CPU Instructions}
 
@@ -56,9 +56,10 @@ bytes         & 1 per prefix                & 1, 2 or 3
  & 0 or 1                      & 0 or 1                   & 0, 1, 2 or 4
              & 0, 1, 2 or 4
 \end{tabular}
-\caption{Instruction Format for Intel 64 and IA-32 architectures. It shows how
+\caption{Instruction Format for Intel 64 and IA-32 architectures, showing how
 many different instruction lengths are possible in modern architectures and
-also which parts they may contain.}
+also which parts they may contain. Format according to Intel
+Manual\cite{intelsys} section 2.1}
 \label{tab:instrfor}
 \end{table}
 
@@ -77,9 +78,9 @@ parameters.
 addressing mode to use for memory accesses.
   \item SIB - This byte also needs to be parsed and evaluated for some ModR/M
 addressing-modes.
-  \item Displacement - Some addressing-modes referred in the ModR/M or SIB byte
+  \item Displacement - Some addressing-modes set by the ModR/M or SIB byte
 might include a displacement following them.
-  \item Immediate - Immediate data might follow if referred in previous
+  \item Immediate - Immediate data might follow if required by previous
 parameters.
 \end{itemize}
 
@@ -95,7 +96,7 @@ linker creates ELF files after an assembler turned the program\textquotesingle s
 source code into machine code. Most modern Unix-like operating systems follow
 the ELF specification released by the Tool Interface Standard
 Committee~\cite{elfspec}. Therefore, we need to understand the layout of such
-executable files before introducing bitflips to them.
+executable files before introducing bitflips in them.
 
 \subsubsection{Structure of an ELF file}
 
@@ -134,10 +135,9 @@ executable files before introducing bitflips to them.
   \path [thick,->,>=stealth] (seg03) edge[out=180, in=0] (bss);
   \end{tikzpicture}
   \caption{Schematics of the structure of an ELF file showing the four main
-sections inside an executable. The Figure shows the connection of between
-sections and segments via the program header table and the section header
-table. Segments usually are just numbers and can refer to multiple sections
-inside the section header table.}
+sections inside an executable. Sections and segments are connected via the
+program header table and the section header table. Segments usually are just
+numbers and can refer to multiple sections inside the section header table.}
 \label{fig:elfstruct}
 \end{figure}
 
@@ -149,18 +149,18 @@ the two different headers. Sections and segments can be seen as follows:
 
 \subsubsection{Sections}
 
-These describe the binary for the linking view. A section contains instructions,
-data, symbol table and relocation information. Sections reserved for the system
-start with a dot, there might be additional sections defined by the user.
-Sections are created and managed by the linker. Sections that are directly
-loaded into the program\textquotesingle s memory image are initialized data
-(\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}) and
+Sections describe the binary for the linking view. A section can contain
+instructions, data, symbol table and relocation information. Sections reserved
+for the system start with a dot. There can be additional sections defined by
+the user. Sections are created and managed by the linker. Sections that are
+directly loaded into the program\textquotesingle s memory image are initialized
+data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}), and
 executable instructions (\texttt{.text}).
 
 \subsubsection{Segments}
 
 They describe the virtual memory layout of a loaded binary.
-Figure~\ref{fig:elfstruct} shows how segments are applied in an ELF file.
+Figure~\ref{fig:elfstruct} shows how segments are used in an ELF file.
 Usually, the linker splits segments into different behaviours the loader needs
 to apply. For example, all read-only data sections are in the same segment. When
 loading the image into memory, references inside the ELF file need to be
@@ -169,98 +169,103 @@ and its dependencies the program can be executed.
 
 \subsubsection{Loading ELF files into Memory}
 
-As we focus on GNU/Linux operating systems, we will look at how UNIX System V
-Release 4 based operating systems handle ELF files in order to create running
+As we focus on GNU/Linux operating systems, we will look at how UNIX System-V
+Release 4-based operating systems handle ELF files in order to create running
 programs. These systems do not use physical addresses during execution, and
 the OS is free to change the position of sections in the virtual address space.
-Therefore, in an ELF, a section only contains a base address and offsets to that
-address. During the loading step, the operating system is free to change the
-base address in the programs virtual address space. The loader then places
-additional memory according to the offsets.
+Therefore, in an ELF file, a section only contains a base address and offsets
+to that address. For certain compilation settings the the operating system is
+free to change the base address in the programs virtual address space. The
+loader then places additional memory according to the offsets.
 
 \subsubsection{Dynamic Linking}
 
-In modern systems it is widespread to have multiple functions used by different
+In modern systems it is common to have multiple functions used by different
 programs. Shared libraries can be used to provide such general functions. When
-deploying programs, developers usually make sure all needed shared libraries
+deploying programs, developers usually make sure all required shared libraries
 exist on the target platform or ship their software with those included. When
-depending on libraries by the system, the loader will move the shared libraries
-into memory at the desired entry point, this is called dynamic linking. The
-loader fetches the information about the needed library from the ELF file and
-then checks the library paths provided by the operating system if the library
-is available to be loaded.
+depending on such system libraries, the loader will insert the shared-library
+functions into memory at the desired entry point. This technique is called
+dynamic linking. The loader fetches the information about the required library
+from the ELF file and then checks the library paths provided by the operating
+system if the library can to be loaded.
 
 \section{Analysis and Testing of Executables}
 
 Testing is a significant part of software development. There are a lot of
 different approaches and styles for testing. One approach to test a program is
-to apply input to it and check if the code operates as expected by validating
+to provide input to it and check if the code operates as expected by validating
 the output. With increasing amount of code and an increasing number of bugs
 found, the style of testing changed over the years. On the one hand, developers
-nowadays provide unit tests inside their code to test single functions and make
-sure they work as intended. On the other hand, sometimes the source code is not
-available to a tester, or it is way too much work to read the whole source code
-to create such tests. Therefore, developers came up with tools which can be
-used to test binaries on their own without knowing the whole source code.
+nowadays ideally provide unit tests inside their code to test single functions
+and make sure they work as intended. On the other hand, sometimes the source
+code is not available to a tester, or it is way too much work to read the entire
+source code to create such tests. Therefore, developers came up with tools
+which can be used to test binaries on their own without knowing the whole source
+code.
 
 \subsection{Fuzzing}
 
-Fuzzing is an approach for testing programs with just a little knowledge about
-the program to test. Such an approach is called black-box testing. Fuzzing is a
-technique to detect erroneous responses of a program by providing different,
-automatically created, mostly random, inputs. Tools applying this technique are
-called fuzzers. Fuzzers try to reach corner cases in programs without knowing
-which exist and detect undefined behaviour or crashes. Generally, fuzzers give
-an overall view on the robustness of a program. They are cheap to apply and even
-can find bugs usual white-box tests would miss.
+Black-box testing is an approach where a program is tested without knowing
+its source code. Fuzzing is taking this to another level, where even knowledge
+about the program itself is just minimal. The idea of applying just random
+inputs to programs to test its robustness already came up in the 80s as
+Duran~\etal\cite{randtest} showed. Tools applying similar techniques, like
+applying automatically-generated, often randomised, inputs are called fuzzers.
+They try to reach corner cases in programs without knowing which exist and
+detect undefined behaviour or crashes. Generally, fuzzers give an overall view
+on the robustness of a program. They are cheap to apply and even can find bugs
+usual white-box tests would miss.
 
-If a fuzzer only applies random inputs, testing would take a very long time, as
-a lot of unneeded tests would run. Because of this, the technology improved over
-the time and different fuzzers evolved. For simple programs just testing common
-input mistakes, like negative numbers, newlines, end of file characters, format
-strings or just very long strings might be enough. Advanced software needs
-better ways of fuzzing, for example, network protocols, file systems or image
-formats have a very complex structure which makes it hard to find possible
-crashes by random data input. Fuzzers for such kind of software generate inputs
-from given examples and apply small changes to them. Like,
-Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
-programs. Besides special format fuzzers, more advanced ones exist which
-directly interact with the target, allowing to track execution paths per input
-and therefore even create more test cases automatically. The most popular fuzzer
-is "american fuzzy lop" (afl)~\cite{aflweb}. It contains described algorithms to
-get the best possible code coverage. Another more advanced fuzzer is Steelix by
-Yuekang~\etal~\cite{steelix}, which provides program-state based binary fuzzing.
-Steelix uses static-analysis and binary instrumentation to provide more
-information about the fuzzing process and therefore gains better test cases and
-execution paths for the fuzzed program. Shoshitaishvili~\etal showed how fuzzing
-could find authentication bypasses in binary firmware with their tool
-Firmalice~\cite{firmalice}. In their work Wang~\etal~\cite{inmemfuzzing} showed
-how in-memory fuzzing is used to detect similarities in binary code. This is
-done by fuzzing every function available and compare traces of program
-behaviours with machine learning models. They show that they can find
-similarities in binaries even when different compilers, optimisations or
-obfuscation is applied.
+If a fuzzer would only apply random inputs, testing would take a very long
+time, as a lot of unneeded tests would run. Because of this, the technology
+improved over time and different fuzzers evolved. For simple programs, just
+testing common input mistakes, like negative numbers, newlines, end of file
+characters, format strings, or just very long strings might be enough. Advanced
+software needs better ways of fuzzing, for example, network protocols, file
+systems, or image formats have a very complex structure which makes it hard to
+find possible crashes by random data input. Fuzzers for such kind of software
+generate inputs from given examples and apply small changes to them.
+Xmlfuzzer\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
+programs. Besides special format fuzzers there are more advanced ones which
+directly interact with the target, allowing to track execution paths, and
+therefore, create even more test cases automatically. The most popular fuzzer is
+\textquotedbl american fuzzy lop\textquotedbl (afl)\cite{aflweb}. It contains
+described algorithms to get the best possible code coverage. Another more
+advanced fuzzer is Steelix by Yuekang~\etal\cite{steelix}, which provides
+program-state-based binary fuzzing. Steelix uses static analysis and binary
+instrumentation to provide more information about the fuzzing process and
+therefore gains better test cases and code coverage.
+
+Shoshitaishvili~\etal showed how fuzzing could find authentication bypasses in
+binary firmware with their tool Firmalice\cite{firmalice}.
+Wang~\etal\cite{inmemfuzzing} showed how in-memory fuzzing can be used to detect
+similarities in binary code. This is done by fuzzing every function available
+and comparing traces of program behaviours with machine learning models. They
+show that they can find similarities in binaries even when different compilers,
+and optimisations are used or when obfuscation is applied.
 
 \subsection{Symbolic Execution}
 
-Fuzzing provides a pseudorandom input to a program to test it. Therefore it
-might not catch all possible execution paths of a program. Scientists developed
-techniques to test all possible paths by simplifying the program, one of these
-techniques is symbolic execution. It makes use of the possible simplification of
-inputs where they use a logic symbol with less possible states instead. For
-example, a number can be represented by the possible states: maximal value,
-minimum value, positive, negative, zero. The possible symbolic-state inputs then
-run through the program in combination with a constraint solver to report
-possible violations of the program\textquotesingle s specification. The solver
-can also be used to find possible paths to reach a pre-defined goal inside the
-binary.
+Fuzzing provides a pseudo-random input to a program to test it. Therefore, it
+might not catch all possible execution paths of a program. Techniques to test
+all possible paths by simplifying the program, one of these techniques is
+symbolic execution. The idea was already in place in 1976, when James C. King
+released his work\cite{symbolexechist} about symbolic execution. It makes use
+of the possible simplification of inputs where they use a logic symbol with
+fewer possible states instead. For example, a number can be represented by the
+possible states: maximal value, minimum value, positive, negative, zero. The
+possible symbolic-state inputs then run through the program in combination with
+a constraint solver to report possible violations of the program\textquotesingle
+s specification. The solver can also be used to find possible paths to reach a
+pre-defined goal inside the binary.
 
-One of the most famous symbolic analysis frameworks is angr~\cite{angrpaper}.
+One of the most used symbolic analysis frameworks is angr~\cite{angrpaper}.
 Besides the symbolic execution of binaries, it also allows various other
 analysis methods such as control-flow graph recovery, automatic exploit
 generation or automatic binary hardening.
 
-Stephens~\etal~\cite{driller} showed with Driller how symbolic execution could
+Stephens~\etal\cite{driller} showed with Driller how symbolic execution could
 be beneficial to fuzzing approaches. This allows keeping the number of execution
 paths to test lower but also try to cover as much code as possible. Driller uses
 concolic execution for the path exploring. Concolic execution is the combination
@@ -295,7 +300,7 @@ areas are unknown to the instrumenter at this point.
 
 \subsubsection{Intel Pin}
 
-Pin~\cite{pintool} is a proprietary, dynamic, binary instrumentation framework
+Pin\cite{pintool} is a proprietary, dynamic, binary instrumentation framework
 developed and released by Intel, who supply it for free. The framework provides
 a large number of API calls which abstracts most of the work done by Pin and
 gives easy access to binary analysis. As Pin is a binary instrumentation
@@ -306,9 +311,9 @@ problem to log register values or change those before or after desired
 instruction calls or even inject code to be run before given calls. Programs
 instrumenting a binary are called pintools, the framework provides their API
 calls for C++, but also bindings for Python can be found in
-\texttt{python-pin}~\cite{pythonpin}.
+\texttt{python-pin}\cite{pythonpin}.
 
-In their paper, Luk~\etal~\cite{pintool} describe the system of Pin and
+In their paper, Luk~\etal\cite{pintool} describe the system of Pin and
 how the written pintool is combined with the application in more detail. When
 instrumenting a program, three binaries are being used. One is the application
 to instrument, one is the compiled pintool, and one is Pin itself. Pin can be
@@ -347,7 +352,7 @@ instruction order.
 
 \section{Permission Model in Unix-based Systems}
 
-The POSIX standard~\cite{posix} defines many properties for operating systems,
+The POSIX standard\cite{posix} defines many properties for operating systems,
 also permissions for users and their groups. For practical reasons, a user can
 be part of multiple groups. A unique integer ID per user and group provides
 identification to the system. The POSIX-defined permission structure applies to
@@ -372,15 +377,16 @@ user\textquotesingle s password to execute commands as the target user.
 
 \subsection{\texttt{setuid} Binary Property}
 
-\texttt{setuid} stands for "set user identity"~\cite{ogroupsetuid}. It allows an
-executable to change its user ID on execution. An additional bit in the file
-permissions represents the \texttt{setuid} property, namely \texttt{S\_ISUID}.
-This property allows a user to run a program with the permissions of the
-file\textquotesingle s owner. Tools like \texttt{su} and \texttt{sudo} need
-this as they require the permission to change the current context. It is also
-practical to allow normal users the usage of tools like \texttt{ping} or
-\texttt{ip}, without allowing them to use \texttt{sudo}. We refer to the GNU
-libc documentation for more details~\cite{libcpermission}.
+\texttt{setuid} stands for \textquotedbl set user
+identity\textquotedbl\cite{ogroupsetuid}. It allows an executable to change its
+user ID on execution. An additional bit in the file permissions represents the
+\texttt{setuid} property, namely \texttt{S\_ISUID}. This property allows a user
+to run a program with the permissions of the file\textquotesingle s owner. Tools
+like \texttt{su} and \texttt{sudo} need this as they require the permission to
+change the current context. It is also practical to allow normal users the usage
+of tools like \texttt{ping} or \texttt{ip}, without allowing them to use
+\texttt{sudo}. We refer to the GNU libc documentation for more
+details~\cite{libcpermission}.
 
 Whereas the \texttt{setuid} property might seem practical, it also brings
 security risks. A bug allowing code execution in such a program allows an
@@ -390,15 +396,15 @@ property should be well audited.
 
 \subsection{\texttt{chroot}}
 
-\texttt{chroot}~\cite{ogroupchroot} stands for "change root directory". One can
-either use it via the system call or the wrapper program. A \texttt{chroot} call
-changes the root directory for the running process. Meaning, the environment is
-changed, and the program runs inside a completely different system. It is not
-possible to access files from outside the new environment nor to interact with
-processes running in the old environment. The tool is either used for testing
-purposes, to create packages in clean environments, to check compatibility, as
-the chrooted system could be a different system, or for sandboxing and privilege
-separation.
+\texttt{chroot}\cite{ogroupchroot} stands for \textquotedbl change root
+directory\textquotedbl. One can either use it via the system call or the
+wrapper program. A \texttt{chroot} call changes the root directory for the
+running process. Meaning, the environment is changed, and the program runs
+inside a completely different system. It is not possible to access files from
+outside the new environment nor to interact with processes running in the old
+environment. The tool is either used for testing purposes, to create packages
+in clean environments, to check compatibility, as the chrooted system could be
+a different system, or for sandboxing and privilege separation.
 
 \section{Connecting Computers}
 
@@ -420,7 +426,7 @@ for the participants became standard and regularly improved.
 Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
 such servers available, most of them being open source and free, such as
-Apache~\cite{apacheweb} and \texttt{nginx}~\cite{nginxweb}. Web servers use the
+Apache\cite{apacheweb} and \texttt{nginx}\cite{nginxweb}. Web servers use the
 Hypertext Transfer Protocol (HTTP) to handle requests and deliver the content to
 the client. Web servers usually deliver websites encoded in Hypertext Markup
 Language (HTML) but can also deliver all kind of files including JavaScript (JS)
@@ -439,9 +445,9 @@ connection if needed.
 \subsubsection{HTTP - Basic Access Authentication (BA)}
 
 To allow only authorised users to access specified paths on a web server HTTP
-added access-control to the protocol described in RFC 7617~\cite{rfc7617}. This
+added access-control to the protocol described in RFC 7617\cite{rfc7617}. This
 technique makes use of a header field in HTTP, namely \texttt{WWW-Authenticate}.
-Where RFC 3986~\cite{rfc3986} deprecates the functionality to transmit
+Where RFC 3986\cite{rfc3986} deprecates the functionality to transmit
 credentials inside the requesting URL. BA is a straightforward access-control
 technique and does not protect the transmitted credentials. Therefore, it is
 used together with HTTPS at most times. The client has to transmit the
@@ -453,12 +459,12 @@ techniques using cookies or session identifiers.
 Basic Access Authentication is used by these two web servers in the default
 configuration. Apache makes use of \texttt{ht} files, which are an extension to
 the usual server configuration for users with limited permissions, see
-their documentation~\cite{apacheauthdoc} for further details. Apache introduced
+their documentation\cite{apacheauthdoc} for further details. Apache introduced
 \texttt{htpasswd}-files to make use of BA, which stores the user credentials.
 \texttt{nginx} later adapted these files for their web server implementation.
 The \texttt{htpasswd}-files keep the data either in plaintext or hashed. To
 create these files Apache provides the tool
-\texttt{htpasswd}~\cite{htpasswddoc}. This tool uses MD5 hashing per default (as
+\texttt{htpasswd}\cite{htpasswddoc}. This tool uses MD5 hashing per default (as
 of version 2.2.18), but it is possible to change the hashing algorithm to
 something more secure, like bcrypt. On a request including BA, the web server
 will look up the \texttt{htpasswd}-file to verify given credentials and then
@@ -497,13 +503,13 @@ for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
 TLS is commonly used in web servers to guarantee user\textquotesingle s safety,
 but also applications like Virtual Private Networks (VPNs) and Secure Shell
 (SSH) make use of protocols and cyphers described in the TLS standard. The most
-commonly used TLS implementation is OpenSSL~\cite{opensslweb}.
+commonly used TLS implementation is OpenSSL\cite{opensslweb}.
 
 \subsection{Cryptographic Nonces}
 
 In the early days of encrypted communication, replay-attacks were a common
 problem, as Syverson showed in his taxonomy of replay attacks in
-1994~\cite{replaytax}. Following protocols introduced nonces to resolve this
+1994\cite{replaytax}. Following protocols introduced nonces to resolve this
 issue. Cryptographic nonces are one-time, often pseudorandom, numbers used for
 each packet sent. They are combined with the key so that the encryption differs
 for each packet. This technique makes replay-attacks harder.
@@ -511,7 +517,7 @@ for each packet. This technique makes replay-attacks harder.
 In most cases, nonce reuse is a problem for the protocol and results in breakage
 of the encryption of future or past packages. Hence, most protocol standards
 define a nonce as a pseudorandom, non-repeating or unpredicted
-value~\cite{noncegeneral}. It is also possible to use the nonce as a counter
+value\cite{noncegeneral}. It is also possible to use the nonce as a counter
 which has a random start value and increases for each packet sent. However, also
 current protocols and technologies still face problems with nonces, like
 Vanhoef~\etal showed in their work in 2017, that it is possible to force nonce
@@ -521,9 +527,9 @@ reuse in WPA2\cite{wpanoncereuse}.
 
 The Advanced Encryption Standard is a block cypher proposed to the US National
 Institute of Standards and Technology (NIST) by Vincent Rijmen and Joan Daemen
-in 1999~\cite{aesproposal}. In 2001 NIST released AES as a specification for
+in 1999\cite{aesproposal}. In 2001 NIST released AES as a specification for
 encryption of electronic data. It is the successor of the Data Encryption
-Standard (DES). AES is also part of ISO/IEC 18033-3~\cite{iso18033}, the ISO
+Standard (DES). AES is also part of ISO/IEC 18033-3\cite{iso18033}, the ISO
 standard related to security techniques and encryption algorithms.
 
 \subsubsection{Design of AES}
@@ -647,7 +653,7 @@ $b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
 \draw [arrow] (xorbox.east) -- (b1);
   \end{tikzpicture}
   \caption{Design of the \texttt{AddRoundKey} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is XORed with
+the AES propsal\cite{aesproposal}. Each byte in the $a$-block is XORed with
 one byte of the key-block and placed in the $b$-block.}
   \label{fig:addroundkey}
 \end{figure}
@@ -676,7 +682,7 @@ $b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
 \draw [arrow] (sbox) -- (b2);
   \end{tikzpicture}
   \caption{Design of the \texttt{SubBytes} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is looked up in
+the AES propsal\cite{aesproposal}. Each byte in the $a$-block is looked up in
 the S-box from table~\ref{tab:sbox} and placed in the $b$-block.}
   \label{fig:subbytes}
 \end{figure}
@@ -703,7 +709,7 @@ $a_{3,3}$ & $a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$  \\
 \draw [arrow] (m1) -- (m2);
   \end{tikzpicture}
   \caption{Design of the \texttt{ShiftRows} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each row is shifted according to their
+the AES propsal\cite{aesproposal}. Each row is shifted according to their
 Y-axis index.}
   \label{fig:shiftrows}
 \end{figure}
@@ -732,7 +738,7 @@ $b_{3,0}$ & $b_{3,1}$ & |[draw, fill=red!20]|\rn{b24}{b_{3,2}} & $b_{3,3}$  \\
   \draw [arrow] (cxmul) -- (b22);
   \end{tikzpicture}
   \caption{Design of the \texttt{MixColumns} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each column-vector in the $a$-block is
+the AES propsal\cite{aesproposal}. Each column-vector in the $a$-block is
 multiplied with a polynomial matrix $c(x)$ and then placed in the $b$-block.}
   \label{fig:mixcolumns}
 \end{figure}
@@ -760,7 +766,7 @@ multiple times. The number of repetitions depends on the size of key.
 \item Last-round - The last round  does not include the call to
 \texttt{MixColumns}, it was removed because of implementation reasons and with
 the ommiting the security was still provided, this matter is discussed in the
-Rijnadael design document~\cite{aesproposal}.
+Rijnadael design document\cite{aesproposal}.
 \begin{itemize}
 \item \texttt{SubBytes}
 \item \texttt{ShiftRows}
@@ -784,7 +790,7 @@ which speeds up encryption and decryption for libraries as OpenSSL.
 
 Since AES was released, researchers and attackers targeted the cypher and tried
 to find weak spots in it. Most of these attacks targeted a smaller number of
-rounds than the algorithm describes. In 2011, Bogdanov~\etal~\cite{bicliqueaes}
+rounds than the algorithm describes. In 2011, Bogdanov~\etal\cite{bicliqueaes}
 showed an attack against AES which targets the whole number of rounds. Their
 attack weakens the security of AES slightly, where for 128-bit key recovery the
 computational complexity drops to $2^{126.1}$ and for 256-bit keys to
@@ -793,12 +799,12 @@ affect real-world usages of AES.
 
 Way more common than such cryptoanalysis attacks on AES are attacks targeting
 software and hardware implementations. For example,
-O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in the bootloader.
+O'Flynn~\etal\cite{aespowerboot} showed an attack on AES in the bootloader.
 Whereas most attacks target 128 bits, they showed one against 256. They use a
 Correlation Power Analysis (CPA) on a bootloader which loads an AES-256-CBC
 encrypted firmware. Besides recovering the full key, they also achieve recovery
 of the initialisation vector. Another hardware side-channel attack was made by
-Lo~\etal~\cite{sboxpoweranal}. They target the implementation of the S-box used
+Lo~\etal\cite{sboxpoweranal}. They target the implementation of the S-box used
 in AES-128 besides using CPA, they also use differential power analysis (DPA).
 In their work they compare both methods as they try to recover cypher keys from
 the \texttt{AddRoundKey} and \texttt{SubBytes} function calls. Their work was
@@ -806,7 +812,7 @@ done with widespread hardware, the Arduino Uno, making it possible for more
 people to learn from such attacks, as they can replicate it with cheap
 hardware. With an increasing number of side-channel attacks on software and
 hardware, vendors increased the key-size of AES in their implementations. In
-their work, Neve~\etal~\cite{sidecomplex}, show that increasing the key-size
+their work, Neve~\etal\cite{sidecomplex}, show that increasing the key-size
 does not increase the complexity of side-channel attacks in the same manner.
 They show for cache-based side-channel attacks an upgrade from 128 bits to 256
 only increases the complexity of an attack by a factor of 6 to 7.
@@ -815,9 +821,9 @@ only increases the complexity of an attack by a factor of 6 to 7.
 
 Galois Counter Mode (GCM) in combination with Advanced Encryption Standard (AES)
 provides encryption and simultaneously performs message
-authentication~\cite{gcm, gcmnist}. Figure~\ref{fig:aesgcm} shows the schematic
+authentication\cite{gcm, gcmnist}. Figure~\ref{fig:aesgcm} shows the schematic
 of AES-GCM. Where we use close to the same notation as Böck~\etal in their
-paper~\cite{gcmnonceattack}:
+paper\cite{gcmnonceattack}:
 
 \begin{itemize}
 \begin{samepage}
@@ -893,7 +899,8 @@ with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
   \caption{Schematic of AES-GCM. Whereas the $E_k$ blocks apply
 AES-encryption with the key $k$. The $mult_H$ blocks apply a multiplication in
 the Galois-field. $A$ represents a block of authenticated data, which is added
-to the MAC $TAG$ but not encrypted.} \label{fig:aesgcm}
+to the MAC $TAG$ but not encrypted.}
+  \label{fig:aesgcm}
 \end{figure}
 
 Following steps describe how AES-GCM is used to encrypt data:
@@ -936,7 +943,7 @@ The authenticated tag $TAG$ can therefore be found by solving the polynomial
 $g(X) = A_{1}X^{m+n+1} + \cdots + A_{m}X^{n+2} + C_{1}X^{n+1} + \cdots +
 C_{n}X^2 + LX + S$, as $g(H) = TAG$. Where $L$ is the combined length of $A$
 and $C$, and $S$ is the nonce plus the counter. We refer to the NIST
-standard about AES-GCM~\cite{gcmnist} for more details.
+standard about AES-GCM\cite{gcmnist} for more details.
 
 \subsubsection{OpenSSL source code}
 
@@ -951,14 +958,14 @@ the cypher data.
 
 \subsubsection{AES-GCM Nonce Reuse Attack}
 
-Joux\cite{NISTGCMcomment} calls his attack against GCM "a forbidden attack"
-because in cryptography the uniqueness of nonces is seen as given.
-Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce reuse still is in
-real-world application and why clear definitions for nonces in protocols are
-needed.
+Joux\cite{NISTGCMcomment} calls his attack against GCM \textquotedbl a
+forbidden attack\textquotedbl because in cryptography the uniqueness of nonces
+is seen as given. Böck~\etal\cite{gcmnonceattack} describe how relevant nonce
+reuse still is in real-world application and why clear definitions for nonces
+in protocols are needed.
 
 We look at the simplified attack of Joux\textquotesingle s
-comment~\cite{NISTGCMcomment}, described by Böck~\etal~\cite{gcmnonceattack}.
+comment\cite{NISTGCMcomment}, described by Böck~\etal\cite{gcmnonceattack}.
 Assuming that the same nonce is used for two messages, consisting of just a
 single ciphertext block and no authenticated data. Also, we note that all
 values besides $S$ are known to the attacker:
@@ -1004,7 +1011,7 @@ possible.
 \subsubsection{Native Timing Measurement}
 
 In native code, researchers use the highly precise timestamp counter (TSC)
-provided on x86 architectures since the first Pentium CPU~\cite{intelsys}. The
+provided on x86 architectures since the first Pentium CPU\cite{intelsys}. The
 CPU stores this time stamp in a 64-bit register. The TSC counts the number of
 execution cycles since the last resetting of the CPU. As CPUs tend to change
 their clock frequency during runtime, the TSC might deliver different results
@@ -1021,7 +1028,7 @@ counter to \texttt{EDX:EAX} and the processor ID into \texttt{EXC}.
 \subsubsection{JavaScript Timing Measurement}
 
 Calls to the \texttt{RDTSC} instruction are generally only possible in native
-code, but as Gruss~\etal~\cite{memdedupjs} and Lipp~\etal~\cite{keytimejs}
+code, but as Gruss~\etal\cite{memdedupjs} and Lipp~\etal\cite{keytimejs}
 showed, it is also possible to receive highly precise timestamps in JavaScript.
 In their work, we see another countermeasure by browser vendors defeated by
 researchers. In JavaScript, a time stamp function exists, namely
@@ -1030,7 +1037,7 @@ stamp counter in their side-channel attacks, browser vendors were forced to
 reduce the resolution of the reported value, which was nanosecond precise in the
 past and is only milliseconds precise now. Browser vendors thought with this
 countermeasures JavaScript is more secure, but researchers like
-Gruss~\etal~\cite{memdedupjs} and Vila~\etal~\cite{loophole} showed that there
+Gruss~\etal\cite{memdedupjs} and Vila~\etal\cite{loophole} showed that there
 are ways to bring back highly-precise timestamps in the area of single-digit
 microseconds.
 
@@ -1054,7 +1061,7 @@ validate memory all the time to make sure memory accesses do not get wrong data
 from other cache levels or the DRAM. Computation at rates of about four
 gigahertz would not be possible without such caching mechanisms.
 
-We refer to the Intel manual~\cite{intelsys} chapter 11.1 for more details about
+We refer to the Intel manual\cite{intelsys} chapter 11.1 for more details about
 cache management in modern CPUs.
 
 \begin{figure}
@@ -1102,12 +1109,12 @@ Gruss~\etal\cite{gruss2015cache} showed how caches provide information by
 measuring memory access-timings. They also showed how to automate attacks on
 last-level caches. Knowledge gained from this kind of attack has also played
 a role in the exploitation of the rowhammer bug or other hardware bugs, such as
-Meltdown~\cite{meltdown} and Spectre~\cite{spectre}.
+Meltdown\cite{meltdown} and Spectre\cite{spectre}.
 
 \subsubsection{FLUSH+RELOAD}
 
 This cache attack is a low noise, L3 cache side-channel attack, released
-by Yarom~\etal~\cite{flushreload}. The attack provides a possibility of leaking
+by Yarom~\etal\cite{flushreload}. The attack provides a possibility of leaking
 information about memory accesses on shared pages between two processes. As the
 attack targets the last-level cache, it does not require the two processes to
 run on the same core. Pages are either shared when actively mapped with such
@@ -1131,7 +1138,7 @@ key to the attacker.
 
 \subsubsection{FLUSH+FLUSH}
 
-This is a cache attack designed by Gruss~\etal~\cite{flushflush} to circumvent
+This is a cache attack designed by Gruss~\etal\cite{flushflush} to circumvent
 detection of cache attacks such as FLUSH+RELOAD. This attack only uses only the
 \texttt{clflush} instruction and no memory accesses. With this idea, the attack
 bypasses cache attack detection by performance counters. Instead of the three
@@ -1155,7 +1162,7 @@ With measuring the execution time of \texttt{clflush}, the spy process can again
 tell when a victim has accessed targeted memory, as the timing will be higher in
 such cases. Besides the leakages similar to the FLUSH+RELOAD results,
 Gruss~\etal also built a side-channel with this principle to transmit
-information between two processes, according to their paper~\cite{flushflush},
+information between two processes, according to their paper\cite{flushflush},
 they reach a transmission speed of $496$ kilobytes per second.
 
 \subsection{Impact of Microarchitectural Attacks}
@@ -1167,7 +1174,7 @@ microarchitectural attacks by the general public a lot.
 
 \subsubsection{Meltdown}
 
-Lipp~\etal~\cite{meltdown} presented an attack targeting the memory isolation
+Lipp~\etal\cite{meltdown} presented an attack targeting the memory isolation
 between the operating system\textquotesingle s kernel and the userland memory
 and shows how the CPU\textquotesingle s out-of-order execution can lead to a
 leak of information from kernel memory to a user program. Meltdown makes use of
@@ -1183,14 +1190,14 @@ makes use of the Flush+Reload cache attack, as they use the read kernel memory
 to flush certain cache lines. Access times to memory then tells which cache
 lines the program cleaned. Hence it leaks the kernel memory content. Lipp~\etal
 propose the KAISER countermeasure as a fix for this vulnerability. This work by
-Gruss~\etal~\cite{kaiserpaper} is used to separate kernel and user memory
+Gruss~\etal\cite{kaiserpaper} is used to separate kernel and user memory
 addresses. Their proof-of-concept implements a complete separation of the two
 memory spaces inside the Linux kernel, which makes sure no information about the
 kernel execution is leaked to the userspace.
 
 \subsubsection{Spectre}
 
-Kocher~\etal~\cite{spectre} presented this attack also targeting information
+Kocher~\etal\cite{spectre} presented this attack also targeting information
 leakage by features modern CPUs provide. The attack gained its name form
 exploiting speculative execution which makes use of the branch-prediction unit
 inside the CPU. The CPU executes code which maybe needs execution later on,
@@ -1223,7 +1230,7 @@ if(x < array1_size)
 
 \subsubsection{Foreshadow}
 
-An attack by van Bulck~\etal~\cite{foreshadow}, targeting the Guard eXtension
+An attack by van Bulck~\etal\cite{foreshadow}, targeting the Guard eXtension
 (SGX) in current Intel CPUs. The researchers use already known speculative
 execution bugs to gain knowledge of secret memory used inside the SGX
 environment which is transferred to the CPU\textquotesingle s cache. The attack
@@ -1248,14 +1255,15 @@ This interference resulted in a change of bits in other memory rows.
 
 This behaviour and bug then caused researchers to dig deeper into the
 possibilities, and several attacks were found based on the rowhammer bug. For
-example, Google\textquotesingle s "Project Zero"~\cite{projectzerorow} showed,
+example, Google\textquotesingle s \textquotedbl Project
+Zero\textquotedbl\cite{projectzerorow} showed,
 it is possible to use rowhammer for privilege escalation and sandbox escapes.
-Van der Veen~\etal~\cite{drammer} state that this attack not only affects
+Van der Veen~\etal\cite{drammer} state that this attack not only affects
 desktop computers but also memory in mobile devices. In their work,
 Gruss~\etal\cite{flipinthewall} show that flipping bits in memory has further
 risks than previously thought and that Rowhammer defences need a general
 overhaul. They state that the only solution is to fix the hardware.
-Gruss~\etal~\cite{rowhammerjs} also showed that it is possible to trigger
+Gruss~\etal\cite{rowhammerjs} also showed that it is possible to trigger
 bitflips from JavaScript.
 
 \subsubsection{Design of Dynamic Random-Access Memory (DRAM)}
@@ -1287,7 +1295,7 @@ change their charge to the level of the connected bit line.
 
 The capacitor used for the 1-T cell will either lose load over time or on
 reading access. Therefore, these capacitors need to be periodically refreshed.
-The JEDEC standard~\cite{jedec} sets the refresh cycle to a 64-millisecond
+The JEDEC standard\cite{jedec} sets the refresh cycle to a 64-millisecond
 interval. For a usual chip with $8192$ rows, this means a refresh happens all
 $7,8$ microseconds. The easiest way to do this is by reading a bit and writing
 the response back to it. In the DRAM design, it is possible to refresh each row
@@ -1409,9 +1417,9 @@ to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
 positioning is stored. Some systems allow huge pages, where two megabytes of
 memory are used contiguously. These two megabytes will use more than one row,
 other than normal pages with the size of four kilobytes. In the paper,
-Kim~\etal~\cite{rowhammergeneral} use addresses calculated based on their
+Kim~\etal\cite{rowhammergeneral} use addresses calculated based on their
 knowledge of physical address mapping used by common CPU vendors. Project
-Zero~\cite{projectzerorow} show how it is possible to use rowhammer to
+Zero\cite{projectzerorow} show how it is possible to use rowhammer to
 gain privilege escalation on a standard \texttt{x86\_64} CPU and an escape from
 a sandbox. After vendors of operating systems started to introduce
 countermeasures, scientists like Gruss~\etal\cite{rowhammerjs, flipinthewall},
