@@ -124,8 +124,8 @@ than that as we target larger binaries.
 \subsection{Design of the Testing Framework}
 
 We have implemented a framework to search bits to flip in binaries.
-Figure~\ref{fig:frameworkdesign} shows a diagram describing the framework's
-design. We split it into multiple parts:
+Figure~\ref{fig:frameworkdesign} shows a diagram describing the
+framework\textquotesingle s design. We split it into multiple parts:
 
 \begin{enumerate}
   \item Accessed memory areas are logged from all the ELF files the program
@@ -245,24 +245,25 @@ starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
 \end{minipage}
 
 The framework starts with executing \texttt{instr\_tool.sh} to generate a report
-showing all bitflips, additional it can also filter them. After the script's
-execution, the \texttt{tool.out}-file should contain a list of all byte
-positions to flip and test. Afterwards, the defined number of chroots are
-created by copying the template from \texttt{chroot\_tmpl}. The configured flips
-are split and separately copied to each \texttt{/media/flips} folder in the
-testing chroot. The \texttt{run\_tool\_chroot.sh} file is copied to each testing
-environment and executed there. This script runs the tests with all flips and
-reports successful flips to the framework
+showing all bitflips, additional it can also filter them. After the
+script\textquotesingle s execution, the \texttt{tool.out}-file should contain a
+list of all byte positions to flip and test. Afterwards, the defined number of
+chroots are created by copying the template from \texttt{chroot\_tmpl}. The
+configured flips are split and separately copied to each \texttt{/media/flips}
+folder in the testing chroot. The \texttt{run\_tool\_chroot.sh} file is copied
+to each testing environment and executed there. This script runs the tests with
+all flips and reports successful flips to the framework
 
 \subsubsection{Instrumenting the Program}
 
-We use Intel Pin~\cite{pintool} for instrumentation.  We log every memory access
+We use Intel Pin\cite{pintool} for instrumentation.  We log every memory access
 during execution of the program using Pin. Whereas we want to log all accesses
-which happen inside of ELF files, which means the program's binary and all
-libraries it uses during runtime. We use the same pintool for all test runs. It
-simply adds instrumenter calls to all memory accesses. The tools stores all
-accesses per file and what base-offsets are used. This information is needed to
-determine if the accessed area is mapped to a file later on.
+which happen inside of ELF files, which means the program\textquotesingle s
+binary and all libraries it uses during runtime. We use the same pintool for
+all test runs. It simply adds instrumenter calls to all memory accesses. The
+tools stores all accesses per file and what base-offsets are used. This
+information is needed to determine if the accessed area is mapped to a file
+later on.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -319,8 +320,8 @@ cases, these refer to dynamically loaded libraries. The
 the machine code layer. The function can have an arbitrary number of parameters,
 as the user have to define the function with each parameter and the type. Pin
 then inserts a call to the given function pointer and manages the handling of
-the parameters and return values in a way that the instrumented program's
-execution is not affected.
+the parameters and return values in a way that the instrumented
+program\textquotesingle s execution is not affected.
 
 Instrumentation is done via the configured \texttt{instrumenter\_call}. That
 entry is executed and expected to generate a file named in the
@@ -379,22 +380,22 @@ achieve this. Also, we also want to show how we can search for bitflips in the
 \subsubsection{\texttt{sudo} - Privilege Escalation}
 
 For \texttt{sudo}, the task was to find all possible bitflips which allow
-switching to \texttt{root}, without knowing the correct user's password.
-\texttt{sudo} is a \texttt{setuid}-binary, which changes it's process owner to
-\texttt{root} when being executed. We ran into problems with our framework
-because of this property of the binary.
+switching to \texttt{root}, without knowing the correct user\textquotesingle s
+password. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
+owner to \texttt{root} when being executed. We ran into problems with our
+framework because of this property of the binary.
 
 \subsubsection{Instrumentation}
 
 For \texttt{sudo} instrumentation became more advanced  than for simple
 programs, because of the way Pin works. Usually, when starting a program with a
-pintool, Pin would modify the program's memory to add its internal instrumenter
-calls and then execute the program. As \texttt{sudo} is owned by \texttt{root},
-Pin is not allowed to modify the memory when running as regular user. Running
-\texttt{sudo} with Pin attached as \texttt{root} is possible, but starting
-\texttt{sudo} as super-user would not trigger the password dialogue nor trigger
-any of the authentication check execution paths as there is no need to change
-the current user.
+pintool, Pin would modify the program\textquotesingle s memory to add its
+internal instrumenter calls and then execute the program. As \texttt{sudo} is
+owned by \texttt{root}, Pin is not allowed to modify the memory when running as
+regular user. Running \texttt{sudo} with Pin attached as \texttt{root} is
+possible, but starting \texttt{sudo} as super-user would not trigger the
+password dialogue nor trigger any of the authentication check execution paths
+as there is no need to change the current user.
 
 To bypass this, we use the attach-to-process functionality of Pin, which
 wouldn't change the context of the program and still run it as a regular user.
@@ -548,9 +549,9 @@ have used twenty-four parallel test runs on our described environment.
 \subsubsection{\texttt{nginx} - Basic Authentication}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
-flips inside the program's binary itself were useable. Table~\ref{tab:nginxres}
-shows the number of flips found and that all flips are inside the \texttt{.text}
-section of the binary.
+flips inside the program\textquotesingle s binary itself were useable.
+Table~\ref{tab:nginxres} shows the number of flips found and that all flips are
+inside the \texttt{.text} section of the binary.
 
 \begin{table}[]
 \centering
@@ -583,9 +584,9 @@ label=lst:nginxex]
 In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
 flip in this example changes a call to \texttt{test} to \texttt{add}. The
 instruction afterwards is \texttt{setn}, used to set a byte if the condition,
-"not equal" in this case, is met. As \texttt{add} does not affect the
-\texttt{ZF} register, which the \texttt{setn} checks, the code is likely to
-behave differently.
+\textquotedbl not equal\textquotedbl  in this case, is met. As \texttt{add}
+does not affect the \texttt{ZF} register, which the \texttt{setn} checks, the
+code is likely to behave differently.
 
 Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
 The timing is that high cause we had to make sure the server is up and ready to

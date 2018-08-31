@@ -12,21 +12,22 @@ Issues like these show one more time that vendors set performance above
 security. The demand for better releases of hardware is rising all the time, and
 not only vendors of CPUs are affected by this demand. Another field of silicon
 chip design ran into a similar problem in the past, namely DRAM chip vendors. In
-2015 Kim~\etal~\cite{rowhammergeneral} released their paper "RowHammer", showing
-how specially crafted memory access routines can cause bits in DRAM chips to
-flip, without accessing them directly. This work showed how the demand for
-higher memory density caused vendors to lower quality management, causing
-interfering voltages and leaking currents to influence other memory storage
-cells. Whereas this at first was just seen as a stability issue, Google's
-Project Zero showed how rowhammer could be used for privilege escalation and
-sandbox escapes~\cite{projectzerorow}. With results like this, the interest in
+2015 Kim~\etal~\cite{rowhammergeneral} released their paper \textquotedbl
+RowHammer\textquotedbl, showing how specially crafted memory access routines
+can cause bits in DRAM chips to flip, without accessing them directly. This
+work showed how the demand for higher memory density caused vendors to lower
+quality management, causing interfering voltages and leaking currents to
+influence other memory storage cells. Whereas this at first was just seen as a
+stability issue, Google\textquotesingle s Project Zero showed how rowhammer
+could be used for privilege escalation and sandbox
+escapes~\cite{projectzerorow}. With results like this, the interest in
 researching the field of rowhammer increased. Where Gruss~\etal~\cite{nethammer}
 showed how bitflips could be triggered by just specially crafted network
 requests, they also showed that bitflips could be triggered by using JavaScript
 inside modern web browsers~\cite{rowhammerjs}. Van der Veen~\etal~\cite{drammer}
 showed that not only users of personal computers are affected by rowhammer, but
 it is also an issue for mobile platforms. Releases like these papers put
-rowhammer in the position of one of the most popular microarchitectural attacks.
+Rowhammer in the position of one of the most popular microarchitectural attacks.
 
 Testing and debugging were always a significant part of software technology, and
 with rising sizes of projects and an increasing number of old code bases, it is
@@ -78,8 +79,9 @@ internet connections.
 Our contribution to the field of microarchitectural attacks and rowhammer is
 providing a practical analysis of real-world applications and how bitflips
 affect them. We present a framework which can be used to find bitflips suitable
-to change a program's behaviour in a desired way. The structure of the framework
-is designed to be extensible and adaptable for multiple purposes.
+to change a program\textquotesingle s behaviour in a desired way. The structure
+of the framework is designed to be extensible and adaptable for multiple
+purposes.
 
 We apply our tool to real-world applications to show the impact bitflips could
 have on users of personal computers. On one hand, we show how privilege
@@ -89,8 +91,8 @@ hand, we also analyse the popular \texttt{nginx} web server. Here we show bits
 which when toggled permit an attacker to bypass the HTTP authentication
 measures. We present results for these two applications and show all possible
 flips allowing us to achieve our set goals. Besides analysing the bits inside
-the program's executable, we also examine any dynamically loaded library it
-uses.
+the program\textquotesingle s executable, we also examine any dynamically loaded
+library it uses.
 
 In addition to that, we contributed to rowhammer research by looking at possible
 cryptographic vulnerabilities introduced by bitflips. As a basis, we look at the

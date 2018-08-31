@@ -17,12 +17,12 @@ bypass HTTP authentication checks. Such a bypass would allow an attacker to
 access pages or files which he could not do before as he was not granted the
 access rights in the original configuration.
 
-Besides analysing the impact of bitflips in programs' binary files, we also look
-at the consequences of flips applied to memory generated and used at runtime by
-programs. As an example of such an attack, we show how bitflips can introduce
-misusage of nonces inside the OpenSSL implementation of AES-GCM. We create nonce
-re-use using rowhammer and with it break the cryptographic security offered by
-the cypher.
+Besides analysing the impact of bitflips in programs\textquotesingle binary
+files, we also look at the consequences of flips applied to memory generated
+and used at runtime by programs. As an example of such an attack, we show how
+bitflips can introduce misusage of nonces inside the OpenSSL implementation of
+AES-GCM. We create nonce re-use using rowhammer and with it break the
+cryptographic security offered by the cypher.
 
 With our work, we want to motivate further research in the field of rowhammer
 attacks and microarchitectural attacks in general. This thesis is a basis for
