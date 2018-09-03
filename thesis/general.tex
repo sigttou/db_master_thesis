@@ -230,12 +230,12 @@ Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
 programs. Besides special format fuzzers there are more advanced ones which
 directly interact with the target, allowing to track execution paths, and
 therefore, create even more test cases automatically. The most popular fuzzer is
-\textquotedbl american fuzzy lop\textquotedbl (afl)~\cite{aflweb}. It contains
-described algorithms to get the best possible code coverage. Another more
-advanced fuzzer is Steelix by Yuekang~\etal~\cite{steelix}, which provides
-program-state-based binary fuzzing. Steelix uses static analysis and binary
-instrumentation to provide more information about the fuzzing process and
-therefore gains better test cases and code coverage.
+``american fuzzy lop'' (afl)~\cite{aflweb}. It contains described algorithms to
+get the best possible code coverage. Another more advanced fuzzer is Steelix by
+Yuekang~\etal~\cite{steelix}, which provides program-state-based binary fuzzing.
+Steelix uses static analysis and binary instrumentation to provide more
+information about the fuzzing process and therefore gains better test cases and
+code coverage.
 
 Shoshitaishvili~\etal showed how fuzzing could find authentication bypasses in
 binary firmware with their tool Firmalice~\cite{firmalice}.
@@ -378,16 +378,15 @@ user\textquotesingle s password to execute commands as the target user.
 
 \subsection{\texttt{setuid} Binary Property}
 
-\texttt{setuid} stands for \textquotedbl set user
-identity\textquotedbl~\cite{ogroupsetuid}. It allows an executable to change its
-user ID on execution. An additional bit in the file permissions represents the
-\texttt{setuid} property, namely \texttt{S\_ISUID}. This property allows a user
-to run a program with the permissions of the file\textquotesingle s owner. Tools
-like \texttt{su} and \texttt{sudo} need this as they require the permission to
-change the current context. It is also practical to allow normal users the usage
-of tools like \texttt{ping} or \texttt{ip}, without allowing them to use
-\texttt{sudo}. We refer to the GNU libc documentation for more
-details~\cite{libcpermission}.
+\texttt{setuid} stands for ``set user identity''~\cite{ogroupsetuid}. It allows
+an executable to change its user ID on execution. An additional bit in the file
+permissions represents the \texttt{setuid} property, namely \texttt{S\_ISUID}.
+This property allows a user to run a program with the permissions of the
+file\textquotesingle s owner. Tools like \texttt{su} and \texttt{sudo} need this
+as they require the permission to change the current context. It is also
+practical to allow normal users the usage of tools like \texttt{ping} or
+\texttt{ip}, without allowing them to use \texttt{sudo}. We refer to the GNU
+libc documentation for more details~\cite{libcpermission}.
 
 Whereas the \texttt{setuid} property might seem practical, it also brings
 security risks. A bug allowing code execution in such a program allows an
@@ -397,15 +396,15 @@ property should be well audited.
 
 \subsection{\texttt{chroot}}
 
-\texttt{chroot}~\cite{ogroupchroot} stands for \textquotedbl change root
-directory\textquotedbl. One can either use it via the system call or the
-wrapper program. A \texttt{chroot} call changes the root directory for the
-running process. Meaning, the environment is changed, and the program runs
-inside a completely different system. It is not possible to access files from
-outside the new environment nor to interact with processes running in the old
-environment. The tool is either used for testing purposes, to create packages
-in clean environments, to check compatibility, as the chrooted system could be
-a different system, or for sandboxing and privilege separation.
+\texttt{chroot}~\cite{ogroupchroot} stands for ``change root directory''. One
+can either use it via the system call or the wrapper program. A \texttt{chroot}
+call changes the root directory for the running process. Meaning, the
+environment is changed, and the program runs inside a completely different
+system. It is not possible to access files from outside the new environment nor
+to interact with processes running in the old environment. The tool is either
+used for testing purposes, to create packages in clean environments, to check
+compatibility, as the chrooted system could be a different system, or for
+sandboxing and privilege separation. 
 
 \section{Connecting Computers}
 
@@ -959,11 +958,11 @@ the cypher data.
 
 \subsubsection{AES-GCM Nonce Reuse Attack}
 
-Joux~\cite{NISTGCMcomment} calls his attack against GCM \textquotedbl a
-forbidden attack\textquotedbl because in cryptography the uniqueness of nonces
-is seen as given. Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce
-reuse still is in real-world application and why clear definitions for nonces
-in protocols are needed.
+Joux~\cite{NISTGCMcomment} calls his attack against GCM a ``forbidden attack''
+because in cryptography the uniqueness of nonces is seen as given.
+Böck~\etal~\cite{gcmnonceattack} describe how relevant nonce reuse still is in
+real-world application and why clear definitions for nonces in protocols are
+needed. 
 
 We look at the simplified attack of Joux\textquotesingle s
 comment~\cite{NISTGCMcomment}, described by Böck~\etal~\cite{gcmnonceattack}.
@@ -1256,8 +1255,7 @@ This interference resulted in a change of bits in other memory rows.
 
 This behaviour and bug then caused researchers to dig deeper into the
 possibilities, and several attacks were found based on the Rowhammer bug. For
-example, Google\textquotesingle s \textquotedbl Project
-Zero\textquotedbl~\cite{projectzerorow} showed,
+example, Google\textquotesingle s ``Project Zero''~\cite{projectzerorow} showed,
 it is possible to use Rowhammer for privilege escalation and sandbox escapes.
 Van der Veen~\etal~\cite{drammer} state that this attack not only affects
 desktop computers but also memory in mobile devices. In their work,
