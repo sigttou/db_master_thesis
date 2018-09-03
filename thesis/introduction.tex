@@ -1,52 +1,57 @@
 %%%%%% Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Introduction}\label{sec:intro}
 
-Microarchitectural attacks are becoming more and more popular. With the latest
-contribution in this field, releases like Meltdown~\cite{meltdown} and
-Spectre~\cite{spectre} made the topic known to the general public. Many media
-outlets reported on these issues of modern CPUs and their design. Where it was
-mostly vendors of x86-architecture CPUs like Intel or AMD, also ARM, and with
-it, most mobile devices were affected by such exploiting techniques.
+With the latest releases of Microarchitectural attacks like
+Meltdown~\cite{meltdown} and Spectre~\cite{spectre}, the topic of flaws in
+hardware implementations became known to the general public. Many media outlets
+reported on these issues of modern CPUs. Where it was mostly vendors of
+x86-architecture CPUs like Intel or AMD, also ARM, and with it, most mobile
+devices are affected by such flaws.
 
-Releases like these show one more time that vendors set performance above
-security. The demand for better releases of hardware is rising all the time, and
-not only vendors of CPUs are affected by this demand. Another field of silicon
-chip design ran into a similar problem in the past, namely DRAM chip vendors. In
-2015, Kim~\etal~\cite{rowhammergeneral} released their paper ``RowHammer'',
+Issues like these show that these vendors have set performance above security by
+neglecting quality management and testing. The demand for better releases of
+hardware is rising all the time, and not only vendors of CPUs are affected by
+this demand. Another field of silicon chip design ran into a similar problem in
+the past, namely DRAM chip vendors.  
+
+In 2015, Kim~\etal~\cite{rowhammergeneral} released their paper ``RowHammer'',
 showing how specially crafted memory access routines can cause bits in DRAM
 chips to flip, without accessing them directly. This work showed how the demand
-for higher memory density caused vendors to lower quality management, causing
-interfering voltages and leaking currents to influence other memory-storage
-cells. Whereas this at first was just seen as a stability issue,
-Google\textquotesingle s Project Zero showed how Rowhammer could be used for
-privilege escalation and sandbox escapes~\cite{projectzerorow}. With reports
-like this, the interest in researching the field of Rowhammer increased. Where
-Gruss~\etal~\cite{nethammer} showed how bitflips could be triggered by just
-specially crafted network requests, they also showed that bitflips could also be
-triggered by using JavaScript inside modern web browsers~\cite{rowhammerjs}. Van
-der Veen~\etal~\cite{drammer} showed that not only users of personal computers
-are affected by Rowhammer, but it is also an issue for mobile platforms.
-Releases like these papers put Rowhammer in the position of being one of the
-most popular microarchitectural attacks.
+for higher memory density caused faults where interfering voltages and leaking
+currents to influence other memory storage cells. While at first, this was just
+seen as a stability issue, Google's Project Zero showed how rowhammer can be
+used for privilege escalation and sandbox escapes~\cite{projectzerorow}. With
+reports like this, the interest in researching the field of rowhammer increased.
+Gruss~\etal~\cite{rowhammerjs} showed that it is not only possible to target
+systems by executing native code, but also that Rowhammer can be triggered by
+using JavaScript. Van der Veen~\etal\cite{drammer} published their work named
+``Drammer'', where they show how not only desktop computers are affected by the
+Rowhammer bug, but also mobile devices. Earlier this year,
+Gruss~\etal~\cite{nethammer}, released a way to trigger bitflips by only sending
+specially-crafted network requests. Publications like these show that Rowhammer
+is an active research topic, where still new findings come up. 
+
+\todo{Insert Research Question here}
 
 Testing and debugging were always a significant part of software technology, and
 with rising sizes of projects and an increasing number of old code bases, it is
-more vital than ever. Not only developers are putting much work into this, but
-also researchers are releasing new ways of testing regularly. With modern
-approaches for testing like fuzzying, searching for bugs in unknown code got
-more successful. Besides testing, also the field of proving software correct got
-much attention. With symbolic execution techniques, the possibility to prove
-each software state on its own got more practical. The rising popularity of the
-symbolic execution framework \texttt{angr}~\cite{angrpaper} proves this point.
-This tool mostly gets used in testing with the combination of fuzzing, but also
-security researchers use \texttt{angr} to find exploitable code parts.
+more vital than ever. Not only developers are putting much work into these
+topics but also researchers releasing new ways of testing regularly. With modern
+approaches for testing like fuzzying, bug searching in unknown code got more
+successful. Also, the field of proving software's correctness got much
+attention. With symbolic execution techniques, the possibility to prove each
+software state on its own got more practical. The release of the open source
+symbolic execution framework \texttt{angr}~\cite{angrpaper} made it possible for
+a wide range of users to apply symbolic execution to programs. This tool mostly
+gets used in testing, in combination with fuzzing, but also security researchers
+use \texttt{angr} to find exploitable code segments and execution paths.
 
-Understanding what programs do and how they work on machine layer gets harder
-with every release of new computing units. Instrumentation is a technique to
-inject code to programs providing the possibility to collect runtime
-information. With tools like Intel Pin~\cite{pintool} it gets possible to check
-changes of processor registers, log accessed memory, and measure performance at
-machine code level.
+Understanding what programs do, and how they are executed by the CPU, gets
+harder with every improvement and change in hardware design. Instrumentation is
+a technique to inject code to programs providing the possibility to collect
+runtime information. With tools like Intel Pin~\cite{pintool} it is possible to
+check changes to processor registers, log accessed memory and performance
+measuring at machine code level.
 
 \section{Goals and Motivation for the Thesis}
 
