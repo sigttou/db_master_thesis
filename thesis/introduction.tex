@@ -2,8 +2,8 @@
 \chapter{Introduction}\label{sec:intro}
 
 Microarchitectural attacks are becoming more and more popular. With the latest
-contribution in this field, releases like Meltdown\cite{meltdown} and
-Spectre\cite{spectre} made the topic known to the general public. Many media
+contribution in this field, releases like Meltdown~\cite{meltdown} and
+Spectre~\cite{spectre} made the topic known to the general public. Many media
 outlets reported on these issues of modern CPUs and their design. Where it was
 mostly vendors of x86-architecture CPUs like Intel or AMD, also ARM, and with
 it, most mobile devices were affected by such exploiting techniques.
@@ -12,7 +12,7 @@ Releases like these show one more time that vendors set performance above
 security. The demand for better releases of hardware is rising all the time, and
 not only vendors of CPUs are affected by this demand. Another field of silicon
 chip design ran into a similar problem in the past, namely DRAM chip vendors. In
-2015 Kim~\etal\cite{rowhammergeneral} released their paper \textquotedbl
+2015 Kim~\etal~\cite{rowhammergeneral} released their paper \textquotedbl
 RowHammer\textquotedbl, showing how specially crafted memory access routines
 can cause bits in DRAM chips to flip, without accessing them directly. This
 work showed how the demand for higher memory density caused vendors to lower
@@ -20,12 +20,12 @@ quality management, causing interfering voltages and leaking currents to
 influence other memory-storage cells. Whereas this at first was just seen as a
 stability issue, Google\textquotesingle s Project Zero showed how Rowhammer
 could be used for privilege escalation and sandbox
-escapes\cite{projectzerorow}. With reports like this, the interest in
-researching the field of Rowhammer increased. Where Gruss~\etal\cite{nethammer}
+escapes~\cite{projectzerorow}. With reports like this, the interest in
+researching the field of Rowhammer increased. Where Gruss~\etal~\cite{nethammer}
 showed how bitflips could be triggered by just specially crafted network
 requests, they also showed that bitflips could also be triggered by using
-JavaScript inside modern web browsers\cite{rowhammerjs}. Van der
-Veen~\etal\cite{drammer} showed that not only users of personal computers are
+JavaScript inside modern web browsers~\cite{rowhammerjs}. Van der
+Veen~\etal~\cite{drammer} showed that not only users of personal computers are
 affected by Rowhammer, but it is also an issue for mobile platforms. Releases
 like these papers put Rowhammer in the position of being one of the most popular
 microarchitectural attacks.
@@ -38,14 +38,14 @@ approaches for testing like fuzzying, searching for bugs in unknown code got
 more successful. Besides testing, also the field of proving software correct got
 much attention. With symbolic execution techniques, the possibility to prove
 each software state on its own got more practical. The rising popularity of the
-symbolic execution framework \texttt{angr}\cite{angrpaper} proves this point.
+symbolic execution framework \texttt{angr}~\cite{angrpaper} proves this point.
 This tool mostly gets used in testing with the combination of fuzzing, but also
 security researchers use \texttt{angr} to find exploitable code parts.
 
 Understanding what programs do and how they work on machine layer gets harder
 with every release of new computing units. Instrumentation is a technique to
 inject code to programs providing the possibility to collect runtime
-information. With tools like Intel Pin\cite{pintool} it gets possible to check
+information. With tools like Intel Pin~\cite{pintool} it gets possible to check
 changes of processor registers, log accessed memory, and measure performance at
 machine code level.
 
@@ -54,7 +54,7 @@ machine code level.
 With our work, we want to increase the awareness about Rowhammer and making the
 issue better known to the general public. We want to use the attention given to
 microarchitectural attacks to improve the knowledge about other work in this
-field. For Rowhammer, Gruss~\etal\cite{flipinthewall} already showed that
+field. For Rowhammer, Gruss~\etal~\cite{flipinthewall} already showed that
 current defences are not suitable. Attackers can still use bitflips to gain
 privilege escalation or use them to do other things threatening the security of
 users. We want to take this approach further to present an easy way to find
@@ -97,7 +97,7 @@ library it uses.
 
 In addition to that, we contributed to Rowhammer research by looking at possible
 cryptographic vulnerabilities introduced by bitflips. As a basis, we look at the
-work by Böck~\etal\cite{gcmnonceattack}, who showed how web servers were
+work by Böck~\etal~\cite{gcmnonceattack}, who showed how web servers were
 misusing nonces when using AES-GCM. We took their approach to bypass the fixes
 applied by server software to re-introduce this misusage of nonces via bitflips.
 We look at the current implementation of AES-GCM in the TLS library OpenSSL,

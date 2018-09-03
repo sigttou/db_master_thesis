@@ -22,9 +22,9 @@ developers can have their code tested and improve stability.
 In general, we can see a more connecting work between microarchitectural attacks
 and classic exploitation techniques. With improved attacks also awareness of
 vulnerabilities such as cache-attacks or other side-channels is improved as more
-users are affected. Latest attacks, such as Meltdown\cite{meltdown} and
-Spectre\cite{spectre} by Lipp and Gruss~\etal, have shown this already. Another
-example of a famous microarchitectural attack Foreshadow\cite{foreshadow},
+users are affected. Latest attacks, such as Meltdown~\cite{meltdown} and
+Spectre~\cite{spectre} by Lipp and Gruss~\etal, have shown this already. Another
+example of a famous microarchitectural attack Foreshadow~\cite{foreshadow},
 released in August 2018 by Bulck~\etal. The three attacks are related as they
 target the CPU internal code used to execute machine code given to it.
 
@@ -49,14 +49,14 @@ architectures.
 
 With already a high number of side-channel attacks coming to JavaScript and
 attacks like Spectre being run inside web browsers, we can see the number of
-microarchitectural attacks in JavaScript rising. Gruss~\etal\cite{rowhammerjs}
+microarchitectural attacks in JavaScript rising. Gruss~\etal~\cite{rowhammerjs}
 have already shown how the attack of Rowhammer can be ported to JavaScript. With
 attacks like this, the number of possible targets for these attacks rises.
 Victims only need to open a website and are targeted with Spectre, Rowhammer
 and other attacks. In this way, the need for native code execution is not given
 any more to run the exploiting code. Additional, attacks could also be ported
 to mobile devices and browsers running on Android and iOS operating systems.
-Gruss~\etal\cite{keytimejs} already showed how timing attacks ported to
+Gruss~\etal~\cite{keytimejs} already showed how timing attacks ported to
 JavaScript could affect end users on mobile devices. With the rising numbers of
 attack vectors in the field, and the number of victims, we can see an increasing
 awareness of the issue in the wider user base. Therefore, more pressure is
@@ -69,15 +69,15 @@ With the increasing complexity of CPUs and their design including more
 dependency on microcode, we see an increasing number of bugs coming from this
 area. Finding bugs by automation is already a topic in security research, for
 microarchitectural attacks we can see this trend continuing.
-Domas\cite{sandsifter} already showed how fuzzying can be applied to the x86
+Domas~\cite{sandsifter} already showed how fuzzying can be applied to the x86
 ISA in his work, named \texttt{sandsifter}. The tool is open-source and
-published on GitHub\cite{sandsifterurl}. \texttt{sandsifter} is written in
+published on GitHub~\cite{sandsifterurl}. \texttt{sandsifter} is written in
 Python, and the developer built it to audit x86 CPUs. It can be used to find
 hidden instructions or hardware bugs. The tool generates machine code, executes
 it and checks the behaviour of the CPU during execution. The tool already
 succeeded in finding undocumented opcodes, bugs in disassembles and hypervisors
 which also were security related. The results and whitepaper were released at
-the Blackhat conference in 2017\cite{sandsifter}. With such a tool already in
+the Blackhat conference in 2017~\cite{sandsifter}. With such a tool already in
 place, we can see adaptions of it for other architectures in the near future.
 Also, besides only fuzzying instructions, we can also see similar tools being
 introduced for memory accesses to fuzz cache behaviour for example.
@@ -91,9 +91,9 @@ implementations more. The most popular Free Software instruction set
 architecture is RISC-V. It is built on the principles of reduced instruction
 set computing (RISC). RISC-V started in 2010, and lots of researchers have
 contributed since then. There are implementations in place, which provide
-System-on-Chip (SOC) designs of RISC-V, such as lowRISC\cite{lowrisc}. Other
+System-on-Chip (SOC) designs of RISC-V, such as lowRISC~\cite{lowrisc}. Other
 research areas use RISC-V to implement CPU designs to improve systems by
-adding security or optimising options. Such as Ming~\etal\cite{smarts} showed
+adding security or optimising options. Such as Ming~\etal~\cite{smarts} showed
 in their work of introducing a memory protection unit (MPU) in a RISC-V SOC.
 The MPU is used to encrypt and verify memory in DRAM, where they use a Rocket
 core with tagged memory-based on a lowRISC implementation. Tagged memory is a
@@ -109,7 +109,7 @@ increase in such countermeasures, like tagged memory.
 As machine learning is another fast-growing field in computer science, we can
 see that testing and exploitation can learn more and more from already found
 bugs. This data can be used to find errors in new code. There also exist bug
-prediction models, like Puranik~\etal\cite{bugprediction} showed in their work.
+prediction models, like Puranik~\etal~\cite{bugprediction} showed in their work.
 These models can be applied to code and predict if there is a bug. We can see
 that these prediction models will influence microarchitectural attacks, as the
 behaviour of the CPU in certain states could be analysed and conclusions about
@@ -120,7 +120,7 @@ faulty behaviour can be drawn.
 We see Rowhammer as a still open field of research, while vendors could fix the
 exploitation in DRAM chips, by increasing refresh rates or built
 non-load-leaking chips, there is other hardware which already faces similar
-issues, as Kurmus~\etal\cite{rowssdhammer} showed for SSDs. We can see more
+issues, as Kurmus~\etal~\cite{rowssdhammer} showed for SSDs. We can see more
 devices and techniques targeted with such attacks.
 
 Also, an in-depth analysis of the Rowhammer is still an open issue in the
@@ -142,7 +142,7 @@ encryption or allow key-recovery but also allow to break authenticity and
 confidentiality when an attacker flips bits in tags inside message
 authentication codes.
 
-Dobraunig~\etal\cite{noncestat} showed statistical attacks against nonce-based
+Dobraunig~\etal~\cite{noncestat} showed statistical attacks against nonce-based
 authenticated encryption schemes. They show fault attacks on various modes of
 AES, such as GCM, CCM, EAX or OCB. They show how faults would affect the
 algorithm when they are introduced before the MixColumn step of AES. Work on
@@ -156,7 +156,7 @@ the functionality of shifting and replacing could break cryptographic
 assumptions made by AES.
 
 We already saw a combination between microarchitectural attacks and
-cryptographic attacks. Such as Yarom~\etal\cite{noncerec} showed, that it is
+cryptographic attacks. Such as Yarom~\etal~\cite{noncerec} showed, that it is
 possible to use FLUSH+RELOAD cache attacks to recover ECDSA nonces in OpenSSL.
 They show an attack which allows a partial key-recovery in they Elliptic Curve
 Algorithm implementation with only observing a single signing process. With a
@@ -165,8 +165,8 @@ key recovery on this level, it allows forgery for future data transmissions.
 \section{Improving and Reusing our Framework}
 
 For attacks based on memory accesses, we can take away that tools such as
-Pin\cite{pintool} or \texttt{angr}\cite{angrpaper} will be a significant
-factor for analysis. The work of Chabbi~\etal\cite{pincallpaths} could also be
+Pin~\cite{pintool} or \texttt{angr}~\cite{angrpaper} will be a significant
+factor for analysis. The work of Chabbi~\etal~\cite{pincallpaths} could also be
 taken to improve our testing framework as they provide an even more in-depth
 view of execution paths in binaries. Using such detailed graphs, more
 bytes-to-test could be filtered, speeding up the framework.
@@ -175,22 +175,22 @@ On the other side, we can see our framework working as a base-implementation for
 other test environments for parallel testing use cases. The environment is very
 adaptable and developers can exchange single components without much effort.
 Testing inside \texttt{chroot} could be changed to container environments like
-Docker\cite{docker}, to provide more safety or better abstraction of the host
+Docker~\cite{docker}, to provide more safety or better abstraction of the host
 operating system. Also, virtual machines could be used, if the software has to
 be tested on other kernels or operating systems. The testing scripts could be
 replaced to work with multiple input files for a program instead of different
 binaries. This would make it possible to use the framework as a basis for a
 fuzzer. Even a combination with fuzzers would be possible, as the framework
-could be combined with \texttt{afl}\cite{aflweb} to provide a parallel fuzzing
+could be combined with \texttt{afl}~\cite{aflweb} to provide a parallel fuzzing
 framework, which would either allow fuzzing in multiple environments or as a
 general way to parallelise \texttt{afl}.
 
 For the part where binaries are instrumented with Intel Pin at the moment,
 replacements or other sources for analysis could be used. Like the
-QBDI\cite{qbdi} tool for dynamic instrumentation could be used instead, which
+QBDI~\cite{qbdi} tool for dynamic instrumentation could be used instead, which
 provides a wider range for software architectures, such as ARM or AArch64.
 Additional, a complete open source solution for instrumentation is available in
-DynamoRIO\cite{dynrio}, which could also replace Pin.
+DynamoRIO~\cite{dynrio}, which could also replace Pin.
 
 As other use cases for our framework, we could see it being used as a basis for
 malware research, to track the behaviour of malware in different environments,
