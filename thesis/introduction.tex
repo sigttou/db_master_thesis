@@ -32,7 +32,17 @@ to trigger bitflips by only sending specially-crafted network requests.
 Publications like these show that Rowhammer is an active research topic, where
 still new findings come up.
 
-\todo{Insert Research Question here}
+Our work builds on work released by Gruss~\etal~\cite{flipinthewall}, where they
+showed that application code can directly be attacked with Rowhammer. They show
+that a bitflip applied to \texttt{sudo} can result in a bypass of the password
+check. They show some bitflips causing such a bypass. They look at the
+disassembly of the authentication check code and find opcodes which when changed
+would result in a different outcome. With our work, we want to automate, and
+therefore simplify, this process. We want to find a higher number of bitflips in
+a shorter time. In addition to that, we want to provide a toolset, which allows
+us to apply similar searches to other applications. We want to run lots of tests
+in parallel and verify the outcomes. Therefore we want to make use of modern
+testing techniques.
 
 Testing and debugging were always a significant part of software technology, and
 with rising sizes of projects and an increasing number of old code bases, it is
