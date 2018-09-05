@@ -67,29 +67,27 @@ measuring at machine code level.
 
 \section{Goals and Motivation for the Thesis}
 
-With our work, we want to increase the awareness about Rowhammer and making the
-issue better known to the general public. We want to use the attention given to
-microarchitectural attacks to improve the knowledge about other work in this
-field. For Rowhammer, Gruss~\etal~\cite{flipinthewall} already showed that
-current defences are not suitable. Attackers can still use bitflips to gain
-privilege escalation or use them to do other things threatening the security of
-users. We want to take this approach further to present an easy way to find
-bitflips in programs which cause them to behave differently. With our work, we
-want to increase the impact of Rowhammer, supporting the research of better
-countermeasures and forcing vendors to built secure and higher quality DRAM
-chips again.
+As we know from previous work done by Gruss~\etal~\cite{flipinthewall}, there
+are bitflips in the ELF files loaded by the \texttt{sudo} program which allow
+privilege escalation by providing a password check bypass. They only looked at
+the binary section providing the permission check. However, they could not claim
+to find all flips, and their approach is very time-consuming. We want to
+simplify the search by automatic testing of flips. Also, we also want to make it
+easier for future applications to be tested for possible bitflip outcomes by
+providing a test framework.
 
-With the knowledge gained from already released Rowhammer attacks and the
-knowledge gained from modern testing approaches, like fuzzing, we want to
-combine these fields to get the best possible outcome for finding feasible
-bitflips.
+Common Unix-based operating systems use package management to roll-out
+applications to users. Every instance of the operating system then uses the same
+binary to execute. With this in mind, a bitflip found in the \texttt{sudo}
+application distributed with Debian, can be used to attack all instances of that
+installation. An attacker, therefore, can use the test framework to find
+bitflips in widely distributed binaries.
 
-Whereas securing systems is something wanted by most users and vendors, we want
-to show that without flawless hardware components security claims on other
-levels are worthless. We want to push the desire of secure code and operating
-systems down to hardware layers to have users, and researchers care as much
-about security in this field as they already do for their running programs and
-network connections.
+With our work, we want to provide an easy-to-apply framework to search for
+bitflips providing a pre-defined outcome. To show how this framework works we
+apply it to real-world applications and compare our results to the ones reported
+by Gruss~\etal~\cite{flipinthewall}. We want to show how likely such bitflips
+are in applications.
 
 \section{Contributions of this Work}
 
