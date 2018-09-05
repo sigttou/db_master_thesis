@@ -120,6 +120,25 @@ reintroduced by bitflips and give a probability for them.
 
 \section{Outline of this Work}
 
+This thesis is structured as follows: In section~\ref{sec:general}, we describe
+general terms and technologies our work is built on or makes use of. We discuss
+other microarchitectural attacks and give an overview of the functionality of
+programs which our work targets. In section~\ref{sec:elfattack}, we discuss our
+work regarding the automatic bitflip search. We show the tested programs, what
+additions had to be made for testing and present the found bitflips. In
+section~\ref{sec:dynattack}, we discuss our work regarding Rowhammer attacks
+targeting dynamic memory. We thereby show how the OpenSSL implementation of
+AES-GCM can be attacked by flipping bits. In section~\ref{sec:countermeasure},
+we discuss countermeasures which could be applied to improve system security. We
+discuss countermeasures against microarchitectural attacks in general, and
+discuss on what could be done to reduce the impact of our testing. In
+section~\ref{sec:futurework}, we show possible future works, and an overview of
+possible directions the research in the field of microarchitectural attacks
+could take. In section~\ref{sec:conclusion}, we close our thesis with a summary
+and give a conclusion of our work.
+
+\section{Merge to 1.0}
+
 We present this work separated into different chapters. We start with a general
 overview of topics in this field. Beginning with describing how programs get
 executed on modern computers and how operating systems handle applications. For
