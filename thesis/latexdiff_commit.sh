@@ -2,25 +2,23 @@
 
 # simple shell script to diff between commits of this thesis
 
-# $1 ... commit a for latexdiff
-# $2 ... commit b for latexdiff
+# $1 ... commit to diff
 
-if [ "$#" -ne 2 ]; then
-  echo "Usage: ./diff_commit.sh commit_a commit_b"
-  echo "Generates latexdiff between to commits !!!! KILLS YOUR CURRENT FILES !!!!"
+if [ "$#" -ne 1 ]; then
+  echo "Usage: ./diff_commit.sh commit"
+  echo "Generates latexdiff between current state and given commit"
   exit 1
 fi
 
 for file in `ls | grep "\.tex" | grep -v "main"`; do
-  git show $1:./$file > a_$file
-  git show $2:./$file > b_$file
-  latexdiff a_$file b_$file > $file
-  rm a_$file
-  rm b_$file
+  git show $1:./$file > commit_$file
+  mv $file orig_$file
+  latexdiff commit_$file orig_$file > $file
+  rm commit_$file
 done
 
 make pdf
 
-for file in `ls | grep "\.tex" | grep -v "main"`; do
-  git checkout $file
+for file in `ls | grep "\.tex" | grep -v "main" | grep -v "orig_"` ; do
+  mv orig_$file $file
 done
