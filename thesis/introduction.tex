@@ -3,67 +3,68 @@
 
 With the latest releases of Microarchitectural attacks like
 Meltdown~\cite{meltdown} and Spectre~\cite{spectre}, the topic of flaws in
-hardware implementations became known to the general public. Many media outlets,
-like BBC~\cite{bbcmeltdown} and NBC~\cite{nbcmeltdown}, reported on these issues
-of modern CPUs. Where it was mostly vendors of x86-architecture CPUs like Intel
-or AMD, also ARM, and with it, most mobile devices are affected by such flaws.
+hardware implementations became known by the general public, with many media
+outlets, like BBC~\cite{bbcmeltdown} and NBC~\cite{nbcmeltdown}, reporting on
+these issues of modern CPUs. Where vendors of x86-architectures, like Intel or
+AMD, are affected, also ARM, and with it, most mobile devices have such flaws.
 
-Issues like these show that these vendors have set performance above security by
-neglecting quality management and testing. The demand for better releases of
-hardware is rising all the time, and not only vendors of CPUs are affected by
-this demand. Another field of silicon chip design ran into a similar problem in
-the past, namely DRAM chip vendors.  
+Such issues show that these vendors have set performance above security by
+neglecting quality management and testing. The demand for faster hardware is
+rising all the time, and not only vendors of CPUs are influenced by this demand.
+Another field of silicon chip design ran into a similar problem in the past,
+namely DRAM chip vendors.
 
 In 2015, Kim~\etal~\cite{rowhammergeneral} released their paper ``RowHammer'',
 showing how specially crafted memory access routines can cause bits in DRAM
-chips to flip, without accessing them directly. This work showed how the demand
-for higher memory density caused faults where interfering voltages and leaking
-currents to influence other memory storage cells. While at first, this was just
-seen as a stability issue, Google\textquotesingle s Project Zero showed how
-Rowhammer can be used for privilege escalation and sandbox
-escapes~\cite{projectzerorow}. With reports like this, the interest in
-researching the field of Rowhammer increased. Gruss~\etal~\cite{rowhammerjs}
-showed that it is not only possible to target systems by executing native code,
-but also that Rowhammer can be triggered by using JavaScript. Van der
-Veen~\etal\cite{drammer} published their work named ``Drammer'', where they show
-how not only desktop computers are affected by the Rowhammer bug, but also
-mobile devices. Earlier this year, Gruss~\etal~\cite{nethammer}, released a way
-to trigger bitflips by only sending specially-crafted network requests.
-Publications like these show that Rowhammer is an active research topic, where
-still new findings come up.
+chips to flip, without accessing them directly. This work showed how higher
+memory density caused faults where interfering voltages and leaking currents
+influence other memory storage cells. While at first, this was just seen as a
+stability issue, Google\textquotesingle s Project Zero showed how Rowhammer can
+be used for privilege escalation and sandbox escapes~\cite{projectzerorow}. With
+reports like this, the interest in researching the field of Rowhammer increased.
+Gruss~\etal~\cite{rowhammerjs} showed that it is not only possible to target
+systems by executing native code, but also that Rowhammer can be triggered by
+using JavaScript. Van der Veen~\etal\cite{drammer} published their work named
+``Drammer'', where they show how not only desktop computers are affected by the
+Rowhammer bug, but also mobile devices. Earlier this year,
+Gruss~\etal~\cite{nethammer}, released a way to trigger bitflips by sending
+specially-crafted network requests. Publications like these show that Rowhammer
+is an active research topic, where still new findings come up.
 
-Our work builds on work released by Gruss~\etal~\cite{flipinthewall}, where they
-showed that application code can directly be attacked with Rowhammer. They show
-that a bitflip applied to \texttt{sudo} can result in a bypass of the password
-check. They show some bitflips causing such a bypass. They look at the
-disassembly of the authentication check code and find opcodes which when changed
-would result in a different outcome. With our work, we want to automate, and
-therefore simplify, this process. We want to find a higher number of bitflips in
-a shorter time. In addition to that, we want to provide a toolset, which allows
-us to apply similar searches to other applications. We want to run lots of tests
-in parallel and verify the outcomes. Therefore we want to make use of modern
-testing techniques.
+This thesis builds on work released by Gruss~\etal~\cite{flipinthewall}, which
+states that application code can directly be attacked with Rowhammer. They show,
+for example, that a bitflip applied to \texttt{sudo} can result in a bypass of
+the password check. They report some bitflips causing this bypass. They look at
+the disassembly of the authentication-check code and find opcodes, which when
+changed, would result in a different outcome. With our work, we want to
+automate, and therefore simplify, this process. With this, we predict a finding
+of a higher number of bitflips in a shorter time. In addition to that, we want
+to provide a toolset, which allows us to apply similar searches to other
+applications. This tool should be able to run lots of tests in parallel and
+verify the outcomes. Therefore, we want to make use of modern testing
+techniques.
 
 Testing and debugging were always a significant part of software technology, and
 with rising sizes of projects and an increasing number of old code bases, it is
 more vital than ever. Not only developers are putting much work into these
-topics but also researchers releasing new ways of testing regularly. With modern
-approaches for testing like fuzzying, bug searching in unknown code got more
-successful. Also, the field of proving software\textquotesingle s correctness
-got much attention. With symbolic execution techniques, the possibility to prove
-each software state on its own got more practical. The release of the open
-source symbolic execution framework \texttt{angr}~\cite{angrpaper} made it
-possible for a wide range of users to apply symbolic execution to programs. This
-tool mostly gets used in testing, in combination with fuzzing, like
-Stephens~\etal~\cite{driller} showed in their work ``Driller''. Also, security
-researchers use \texttt{angr} to find exploitable code segments and execution
-paths, such as Shoshitaishvili~\etal~\cite{boomerang} showed with their work
-``Firmalice'', where \texttt{angr} was used to detect authentication bypasses in
-firmware images.
+topics, but also researchers releasing new ways of testing regularly. As the
+website of ``american fuzzy lop''~\cite{aflweb} shows, modern approaches for
+testing like fuzzying make bug searching in unknown code more successful. Also,
+the field of proving software\textquotesingle s correctness got much attention.
+With symbolic execution techniques, the possibility to prove each software state
+on its own got more practical. The release of the open source symbolic execution
+framework \texttt{angr}~\cite{angrpaper} made it possible for a wide range of
+users to apply symbolic execution to programs. This tool mostly gets used in
+testing, in combination with fuzzing, like Stephens~\etal~\cite{driller} showed
+in their work ``Driller''. Also, security researchers use \texttt{angr} to find
+exploitable code segments and execution paths, such as
+Shoshitaishvili~\etal~\cite{boomerang} showed with their work ``Firmalice'',
+where \texttt{angr} was used to detect authentication bypasses in firmware
+images.
 
 Understanding what programs do, and how they are executed by the CPU, gets
-harder with every improvement and change in hardware design. Instrumentation is
-a technique to inject code to programs providing the possibility to collect
+harder with every improvement, and change, in hardware design. Instrumentation
+is a technique to inject code to programs providing the possibility to collect
 runtime information. With tools like Intel Pin~\cite{pintool} it is possible to
 check changes to processor registers, log accessed memory and performance
 measuring at machine code level.
@@ -73,24 +74,24 @@ measuring at machine code level.
 As we know from previous work done by Gruss~\etal~\cite{flipinthewall}, there
 are bitflips in the ELF files loaded by the \texttt{sudo} program which allow
 privilege escalation by providing a password check bypass. They only looked at
-the binary section providing the permission check. However, they could not claim
-to find all flips, and their approach is very time-consuming. We want to
-simplify the search by automatic testing of flips. Also, we also want to make it
-easier for future applications to be tested for possible bitflip outcomes by
-providing a test framework.
+the code section providing the permission check. They could not claim to find
+all flips, and their approach is very time-consuming. We want to simplify the
+search by automatic testing of flips. Also, we want to make it easier for future
+applications to be tested for possible bitflip outcomes by providing a test
+framework.
 
 Common Unix-based operating systems use package management to roll-out
 applications to users. Every instance of the operating system then uses the same
 binary to execute. With this in mind, a bitflip found in the \texttt{sudo}
-application distributed with Debian, can be used to attack all instances of that
-installation. An attacker, therefore, can use the test framework to find
-bitflips in widely distributed binaries.
+application distributed with a major Linux distribution, can be used to attack
+all instances of such a system. An attacker, therefore, can use the test
+framework to find bitflips in widely distributed binaries.
 
-With our work, we want to provide an easy-to-apply framework to search for
-bitflips providing a pre-defined outcome. To show how this framework works we
+With our work, we want to present an easy-to-apply framework to search for
+bitflips providing a pre-defined outcome. To show how this framework works, we
 apply it to real-world applications and compare our results to the ones reported
-by Gruss~\etal~\cite{flipinthewall}. We want to show how likely such bitflips
-are in applications.
+by Gruss~\etal~\cite{flipinthewall}. Also, we want to show how likely such
+bitflips are in applications.
 
 \section{Contributions of this Work}
 
@@ -113,19 +114,19 @@ loaded library it uses. By that, we also cover possibilities where external
 functions could change the application\textquotesingle s outcome.
 
 In addition to that, we look at possible cryptographic vulnerabilities
-introduced by bitflips. As a basis, we took the work by
-Böck~\etal~\cite{gcmnonceattack}, who showed how web servers were misusing
-nonces when using AES-GCM. We build on their approach to bypass the fixes
-applied by server software to re-introduce this nonce misusage via bitflips.
-Here we look at the current implementation of AES-GCM in the TLS library
-OpenSSL, used by most web servers. We show that nonce misusage can be
-reintroduced by bitflips and give a probability for them.
+introduced by bitflips. As a basis, we take the work by
+Böck~\etal~\cite{gcmnonceattack}, who showed how it is possible for web servers
+to misuse nonces when using AES-GCM. We build on their approach to bypass the
+fixes applied by server software to re-introduce this nonce misusage via
+bitflips. Here we look at the current implementation of AES-GCM in the TLS
+library OpenSSL. We show that nonce misusage can be reintroduced by bitflips,
+and give a probability for them to happen during a Rowhammer attack.
 
 \section{Outline of this Work}
 
 This thesis is structured as follows: In section~\ref{sec:general}, we describe
-general terms and technologies our work is built on or makes use of. We discuss
-other microarchitectural attacks and give an overview of the functionality of
+general terms and technologies our work is build on or makes use of. We discuss
+other microarchitectural attacks, and give an overview of the functionality of
 programs which our work targets. In section~\ref{sec:elfattack}, we discuss our
 work regarding the automatic bitflip search. We show the tested programs, what
 additions had to be made for testing and present the found bitflips. In
