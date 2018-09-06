@@ -3,10 +3,10 @@
 
 With the latest releases of Microarchitectural attacks like
 Meltdown~\cite{meltdown} and Spectre~\cite{spectre}, the topic of flaws in
-hardware implementations became known to the general public. Many media outlets
-reported on these issues of modern CPUs. Where it was mostly vendors of
-x86-architecture CPUs like Intel or AMD, also ARM, and with it, most mobile
-devices are affected by such flaws.
+hardware implementations became known to the general public. Many media outlets,
+like BBC~\cite{bbcmeltdown} and NBC~\cite{nbcmeltdown}, reported on these issues
+of modern CPUs. Where it was mostly vendors of x86-architecture CPUs like Intel
+or AMD, also ARM, and with it, most mobile devices are affected by such flaws.
 
 Issues like these show that these vendors have set performance above security by
 neglecting quality management and testing. The demand for better releases of
@@ -54,9 +54,12 @@ got much attention. With symbolic execution techniques, the possibility to prove
 each software state on its own got more practical. The release of the open
 source symbolic execution framework \texttt{angr}~\cite{angrpaper} made it
 possible for a wide range of users to apply symbolic execution to programs. This
-tool mostly gets used in testing, in combination with fuzzing, but also security
+tool mostly gets used in testing, in combination with fuzzing, like
+Stephens~\etal~\cite{driller} showed in their work ``Driller''. Also security
 researchers use \texttt{angr} to find exploitable code segments and execution
-paths.
+paths, such as Shoshitaishvili~\etal~\cite{boomerang} showed with their work
+``Firmalice'', where \texttt{angr} was used to detect authentication bypasses in
+firmware images.
 
 Understanding what programs do, and how they are executed by the CPU, gets
 harder with every improvement and change in hardware design. Instrumentation is
