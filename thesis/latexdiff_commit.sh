@@ -18,7 +18,10 @@ for file in `ls | grep "\.tex" | grep -v "main"`; do
 done
 
 make pdf
+cp $(ls `date --iso-8601`_*.pdf | grep -v "diff") `date --iso-8601`_diff.pdf
 
 for file in `ls | grep "\.tex" | grep -v "main" | grep -v "orig_"` ; do
   mv orig_$file $file
 done
+
+make pdf
