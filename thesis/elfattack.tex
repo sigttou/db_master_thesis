@@ -1,9 +1,9 @@
 %%%%%% Static Data Flips %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
-\chapter{Bitflip Attacks on ELF Files}\label{sec:bitflip}
+\chapter{Bitflip Attacks on ELF Files}\label{sec:elfattack}
 
 In this chapter, we discuss our approach to automate the finding of bitflips in
 ELF files to gain useable execution path changes. This is an idea which
-Gruss~\etal\cite{flipinthewall} already have realised by disassembling binaries
+Gruss~\etal~\cite{flipinthewall} already have realised by disassembling binaries
 and manually looking for suitable flips. We start by describing the impact of a
 single bitflip on the execution path. Then, we look at our work and the
 framework we created to find bitflips in binaries to change their behaviour to a
@@ -25,8 +25,8 @@ point out that we can start with changing the \texttt{1} to a \texttt{0} at
 the \texttt{mov} instruction on address \texttt{0x0642}. Besides that, also the
 opcode of \texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a
 \texttt{jz}, as this is \texttt{0x74 (1110100)}, at address \texttt{0x064d}. For
-compiling we used \texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}\cite{gccubuntu},
-for disassembling \texttt{radare2 2.3.0-git 17214}\cite{radare2web} was used.
+compiling we used \texttt{gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0}~\cite{gccubuntu},
+for disassembling \texttt{radare2 2.3.0-git 17214}~\cite{radare2web} was used.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
@@ -258,7 +258,7 @@ all flips and reports successful flips to the framework.
 
 \subsubsection{Instrumenting the Program}
 
-We use Intel Pin\cite{pintool} for instrumentation.  We log every memory access
+We use Intel Pin~\cite{pintool} for instrumentation.  We log every memory access
 during execution of the program. We want to log all accesses which happen
 inside of ELF files, which means the program\textquotesingle s binary and all
 libraries it uses during runtime. We use the same pintool for all test runs. It
@@ -371,7 +371,7 @@ structured as \texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}.
 
 In our thesis, we want to apply our tool to more extensive programs, programs
 used in the real world and with bitflips in mind which an attacker also would
-use. As Gruss~\etal\cite{flipinthewall} already showed, there are bits in the
+use. As Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
 \texttt{sudoers} library which when toggled, allow using \texttt{sudo} without
 or with a wrong password to still gain super-user privileges. We want to show,
 that our framework can find a more significant number of possible bitflips to
@@ -587,7 +587,7 @@ label=lst:nginxex]
 In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
 flip in this example changes a call to \texttt{test} to \texttt{add}. The
 instruction afterwards is \texttt{setn}, used to set a byte if the condition,
-in this case\textquotedbl not equal\textquotedbl, is met. As \texttt{add}
+in this case ``not equal'', is met. As \texttt{add}
 does not affect the \texttt{ZF} register, which the \texttt{setn} checks, the
 code is likely to behave differently.
 
@@ -599,7 +599,7 @@ testing instances.
 \subsection{Flipping bits in Binaries using Rowhammer}
 
 Targeting files with Rowhammer is an improved attack on previously shown usages
-of the vulnerability. Gruss~\etal\cite{flipinthewall} showed, that besides
+of the vulnerability. Gruss~\etal~\cite{flipinthewall} showed, that besides
 targeting page table entries, it is also possible to target shared libraries or
 ELF files directly. With this work, the possible attack vector for Rowhammer
 grew. To flip the bit in the binary using Rowhammer an attacker needs to make
@@ -617,7 +617,7 @@ Therefore, a later call to the program would load the flipped version already
 cached in DRAM.
 
 Another idea would be to use Rowhammer on storage devices. As
-Kurmus~\etal\cite{rowssdhammer} showed it is possible to find a similar
+Kurmus~\etal~\cite{rowssdhammer} showed it is possible to find a similar
 behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
 MLC NAND chips, showing the possibility of a similar attack. They show that
 corrupting a block inside the SSD is enough to gain privilege escalation. Such

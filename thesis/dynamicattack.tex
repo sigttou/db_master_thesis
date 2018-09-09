@@ -1,12 +1,11 @@
 %%%%%% Dynamic Data Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
-\chapter{Bitflip Attacks on Dynamic Data}\label{sec:automate}
+\chapter{Bitflip Attacks on Dynamic Data}\label{sec:dynattack}
 
 In this chapter, we want to take a look at data created at the runtime of the
 program and how flips to that could benefit an attacker. We will go into details
 about OpenSSL and how bitflips can make attacks like a nonce-misuse possible. We
-want to apply a similar attack as Böck~\etal describe in their work about
-\textquotedbl practical nonce misusage
-attacks\textquotedbl\cite{gcmnonceattack}. By this, we want to show how
+want to apply a similar attack as Böck~\etal describe in their work about ``practical nonce misusage
+attacks''~\cite{gcmnonceattack}. By this, we want to show how
 Rowhammer can reintroduce previous attacks.
 
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
@@ -74,7 +73,7 @@ struct evp_cipher_ctx_st {
 \end{minipage}
 
 For the attack to work, we would need the IV to be reused, just as described by
-Böck~\etal\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
+Böck~\etal~\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
 instead of a random value, flipping back a lower bit would probably cause a
 decrement of the counter which makes reuse very likely. As the described attack
 states, this would cause a break of the cryptography for future messages and the
@@ -84,7 +83,7 @@ attack with Rowhammer, we would target the \texttt{iv} array in the
 
 \subsection{Likelihood of a Nonce-Misuse introduced by Rowhammer}
 
-In their work, nethammer, Lipp~\etal\cite{nethammer}, stated how it is possible
+In their work, nethammer, Lipp~\etal~\cite{nethammer}, stated how it is possible
 to send network requests which cause memory accesses in a manner that they
 introduce Rowhammer faults. With this knowledge and the possibility of
 nonce-misuse attacks in OpenSSL by bitflips, an attacker could overtake TLS

@@ -11,10 +11,10 @@ general to make them more secure.
 
 For this kind of bugs, it is vital to check who is to blame for it, to know who
 needs to define the countermeasure. For attacks like
-Foreshadow\cite{foreshadow}, Meltdown\cite{meltdown} and
-Spectre\cite{spectre} it is clear that that bug is caused by the CPUs
+Foreshadow~\cite{foreshadow}, Meltdown~\cite{meltdown} and
+Spectre~\cite{spectre} it is clear that that bug is caused by the CPUs
 manufactured by Intel or AMD. Even if there are countermeasures like
-Kaiser\cite{kaiserpaper}, which would prevent leakage of kernel memory by
+Kaiser~\cite{kaiserpaper}, which would prevent leakage of kernel memory by
 Meltdown, the bug remains in the microcode, and other processes\textquotesingle
 memory can still be leaked. Vendors need to address such problems directly, by
 either deprecating CPUs or patch the bugs with microcode updates.
@@ -28,7 +28,7 @@ cache, accesses to memory take less time. CPU vendors cannot, and should not,
 fix this, as the attack is based on the principle of how caches work.
 Cache-timing attacks often try to gain information on other processes, by
 loading the same library and check what parts are accessed.
-Gruss~\etal\cite{gruss2015cache} showed how such an attack could be used to
+Gruss~\etal~\cite{gruss2015cache} showed how such an attack could be used to
 build a keylogger, as memory accesses differ for different keys. They also show
 how to generate cache-attacks automatically without an in-depth knowledge of
 the targeted program and system. They also state that a possible removing of
@@ -48,18 +48,18 @@ Rowhammer is an issue which occurs because of missing high-quality checks by
 vendors, the leakage of bit-charges to change bits in other memory areas is a
 hardware fault and needs fixing on this layer. Also, users of current DRAM
 chips need to be protected, and their risk of using their hardware should be
-minimalised. In their work about Rowhammer, Gruss~\etal\cite{flipinthewall}
+minimalised. In their work about Rowhammer, Gruss~\etal~\cite{flipinthewall}
 analyse various countermeasures. Tools like the Micro-Architectural Side
-Channel Attack Trapper (MASCAT) by Irazoqui~\etal\cite{mascat} could be used by
+Channel Attack Trapper (MASCAT) by Irazoqui~\etal~\cite{mascat} could be used by
 anti-virus software to prevent users from executing software making use of
 cache-attacks. With a physical memory separation of kernel memory and user
 memory, privilege escalation by applying bitflips to page-tables can be
 prevented.
 
-Brasser~\etal\cite{canttouch} showed how such a separation could be built
+Brasser~\etal~\cite{canttouch} showed how such a separation could be built
 inside an OS by changing the code of the physical memory allocator. Another
 way to prevent Rowhammer would be to detect an ongoing attack during the runtime
-of a program. With their work about ANVIL, Aweke~\etal\cite{anvil} showed such
+of a program. With their work about ANVIL, Aweke~\etal~\cite{anvil} showed such
 a detection technique. They track DRAM accesses using hardware performance
 measures and check for frequently accessed memory rows to detect the so-called
 aggressors. As prevention, they refresh nearby rows more often to make them
@@ -84,7 +84,7 @@ Whereas this would be a valid countermeasure, it is not practical. Also, having
 different ELF files per system breaks other security improvements. Compiler
 developers and developers of wide-spread software currently push the technique
 of reproducible builds. Whereas the Debian-close organisation
-reproducible-builds\cite{reprobuilds} is one of the most significant
+reproducible-builds~\cite{reprobuilds} is one of the most significant
 contributors in this field. The advantage of reproducible builds is that all
 binaries compiled with the same compiler, same configuration and same
 source code will not differ, this makes detection of changes very easy. The
@@ -95,10 +95,10 @@ malformed compiler or linker could be detected.
 Reproducible builds could also help to define other countermeasures to bit flips
 in the binary memory. Whereas the operating system can verify ELF files by using
 stored checksums, it would also be possible to use similar techniques to do this
-with in-memory code or data at runtime. As Suh~\etal\cite{memintegrity} have
+with in-memory code or data at runtime. As Suh~\etal~\cite{memintegrity} have
 shown in their work about memory integrity verification and encryption for
 secure processors. Other work that could be looked at as countermeasure is
-DRIVE\cite{drive} by Rein~\etal or SPEE\cite{spee} by Gelbart~\etal. Those apply
+DRIVE~\cite{drive} by Rein~\etal or SPEE~\cite{spee} by Gelbart~\etal. Those apply
 code verification to binaries before execution and during runtime.
 
 The encryption of binaries could in general seen as a countermeasure to
@@ -130,7 +130,7 @@ layout randomisation (ASLR), to make attacks abusing buffer-overflow harder as
 an attacker would not know positions of injected code anymore. From this other
 attack were designed, using return-oriented programming (ROP) and using known
 positions inside shared libraries to craft code from code-pieces inside those.
-In their work Ruan~\etal\cite{ropsur}, show a survey of ROP defence mechanisms.
+In their work Ruan~\etal~\cite{ropsur}, show a survey of ROP defence mechanisms.
 They point out the effectiveness of randomisation in memory, which would also
 increase the defence for Rowhammer. Additional there are approaches described
 using instrumentation to detect ROP attacks, which could again also be used to

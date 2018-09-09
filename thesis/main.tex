@@ -42,7 +42,7 @@
 %% example "5mm". Refer to KOMA script documentation for a detailed
 %% explanation what a binding correction is and how to measure it.
 
-\newcommand{\myfontsize}{12pt}
+\newcommand{\myfontsize}{11pt}
 %% e.g., 10pt, 11pt, 12pt
 %% The font size of the main text in pt (points).
 
@@ -198,6 +198,21 @@
 \usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
 
 \tikzset{
   matrixstyle/.style={
