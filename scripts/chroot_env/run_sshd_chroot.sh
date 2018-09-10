@@ -12,6 +12,8 @@ if [ "$#" -ne 4 ]; then
 fi
 
 portnum=222`cat /etc/chrootnum`
+
+cp $2 $2.orig
 for i in `ls $1` ; do
   while ! cp $1$i $2; do kill -9 $sshdpid &> /dev/null ; done
   sshd -f /etc/ssh/sshd_test_config -p $portnum -D &> /dev/null &
@@ -26,3 +28,5 @@ for i in `ls $1` ; do
   fi
   kill -9 $sshdpid &> /dev/null
 done
+
+mv $2.orig $2
