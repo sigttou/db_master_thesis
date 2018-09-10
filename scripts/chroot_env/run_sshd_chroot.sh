@@ -14,13 +14,13 @@ fi
 portnum=222`cat /etc/chrootnum`
 for i in `ls $1` ; do
   while ! cp $1$i $2; do kill -9 $sshdpid &> /dev/null ; done
-  sshd -f /etc/ssh/sshd_test_config -p $portnum 
-  sshdpid=`pgrep -f "sshd_test_config -p $portnum"` 
+  sshd -f /etc/ssh/sshd_test_config -p $portnum -D &> /dev/null &
+  sshdpid=$!
 
   # waiting for server to be started
   sleep 1
 
-  if sshpass -p wrong ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p $portnum localhost "true" &> /dev/null; then
+  if sshpass -p wrong ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p $portnum user@localhost "true" &> /dev/null; then
     echo "SUCCESS: $i - $2" >> $3
     cp $1$i $4$i
   fi
