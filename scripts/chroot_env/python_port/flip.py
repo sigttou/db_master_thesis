@@ -169,6 +169,7 @@ def prepare_chroots(config):
         sub_flip_folder = os.path.join(config["folder_with_flips"], str(i))
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         sub_cr_flip_folder = sub_chroot + config["CR_flip_folder"]
+        sub_cr_pts_folder = sub_chroot + "/dev/pts"
 
         os.makedirs(sub_flip_folder, exist_ok=True)
         flips = [os.path.join(config["folder_with_flips"], f) for f in
@@ -183,6 +184,11 @@ def prepare_chroots(config):
         if not os.path.isdir(sub_cr_flip_folder):
             os.makedirs(sub_cr_flip_folder, exist_ok=True)
             os.system("mount --bind " + sub_flip_folder + " " + sub_cr_flip_folder)
+
+        # forward pts for ssh test
+        if not os.path.isdir(sub_cr_pts_folder):
+            os.makedirs(sub_cr_pts_folder, exist_ok=True)
+            os.system("mount --bind /dev/pts " + sub_cr_pts_folder)
 
     return
 
@@ -232,10 +238,14 @@ def clean_chroots(config):
     for i in range(config["num_of_parallel_checks"]):
         sub_chroot = os.path.join(config["tmp_chroot_folder"], str(i))
         sub_cr_flip_folder = sub_chroot + config["CR_flip_folder"]
+        sub_cr_pts_folder = sub_chroot + "/dev/pts"
 
         if os.path.isdir(sub_cr_flip_folder):
             os.system("umount " + sub_cr_flip_folder)
             os.system("rmdir " + sub_cr_flip_folder)
+        if os.path.isdir(sub_cr_pts_folder):
+            os.system("umount " + sub_cr_pts_folder)
+            os.system("rmdir " + sub_cr_pts_folder)
         if os.path.isdir(sub_chroot):
             os.system("rm -rf " + sub_chroot)
 
