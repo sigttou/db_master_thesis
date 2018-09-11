@@ -20,5 +20,6 @@ sleep 1
 
 while kill -0 `pgrep -f "sshd_config -p 2222"` 2> /dev/null; do sleep 1; done;
 
+grep -vE "libc|libpthread|libnss|ld-linux|libnsl|libdl|libz|vdso" $old_path/msc_test.out > tmp.out
 sort -t "-" -k2 -o $old_path/msc_test.out $old_path/msc_test.out
 cd $old_path
