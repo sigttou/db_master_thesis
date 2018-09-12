@@ -506,7 +506,7 @@ absolute addresses. Close to the same is the \texttt{.got.plt} section, which
 represents the global offset table, which resolves mappings for position
 independent code parts.
 
-\begin{table}[]
+\begin{table}[!htb]
 \centering
 \begin{tabular}{c|cccc|c}
 ELF File & \texttt{.text}  & \texttt{.rodata} & \texttt{.got.plt} &
@@ -588,7 +588,7 @@ flips inside the program\textquotesingle s binary itself were useable.
 Table~\ref{tab:nginxres} shows the number of flips found and that all flips are
 inside the \texttt{.text} section of the \texttt{nginx} binary.
 
-\begin{table}[]
+\begin{table}[!htb]
 \centering
 \begin{tabular}{c|c}
 ELF File               & \texttt{.text} \\ \hline
@@ -627,6 +627,88 @@ Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
 The timing is that high cause we had to make sure the server is up and ready to
 reply to our requests for each test. For testing, we have used eight parallel
 testing instances.
+
+\section{\texttt{sshd} - Secure Shell Server Login Bypass}
+
+For the \texttt{ssh}-server, our goal is to achieve a login without knowing the
+correct password. We configure our test environment with an additional user,
+which allows remote logins via password. On a successful connection, the secure
+shell \texttt{ssh} should be able to execute commands inside the test
+environment.
+
+\subsection{Instrumentation}
+
+Instrumenting \texttt{sshd} is very similar to \texttt{nginx}, it is possible to
+run the \texttt{ssh}-server without super-user privileges. We instrument only
+the code ran during a request, because usually the \texttt{ssh}-daemon is
+started during the boot procedure and never exited. We attach Pin to the running
+server, try to connect with a correct username but a wrong password, wait for
+the denying answer from the server and stop instrumentation.  With this, we
+should get exactly the memory accesses necessary used to verify user
+credentials.
+
+\subsection{Testing}
+
+Verifying the success state is straightforward. We copy the flipped binary,
+start the server and wait for some seconds for the startup to complete. To
+verify the success state, we try to connect to the remote server with a wrong
+password and attempt to execute \texttt{whoami}. This should return the username
+from the credentials used to connect. We tested the \texttt{OpenSSH\_7.4p1
+Debian-10+deb9u4} version of the server and client, both used the OpenSSL
+version \texttt{1.0.2l}.
+
+\subsection{Results}
+
+For the used \texttt{ssh} server we can only report working bitflips in the
+loaded libraries. Additional, all of the reported flips were found in the
+\texttt{.text} section of the ELF files. Table~\ref{tab:sshdres} gives an
+overview of the number of flips found per file. We can see, that most bitflips
+can be found in the \texttt{libc} of the host system, also the cryptographic
+library and the linker are affected for Rowhammer targeting a \texttt{ssh}
+login.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{c|c}
+ELF File               & \texttt{.text} \\ \hline
+\texttt{libc.so.6}         & $34$ \\
+\texttt{libcrypto.so.1.0.2} & $6$ \\
+\texttt{ld-linux-x86-64.so.2} & $1$ \\ \hline
+Sum of flips:                 & $41$
+\end{tabular}
+\caption{List of flips inside the \texttt{sshd(7.4p1)} program
+causing a authentication bypass, whereas all of them were in the \texttt{.text}
+sections of dynamically loaded libraries.}
+\label{tab:sshdres}
+\end{table}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=diff,
+                   caption={Diff for a bitflip applied to the
+\texttt{libcrypto.so.1.0.2} binary in order to bypass a credential check. The
+move from \texttt{rbx} to \texttt{rdi} is exchanged with a move to
+\texttt{r15}, this changes the parameter for \texttt{EVP\_MD\_CTX\_test\_flags},
+which is highly likely to result in a different outcome.},
+label=lst:sshdex]
+   1341c5:      74 ad                  je     134174 <EVP_MD_CTX_cleanup>
+   1341c7:      be 04 00 00 00         mov    $0x4,%esi
+-  1341cc:      49 89 df               mov    %rbx,%rdi
++  1341cc:      48 89 df               mov    %rbx,%r15
+   1341cf:      e8 dc e5 f3 ff         callq  727b0 <EVP_MD_CTX_test_flags@plt>
+   1341d4:      85 c0                  test   %eax,%eax
+\end{lstlisting}
+\end{minipage}
+
+In listing~\ref{lst:sshdex}, we show a diff for the \texttt{libcrypto} library
+used by \texttt{ssh}. We can see how changing the function parameters
+(\texttt{rdi}) for \texttt{EVP\_MD\_CTX\_test\_flags@plt} changes the outcome
+of the libary call in a way ssh will think it is working with correct
+credentials.
+
+Testing the \texttt{ssh} server took about six hours. The timing here is lower
+than for \texttt{nginx} or \texttt{sudo}, as the shell server was faster ready
+than \texttt{nginx}, and there were not so many flips to test as in
+\texttt{sudo}.
 %}}}
 
 %% vim:foldmethod=expr
