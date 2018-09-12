@@ -41,6 +41,6 @@ def main(log_file):
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Illegal number of parameters")
-        print("section_find.py <path_to_elf> <offset>")
+        print("section_find.py <logfile_from_chroot_script>")
         sys.exit(-1)
     main(sys.argv[1])
