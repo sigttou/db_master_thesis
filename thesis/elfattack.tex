@@ -367,18 +367,50 @@ passes the file to replace to the \texttt{CR\_exec\_file} when it calls it. To
 keep track of which bitflip is tested the filename for generated ELF files is
 structured as \texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}.
 
-\section{Finding Rowhammer-flaws in real-world Applications}
+\subsubsection{Flipping bits in Binaries using Rowhammer}
+
+Targeting files with Rowhammer is an improved attack on previously shown usages
+of the vulnerability. Gruss~\etal~\cite{flipinthewall} showed, that besides
+targeting page table entries, it is also possible to target shared libraries or
+ELF files directly. With this work, the possible attack vector for Rowhammer
+grew. To flip the bit in the binary using Rowhammer an attacker needs to make
+sure the file is loaded to DRAM. For execution, the operating system loads the
+ELF file in a defined structure to the memory. Targeting this loaded memory
+might be hard for an attacker, as offsets inside the memory might be
+randomised by ASLR. As we tested ELF files directly and not loaded program
+images, the flips might be best directly applied to the ELF file.
+
+Most operating systems use a disk cache. Meaning the OS will keep file content
+in DRAM as long as the memory is not used elsewhere. When a file is opened the
+system loads the content to the memory, which in case of loading an ELF would
+put the entire file into the DRAM, making it possible to apply bitflips.
+Therefore, a later call to the program would load the flipped version already
+cached in DRAM.
+
+Another idea would be to use Rowhammer on storage devices. As
+Kurmus~\etal~\cite{rowssdhammer} showed it is possible to find a similar
+behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
+MLC NAND chips, showing the possibility of a similar attack. They show that
+corrupting a block inside the SSD is enough to gain privilege escalation. Such
+an attack could also be used to flip bits inside the stored ELF files.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Finding Rowhammer-targets in real-world
+Applications}\label{sec:results}
 
 In our thesis, we want to apply our tool to more extensive programs, programs
 used in the real world and with bitflips in mind which an attacker also would
 use. As Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
-\texttt{sudoers} library which when toggled, allow using ~\texttt{sudo} without
-or with a wrong password to still gain super-user privilege. We want to show,
-that our framework can find a more significant number of possible bitflips to
-achieve this. Also, we also want to show how we can search for bitflips in other
-applications. This subsection will present all our applications tested, if there
-were adaptions made for instrumenting or testing, and the results for the
-bitflips are presented.
+\texttt{sudoers} library which when toggled, allow using \texttt{sudo} without
+or with a wrong password to still gain super-user privilege. We show that our
+framework can find a more significant number of possible bitflips to achieve
+this. We present the results of our testing framework applied to real-world
+programs, which are commonly used in Unix-based operating systems. This
+subsection will present all our applications tested, if there were adaptions
+made for instrumenting or testing, and the results for the bitflips are
+presented. For each application, we present an example bitflip and discuss why
+it caused switching to a successful state.
 
 For the results, looking at the introduced bitflips in the code in
 listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
@@ -394,7 +426,7 @@ the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
 \texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of 16
 gigabyte DRAM memory.
 
-\subsection{\texttt{sudo} - Privilege Escalation}
+\section{\texttt{sudo} - Privilege Escalation}
 
 For \texttt{sudo}, the task was to find all possible bitflips which allow
 switching to \texttt{root}, without knowing the correct password of the base
@@ -402,7 +434,7 @@ user. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
 owner to \texttt{root} when being executed. We ran into problems with our
 framework because of this property.
 
-\subsubsection{Instrumentation}
+\subsection{Instrumentation}
 
 For \texttt{sudo}, instrumentation became more advanced than for simple
 programs, because of the way Pin works. Usually, when starting a program with a
@@ -452,7 +484,7 @@ library before any other code. We use the \texttt{/etc/ld.so.preload} file to
 make our library load for any program. To not have all programs waiting on
 start-up, we check the name of the binary before entering the loop.
 
-\subsubsection{Testing}
+\subsection{Testing}
 
 Checking successful behaviour for the \texttt{sudo} program is easy, we call it
 and provide it a wrong password. There are multiple ways to verify a successful
@@ -460,56 +492,7 @@ privilege change. For once, it is possible to use the \texttt{whoami} program
 to check if the system changed the current user to \texttt{root}. On the other
 side, it is also possible to verify by reading a file owned by the super-user.
 
-\subsection{\texttt{nginx} - HTTP Basic Authentication Bypass}
-
-For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
-flipping a single bit. This means we have to set up a page which is only
-accessible given a correct user and password credential pair.
-
-\subsubsection{Instrumentation}
-
-Instrumenting \texttt{nginx} is straightforward. We had to modify the default
-configuration of the web server a little to make sure the server runs as a
-single process. This was done by not allowing \texttt{nginx} to run as a system
-daemon or make use of a master process. We also only want to instrument the code
-run when an actual request to the protected site happens. Therefore, we again
-use the functionality to attach Pin to an already running process. For
-instrumentation, we start the web server, attach Pin, sent a request to the
-protected site with wrong credentials, wait for the denying answer from the
-server and then end instrumentation. This should give us only the memory
-accessed during a basic authentication request.
-
-\subsubsection{Testing}
-
-Verifying successful bitflips in \texttt{nginx} works the same as in the
-instrumentation. We copy the flipped ELF, start the server, verify it is running
-by requesting a standard page, then requesting the protected site with wrong
-credentials, a successful state is reached if the web server returns the
-protected site to a request with wrong credentials. For requesting the
-protected site, we use \texttt{netcat} instead of \texttt{curl} or
-\texttt{wget}, as we only want to make sure the content is delivered to us and
-not if the HTTP reply got malformed in any way by the bitflip. We use different
-HTTP ports per server, equal to the ID of the chroot, to avoid startup problems
-during testing as the same port would be used more often otherwise, which is
-not possible.
-
-\subsection{Results given by the Framework}
-
-Looking back at the introduced flips for the code in
-listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
-bypassed in the same way for both programs we looked at. As at some point jump
-instructions will point to code executed only in a successful state. We can also
-see flips causing a success which change bits in other sections than the code
-one. We want to show which ELF files have bits where flips would cause the
-program to run into a state of success and what areas in ELF files are most
-promising for flips to be found.
-
-We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
-the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
-\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of 16
-gigabyte DRAM memory.
-
-\subsubsection{\texttt{sudo} - Privilege Escalation}
+\subsection{Results}
 
 Table~\ref{tab:sudores} shows the number of found flips per file. We see that
 the possible flips are spread over multiple files. The \texttt{sudoers} library
@@ -565,7 +548,40 @@ Testing the \texttt{sudo} ELF files took a total of about eight hours time.
 This is less than half of the time it would need to test all possible bytes. We
 have used twenty-four parallel test runs on our described testing environment.
 
-\subsubsection{\texttt{nginx} - Basic Authentication}
+\section{\texttt{nginx} - HTTP Basic Authentication Bypass}
+
+For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
+flipping a single bit. This means we have to set up a page which is only
+accessible given a correct user and password credential pair.
+
+\subsection{Instrumentation}
+
+Instrumenting \texttt{nginx} is straightforward. We had to modify the default
+configuration of the web server a little to make sure the server runs as a
+single process. This was done by not allowing \texttt{nginx} to run as a system
+daemon or make use of a master process. We also only want to instrument the code
+run when an actual request to the protected site happens. Therefore, we again
+use the functionality to attach Pin to an already running process. For
+instrumentation, we start the web server, attach Pin, sent a request to the
+protected site with wrong credentials, wait for the denying answer from the
+server and then end instrumentation. This should give us only the memory
+accessed during a basic authentication request.
+
+\subsection{Testing}
+
+Verifying successful bitflips in \texttt{nginx} works the same as in the
+instrumentation. We copy the flipped ELF, start the server, verify it is running
+by requesting a standard page, then requesting the protected site with wrong
+credentials, a successful state is reached if the web server returns the
+protected site to a request with wrong credentials. For requesting the
+protected site, we use \texttt{netcat} instead of \texttt{curl} or
+\texttt{wget}, as we only want to make sure the content is delivered to us and
+not if the HTTP reply got malformed in any way by the bitflip. We use different
+HTTP ports per server, equal to the ID of the chroot, to avoid startup problems
+during testing as the same port would be used more often otherwise, which is
+not possible.
+
+\subsection{Results}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
 flips inside the program\textquotesingle s binary itself were useable.
@@ -611,33 +627,6 @@ Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
 The timing is that high cause we had to make sure the server is up and ready to
 reply to our requests for each test. For testing, we have used eight parallel
 testing instances.
-
-\subsection{Flipping bits in Binaries using Rowhammer}
-
-Targeting files with Rowhammer is an improved attack on previously shown usages
-of the vulnerability. Gruss~\etal~\cite{flipinthewall} showed, that besides
-targeting page table entries, it is also possible to target shared libraries or
-ELF files directly. With this work, the possible attack vector for Rowhammer
-grew. To flip the bit in the binary using Rowhammer an attacker needs to make
-sure the file is loaded to DRAM. For execution, the operating system loads the
-ELF file in a defined structure to the memory. Targeting this loaded memory
-might be hard for an attacker, as offsets inside the memory might be
-randomised by ASLR. As we tested ELF files directly and not loaded program
-images, the flips might be best directly applied to the ELF file.
-
-Most operating systems use a disk cache. Meaning the OS will keep file content
-in DRAM as long as the memory is not used elsewhere. When a file is opened the
-system loads the content to the memory, which in case of loading an ELF would
-put the entire file into the DRAM, making it possible to apply bitflips.
-Therefore, a later call to the program would load the flipped version already
-cached in DRAM.
-
-Another idea would be to use Rowhammer on storage devices. As
-Kurmus~\etal~\cite{rowssdhammer} showed it is possible to find a similar
-behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
-MLC NAND chips, showing the possibility of a similar attack. They show that
-corrupting a block inside the SSD is enough to gain privilege escalation. Such
-an attack could also be used to flip bits inside the stored ELF files.
 %}}}
 
 %% vim:foldmethod=expr
