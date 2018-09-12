@@ -367,18 +367,34 @@ passes the file to replace to the \texttt{CR\_exec\_file} when it calls it. To
 keep track of which bitflip is tested the filename for generated ELF files is
 structured as \texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}.
 
-\subsection{Applying the Framework to real-world Applications}
+\section{Finding Rowhammer-flaws in real-world Applications}
 
 In our thesis, we want to apply our tool to more extensive programs, programs
 used in the real world and with bitflips in mind which an attacker also would
 use. As Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
-\texttt{sudoers} library which when toggled, allow using \texttt{sudo} without
-or with a wrong password to still gain super-user privileges. We want to show,
+\texttt{sudoers} library which when toggled, allow using ~\texttt{sudo} without
+or with a wrong password to still gain super-user privilege. We want to show,
 that our framework can find a more significant number of possible bitflips to
-achieve this. Also, we also want to show how we can search for bitflips in the
-\texttt{nginx} web sever to allow bypassing HTTP basic authentication measures.
+achieve this. Also, we also want to show how we can search for bitflips in other
+applications. This subsection will present all our applications tested, if there
+were adaptions made for instrumenting or testing, and the results for the
+bitflips are presented.
 
-\subsubsection{\texttt{sudo} - Privilege Escalation}
+For the results, looking at the introduced bitflips in the code in
+listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
+bypassed similarly for the programs we looked at. As at some point jump
+instructions will point to code executed only in a positive state. We can also
+see flips causing a success which change bits in other sections than the code
+one. We want to show which ELF files have bits where flips would cause the
+program to run into a state of success and what areas in ELF files are most
+promising for flips to be found.
+
+We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
+the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
+\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of 16
+gigabyte DRAM memory.
+
+\subsection{\texttt{sudo} - Privilege Escalation}
 
 For \texttt{sudo}, the task was to find all possible bitflips which allow
 switching to \texttt{root}, without knowing the correct password of the base
@@ -444,7 +460,7 @@ privilege change. For once, it is possible to use the \texttt{whoami} program
 to check if the system changed the current user to \texttt{root}. On the other
 side, it is also possible to verify by reading a file owned by the super-user.
 
-\subsubsection{\texttt{nginx} - Basic Authentication}
+\subsection{\texttt{nginx} - HTTP Basic Authentication Bypass}
 
 For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
 flipping a single bit. This means we have to set up a page which is only
