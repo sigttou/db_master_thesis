@@ -14,7 +14,8 @@
 \begin{document}
 \maketitle
 
-Der Einfluss von Computern, Handys und dem Internet auf das alltägliche Leben wird immer größer. Benutzer von solchen Technologien und Produkten haben eine gewisse Erwartung, so wünschen sich Kunden unter anderem immer schnellere und bessere Hardware. Um dieses Druck gerecht zu werden müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen nicht immer perfekt sind, haben Veröffentlichungen wie Meltdown~\cite{meltdown} und Spectre~\cite{spectre} von Kocher und Lipp~\etal gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown} berichteten.
+Der Einfluss von Computern, Handys und dem Internet auf das Leben wird immer größer. Die Geräte werden für vieles im Alltag verwendet, Banktransaktionen, Einkäufe, E-Mails und mittlerweile können auch Verträge elektronisch signiert werden. Wir müssen daher auf diese Technologien vertrauen können, sowohl sollten sie möglichst immer verfügbar sein, als auch sicher. Persönliche Daten, Passwörter, Fotos und ähnlich vertrauliche Dinge sollten vor dritten Personen geschützt sein. Fehler, welche die Sicherheit betreffen, können erhebliche Folgen haben, wobei nicht nur finanzielle Schäden entstehen können sondern auch Identitätsdiebstahl, oder der Verlust von Firmendaten, sind möglich.
+Benutzer von Handys, Computern und ähnlichen Produkten haben eine gewisse Erwartung, nicht nur was die Sicherheit betrifft, so wünschen sich Kunden unter anderem immer schnellere und bessere Hardware. Um dieses Druck gerecht zu werden müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen nicht immer perfekt sind, haben Veröffentlichungen wie Meltdown~\cite{meltdown} und Spectre~\cite{spectre} von Kocher und Lipp~\etal gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown} berichteten.
 
 \paragraph{}
 
@@ -26,11 +27,7 @@ Was Anfangs nur als Stabilitätsproblem gesehen wurde, wurde von Google's Projec
 
 \paragraph{}
 
-Daniel Gruss~\etal haben in ihrer Arbeit~\cite{flipinthewall} gezeigt dass die Änderungen eines einzelnen Bits, wie sie bei Rowhammer zu finden sind, verschiedenen Applikationen betreffen können. In der Veröffentlichung zeigen sie wie die Passwort-Abfrage in \texttt{sudo}, ein Programm zur Vergabe von Administrator-Rechten, umgangen werden kann. In meiner Arbeit möchte ich darauf eingehen und diese Herangehensweise verallgemeinern und die Suche von ähnlichen Lücken automatisieren.
-
-\paragraph{}
-
-Ich möchte moderne Testmethoden mit dem bekannten Wissen über Rowhammer kombinieren um so in schneller Zeit mehr Ergebnisse erzielen. Dadurch kann ich auf die Gefahren von Rowhammer und ihren Einfluss auf die Sicherheit von Systemen hinweisen. Diese Tests sollen zeigen dass jede Anwendung und jedes System betroffen ist. 
+Daniel Gruss~\etal haben in ihrer Arbeit~\cite{flipinthewall} gezeigt dass die Änderungen eines einzelnen Bits, wie sie bei Rowhammer zu finden sind, verschiedenen Applikationen betreffen können. In der Veröffentlichung zeigen sie wie die Passwort-Abfrage in \texttt{sudo}, ein Programm zur Vergabe von Administrator-Rechten, umgangen werden kann. In meiner Arbeit möchte ich darauf eingehen und diese Herangehensweise verallgemeinern und die Suche von ähnlichen Lücken automatisieren. Ich möchte moderne Testmethoden mit dem bekannten Wissen über Rowhammer kombinieren um so in schneller Zeit mehr Ergebnisse erzielen. Dadurch kann ich auf die Gefahren von Rowhammer und ihren Einfluss auf die Sicherheit von Systemen hinweisen. Diese Tests sollen zeigen dass jede Anwendung und jedes System betroffen ist.
 
 \paragraph{}
 
