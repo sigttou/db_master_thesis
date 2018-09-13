@@ -6,7 +6,6 @@ cp /bin/login /tmp/msc_test
 chown root:root /tmp/msc_test
 chmod +x /tmp/msc_test
 
-# passh -P "\$ \{0,1\}$" -p "echo HI\`whoami\`;logout" passh -p wrong passh -P "login: \{0,1\}$" -p user /tmp/msc_test | grep HIuser &> /dev/null
 passh -p wrong passh -P "login: \{0,1\}$" -p user /tmp/msc_test &> /dev/null &
 sleep 1
 
