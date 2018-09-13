@@ -1,5 +1,7 @@
 #!/bin/busybox sh
 
+#!!!! /srv/chroot/stretch/etc/login.defs !!!! set LOGIN_RETRIES to 0
+
 # $1 path to modified files
 # $2 file to be replaced
 # $3 file to log to
