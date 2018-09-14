@@ -434,7 +434,9 @@ user. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
 owner to \texttt{root} when being executed. We ran into problems with our
 framework because of this property.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Instrumentation}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 For \texttt{sudo}, instrumentation became more advanced than for simple
 programs, because of the way Pin works. Usually, when starting a program with a
@@ -484,7 +486,9 @@ library before any other code. We use the \texttt{/etc/ld.so.preload} file to
 make our library load for any program. To not have all programs waiting on
 start-up, we check the name of the binary before entering the loop.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Testing}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Checking successful behaviour for the \texttt{sudo} program is easy, we call it
 and provide it a wrong password. There are multiple ways to verify a successful
@@ -492,7 +496,9 @@ privilege change. For once, it is possible to use the \texttt{whoami} program
 to check if the system changed the current user to \texttt{root}. On the other
 side, it is also possible to verify by reading a file owned by the super-user.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Table~\ref{tab:sudores} shows the number of found flips per file. We see that
 the possible flips are spread over multiple files. The \texttt{sudoers} library
@@ -554,7 +560,9 @@ For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
 flipping a single bit. This means we have to set up a page which is only
 accessible given a correct user and password credential pair.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Instrumentation}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Instrumenting \texttt{nginx} is straightforward. We had to modify the default
 configuration of the web server a little to make sure the server runs as a
@@ -567,7 +575,9 @@ protected site with wrong credentials, wait for the denying answer from the
 server and then end instrumentation. This should give us only the memory
 accessed during a basic authentication request.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Testing}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Verifying successful bitflips in \texttt{nginx} works the same as in the
 instrumentation. We copy the flipped ELF, start the server, verify it is running
@@ -581,7 +591,9 @@ HTTP ports per server, equal to the ID of the chroot, to avoid startup problems
 during testing as the same port would be used more often otherwise, which is
 not possible.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 For the basic authentication bypass in \texttt{nginx} we can report that only
 flips inside the program\textquotesingle s binary itself were useable.
@@ -636,7 +648,9 @@ which allows remote logins via password. On a successful connection, the secure
 shell \texttt{ssh} should be able to execute commands inside the test
 environment.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Instrumentation}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Instrumenting \texttt{sshd} is very similar to \texttt{nginx}, it is possible to
 run the \texttt{ssh}-server without super-user privileges. We instrument only
@@ -647,7 +661,9 @@ the denying answer from the server and stop instrumentation.  With this, we
 should get exactly the memory accesses necessary used to verify user
 credentials.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Testing}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 Verifying the success state is straightforward. We copy the flipped binary,
 start the server and wait for some seconds for the startup to complete. To
@@ -657,7 +673,9 @@ from the credentials used to connect. We tested the \texttt{OpenSSH\_7.4p1
 Debian-10+deb9u4} version of the server and client, both used the OpenSSL
 version \texttt{1.0.2l}.
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 For the used \texttt{ssh} server we can only report working bitflips in the
 loaded libraries. Additional, all of the reported flips were found in the
@@ -709,6 +727,28 @@ Testing the \texttt{ssh} server took about six hours. The timing here is lower
 than for \texttt{nginx} or \texttt{sudo}, as the shell server was faster ready
 than \texttt{nginx}, and there were not so many flips to test as in
 \texttt{sudo}.
+
+\section{Bypassing the Local Login Procedure on Linux-based Operating Systems}
+
+If attackers have local access to computers and the network, the nethammer
+attack~\cite{nethammer} could be used to introduce bitflips to the running
+system. An attacker could target the login procedure to gain full access to the
+system. On most Linux-based systems local logins are done via the
+\texttt{/bin/login} application. This program is called on the default terminal
+by the init process, after the bootup of the operating system. The goal is to
+find bitflips which would allow logging in without knowing the correct password.
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+\subsection{Instrumentation}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+\subsection{Testing}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+\subsection{Results}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 %}}}
 
 %% vim:foldmethod=expr
