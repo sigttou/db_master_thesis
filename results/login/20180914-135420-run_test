@@ -1,0 +1,94 @@
+SUCCESS: pam_nologin.so_0xc3c_0 - /lib/x86_64-linux-gnu/security/pam_nologin.so
+
+SUCCESS: pam_nologin.so_0xae3_0 - /lib/x86_64-linux-gnu/security/pam_nologin.so
+
+SUCCESS: pam_securetty.so_0xd16_0 - /lib/x86_64-linux-gnu/security/pam_securetty.so
+
+SUCCESS: pam_securetty.so_0xc33_0 - /lib/x86_64-linux-gnu/security/pam_securetty.so
+SUCCESS: pam_securetty.so_0xc3f_0 - /lib/x86_64-linux-gnu/security/pam_securetty.so
+
+SUCCESS: pam_securetty.so_0xc0b_0 - /lib/x86_64-linux-gnu/security/pam_securetty.so
+
+SUCCESS: pam_securetty.so_0xb83_0 - /lib/x86_64-linux-gnu/security/pam_securetty.so
+
+SUCCESS: pam_unix.so_0x359e_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x359f_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x359f_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x359f_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x359f_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x3466_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346b_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346b_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346b_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346b_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346b_6 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346c_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x346d_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x3410_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x3410_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x33b6_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b6_7 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b8_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b8_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b8_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b8_6 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x33b9_6 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x3386_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x338a_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x338a_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x338a_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x3339_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x25b2_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x621a_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6220_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6220_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6221_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6221_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6221_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x6146_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6147_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6147_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x614a_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x614a_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x614a_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x614b_7 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x60e6_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x605d_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6060_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6060_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6060_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6060_6 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6060_7 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6061_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6061_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6061_3 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6061_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6061_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x6c27_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6c28_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x6b25_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6b26_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6b27_0 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6b27_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+SUCCESS: pam_unix.so_0x6b27_4 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x6b10_1 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x6494_2 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x646b_5 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
+SUCCESS: pam_unix.so_0x633a_6 - /lib/x86_64-linux-gnu/security/pam_unix.so
+
