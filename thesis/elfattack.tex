@@ -668,10 +668,13 @@ credentials.
 Verifying the success state is straightforward. We copy the flipped binary,
 start the server and wait for some seconds for the startup to complete. To
 verify the success state, we try to connect to the remote server with a wrong
-password and attempt to execute \texttt{whoami}. This should return the username
-from the credentials used to connect. We tested the \texttt{OpenSSH\_7.4p1
-Debian-10+deb9u4} version of the server and client, both used the OpenSSL
-version \texttt{1.0.2l}.
+password and attempt to execute \texttt{whoami}. As the ssh client does not
+allow using pipes to provide a password, we had to use
+\texttt{passh}~\cite{passhweb} to send the credentials to the
+client\textquotesingle s input. The call of \texttt{whoami} should return the
+username from the credentials used to connect. We tested the
+\texttt{OpenSSH\_7.4p1 Debian-10+deb9u4} version of the server and client, both
+used the OpenSSL version \texttt{1.0.2l}.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
@@ -728,7 +731,7 @@ than for \texttt{nginx} or \texttt{sudo}, as the shell server was faster ready
 than \texttt{nginx}, and there were not so many flips to test as in
 \texttt{sudo}.
 
-\section{Bypassing the Local Login Procedure on Linux-based Operating Systems}
+\section{Local Login Bypass on Linux-based Operating Systems}
 
 If attackers have local access to computers and the network, the nethammer
 attack~\cite{nethammer} could be used to introduce bitflips to the running
@@ -742,13 +745,34 @@ find bitflips which would allow logging in without knowing the correct password.
 \subsection{Instrumentation}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
+As the \texttt{/bin/login} binary has to be run as root, we use a similar
+approach as for \texttt{sudo}. We again make use of the preloaded library from
+listing~\ref{lst:presleeplib}. The instrumentation for \texttt{/bin/login} takes
+longer than for the other programs. A reason for this could either be the key
+derivation functions used or timeouts build in to prevent brute-forcing the
+local login. We start the program and attach to the created process shortly
+after, we then try to login with a wrong password and wait for the application
+to quit. All accesses during this are logged. To simplify the procedure, we
+configure the login to allow just one login try instead of the default five.
+
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Testing}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
+\texttt{/bin/login} expects input on a \texttt{TTY}, the Linux terminal
+interface, using pipes to redirect the input does not work for testing. To get
+around this issue, we use \texttt{passh}~\cite{passhweb}, which is usually used
+for automating \texttt{ssh} logins, but it also works for our problem. To find
+out if we result in a successful state, we run the login binary as root, send
+credentials with a correct username and a wrong password, and check if the
+system changed the current user from \texttt{root} to the other user. We tested
+the \texttt{/bin/login} binary included in the \texttt{shadow-utils 4.4}.
+
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\section{Results in General}
 %}}}
 
 %% vim:foldmethod=expr
