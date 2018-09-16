@@ -772,7 +772,41 @@ the \texttt{/bin/login} binary included in the \texttt{shadow-utils 4.4}.
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
-\section{Results in General}
+\begin{table}[!htb]
+\centering
+\begin{tabular}{c|c}
+ELF File               & \texttt{.text} \\ \hline
+\texttt{login}         & $57$ \\
+\texttt{pam\_unix.so} & $64$ \\
+\texttt{pam\_nologin.so} & $2$ \\
+\texttt{pam\_securetty.so} & $5$ \\
+\texttt{libpam.so.0} & $50$ \\ \hline
+Sum of flips:                 & $178$
+\end{tabular}
+\caption{List of flips inside the \texttt{login(shadow-utils 4.4)} program
+causing a bypass of the local login check.}
+\label{tab:loginres}
+\end{table}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=diff,
+                   caption={Diff for a bitflip applied to the
+\texttt{pam\_nologin.so} binary in order to bypass a credential check. The
+pop to register $15$ gets exchanged with a pop to register $14$, therefore the
+value of \texttt{r15} and \texttt{r14} are not as desired and hence the
+execution path of \texttt{/bin/login} changes in a way the login
+procedure succeeds.},
+label=lst:loginex]
+  c37:  41 5d                   pop    %r13
+  c39:  41 5e                   pop    %r14
+- c3b:  41 5e                   pop    %r14
++ c3b:  41 5f                   pop    %r15
+  c3d:  c3                      retq
+  c3e:  66 90                   xchg   %ax,%ax
+\end{lstlisting}
+\end{minipage}
+
+\section{Summery of Results}
 %}}}
 
 %% vim:foldmethod=expr
