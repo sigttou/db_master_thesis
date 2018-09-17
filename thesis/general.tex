@@ -39,14 +39,15 @@ possible, for example, GNU/Linux systems use the executable and linkable format
 
 Machine code, in general, is a list of instructions, encoded in some binary
 format. Usually, an instruction consists of an operation code (opcode), telling
-the PU what to do, and parameters for the opcode, which the processor
-uses for the operation. Instructions can operate on registers or locations in
-memory directly. Available instructions and their design are depending on the
+the PU what to do, and parameters for the opcode, which the processor uses for
+the operation. Instructions can operate on registers or locations in memory
+directly. Available instructions and their design are depending on the
 architecture used. The most common instruction set architectures (ISA) are Intel
-$x86$, mostly referred to as \texttt{x86\_64} or \texttt{AMD64}, and ARM ISA
-which is used by most mobile processors.
+$x86$, which exists in 32-bit mode (\texttt{x86\_32}), and 64-bit mode
+(\texttt{x86\_64} or \texttt{AMD64}), and the ARM ISA which is the architecture
+used by most mobile processors.
 
-\begin{table}[]
+\begin{table}[!htb]
 \centering
 \begin{tabular}{ccccccc}
 \cline{2-7}
@@ -65,28 +66,62 @@ are possible in modern architectures and also which parts they may contain.}
 \end{table}
 
 Table~\ref{tab:instrfor} shows the instruction format for Intel 64 and IA-32
-architectures. The format splits an instruction into the following sections:
+Architectures. An instruction is divided into six possible parts, which all have
+different functionality for the CPU executing it. The parts are described in
+detail by the Intel manual~\cite{intelsys} Section 2.1.
 
-\begin{itemize}
-  \item Prefix - Used to give the CPU further information on how to handle the
-opcode. There are prefixes for memory locks in a multi-core environment or
-repeat instructions to apply an operation on each byte in a string or I/O data.
-There are also prefixes overriding the operand sizes or introducing SSE
-instruction calls, and even others give branching hints to the CPU.
-  \item Opcode - Tells the CPU what to do and how to handle the following
+\subsubsection{Prefix}
+
+The instruction prefix can be used to change the behaviour of the CPU for the
+following opcode. It can be used as a lock (\texttt{0xF0}), which ensures shared
+memory is protected between multiple processing cores. It also can be used as a
+prefix for repeating an instruction (\texttt{0xF2} - repeat-not zero or
+\texttt{0xF3} - repeat-if-zero), which could be used for strings or
+I/O-operations. Besides repeat, the \texttt{0xF2} prefix is also mandatory for
+some instructions, such as \texttt{CPUID}. The prefix can also indicate a larger
+operand-size by \texttt{0x66} or a larger address-size by \texttt{0x67}. This
+address-size prefix provides programs with the ability to switch between 16-bit
+and 32-bit addressing modes. There are also branch-hint prefixes (\texttt{0x2E}
+- branch not taken, \texttt{0x3E} - branch taken), but according to the Intel
+manual~\cite{intelsys}, their usage is deprecated for modern architectures.
+
+\subsubsection{Streaming SIMD Extensions (SSE)}
+
+``Single instruction multiple data''-instructions use the \texttt{0x66} prefix
+to indicate a particular behaviour of the CPU. The instruction can perform the
+same operation on multiple data pointers at the same time. These instructions
+are often used in signal processing or graphics processing. Registers used with
+SIMD contain mostly with single precision floating point data. According to the
+Intel manual~\cite{intelsys} Section 5.5, CPUs supporting this feature provide
+at least eight SIMD registers, namely \texttt{XMM0} to \texttt{XMM7}. Newer
+generations of Intel CPUs might also provide double-precision floating point,
+64-bit registers.
+
+
+\subsubsection{Opcode}
+
+Tells the CPU what to do and how to handle the following
 parameters.
-  \item ModR/M - This byte is used behind the opcode to tell the CPU what
+
+\subsubsection{ModR/M}
+
+This byte follows the opcode to tell the CPU what
 addressing mode to use for memory accesses.
-  \item SIB - This byte also needs to be parsed and evaluated for some ModR/M
-addressing-modes.
-  \item Displacement - Some addressing-modes set by the ModR/M or SIB byte
-might include a displacement following them.
-  \item Immediate - Immediate data might follow if required by previous
-parameters.
-\end{itemize}
 
-We refer to the Intel Manual~\cite{intelsys} section 2.1 for further details on
-the instruction format used in \texttt{x86\_64}.
+\subsubsection{SIB}
+
+This byte also needs to be parsed and evaluated for some ModR/M
+addressing-modes.
+
+\subsubsection{Displacement}
+
+Displacement - Some addressing-modes set by the ModR/M or SIB byte
+might include a displacement following them.
+
+\subsubsection{Immediate}
+
+Immediate - Immediate data might follow if required by previous
+parameters.
 
 \subsection{Executable and Linkable Format (ELF)}
 
