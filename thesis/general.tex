@@ -27,13 +27,13 @@ them one by one. This is done by moving the instruction pointer to different
 memory locations. Simple processors may only execute one single program. On
 ordinary desktop computers, the operating system is the main program which can
 load other programs as processes and manage them. CPUs can only execute machine
-code, but programs usually are written in programming languages which are then
-translated to machine language by either a compiler or an interpreter. We refer
-to files created by a compiler as executables or binaries. These files can
-directly be loaded into memory by the operating system. Operating Systems use
-defined structures for executables to make this loading possible, for example,
-GNU/Linux systems use the executeable and linkable format (ELF) and Windows
-uses the portable executable format (PE).
+code, but programs are usually written in human-readable programming languages
+which are then translated to machine language by either a compiler or an
+interpreter. We refer to files created by a compiler as executables or binaries.
+These files can directly be loaded into memory by the operating system.
+Operating Systems use defined structures for executables to make this loading
+possible, for example, GNU/Linux systems use the executable and linkable format
+(ELF), and Windows uses the portable executable format (PE).
 
 \subsection{CPU Instructions}
 
@@ -58,10 +58,9 @@ bytes         & 1 per prefix                & 1, 2 or 3
  & 0 or 1                      & 0 or 1                   & 0, 1, 2 or 4
              & 0, 1, 2 or 4
 \end{tabular}
-\caption{Instruction Format for Intel 64 and IA-32 architectures, showing how
-many different instruction lengths are possible in modern architectures and
-also which parts they may contain. Format according to Intel
-Manual~\cite{intelsys} section 2.1}
+\caption{Instruction Format for Intel 64 and IA-32
+architectures~\cite{intelsys}, showing how many different instruction lengths
+are possible in modern architectures and also which parts they may contain.}
 \label{tab:instrfor}
 \end{table}
 
