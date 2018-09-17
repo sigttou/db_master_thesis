@@ -772,6 +772,13 @@ the \texttt{/bin/login} binary included in the \texttt{shadow-utils 4.4}.
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
+For \texttt{/bin/login}, we can report bitflips in loaded libraries and also the
+program\textquotesingle s binary itself. All the found bitflips were in the
+\texttt{.text} section of ELF files. As table~\ref{tab:loginres} shows, there
+were $178$ flips ending in a successful bypass of the login service. Most flips
+were found in \texttt{pam} libraries, which are a major part of the user
+management in Linux-based operating systems.
+
 \begin{table}[!htb]
 \centering
 \begin{tabular}{c|c}
@@ -799,14 +806,25 @@ procedure succeeds.},
 label=lst:loginex]
   c37:  41 5d                   pop    %r13
   c39:  41 5e                   pop    %r14
-- c3b:  41 5e                   pop    %r14
-+ c3b:  41 5f                   pop    %r15
+- c3b:  41 5f                   pop    %r15
++ c3b:  41 5e                   pop    %r14
   c3d:  c3                      retq
   c3e:  66 90                   xchg   %ax,%ax
 \end{lstlisting}
 \end{minipage}
 
-\section{Summery of Results}
+In listing~\ref{lst:loginex}, we show a diff for the \texttt{pam\_nologin.so}
+file after a bitflip was applied at the address \texttt{0x0c3b}. With
+the applied flip, register values get changed as the value which should be
+written to register $15$ is placed in register $14$ instead, overwriting the
+value placed there before.
+
+Testing \texttt{/bin/login} tool about 35 hours. This is mainly due to the long
+response time by the program itself, which is probably a countermeasure against
+local brute-forcing. Also, there were by far the most memory accesses reported
+by the instrumentation pintool.
+
+\section{Summery of the Results}
 %}}}
 
 %% vim:foldmethod=expr
