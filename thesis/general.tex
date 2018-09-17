@@ -7,7 +7,7 @@ details of the work in the following chapters. We start by showing how modern
 computers execute programs and code, by looking at file formats required to
 load programs and how common computing architectures structure their machine
 code. We then look at how programs and source codes are tested and what new
-technologies evolved in that matter. As we deal with Unix-based operating
+technologies evolved in that matter. As we deal with Linux-based operating
 systems, we take a look at the permission system used by these. Additionally,
 we discuss topics in secure communication. We describe the basic principles of
 network connections, web servers, and their security. The thesis provides
@@ -93,7 +93,7 @@ ELF is an object file format. It is used to describe a program and gives
 instructions on how to load it into memory to make it ready for execution
 by the processor without applying changes to the binary-content itself. A
 linker creates ELF files after an assembler turned the program\textquotesingle s
-source code into machine code. Most modern Unix-like operating systems follow
+source code into machine code. Most modern Linux-based operating systems follow
 the ELF specification released by the Tool Interface Standard
 Committee~\cite{elfspec}. Therefore, we need to understand the layout of such
 executable files before introducing bitflips in them.
@@ -350,7 +350,7 @@ are called. Another optimisation for their framework is the API call
 anywhere in the instrumentation context, which allows better optimisation of the
 instruction order.
 
-\section{Permission Model in Unix-based Systems}
+\section{Permission Model in Linux-based Systems}
 
 The POSIX standard~\cite{posix} defines many properties for operating systems,
 it includes a description of permissions for users and their groups and how
@@ -362,7 +362,7 @@ properties separately for the owner, the group of the owner and others. POSIX
 also allows users with special privileges to ignore such permission checks, or
 change them. Such users are called super-users.
 
-Besides permission for files most Unix-based systems also provide permission
+Besides permission for files most Linux-based systems also provide permission
 checks for processes and their owners. For example, only processes owned by a
 super-user might be allowed special syscalls. In most systems, only one
 super-user exists, namely \texttt{root}. Usually, users do not want to login
@@ -408,7 +408,7 @@ sandboxing and privilege separation.
 
 \subsection{Pluggable authentication module (PAM)}
 
-PAM is used by most Unix-based operating systems to authenticate users. PAM is
+PAM is used by most Linux-based operating systems to authenticate users. PAM is
 just a collection of low-level authentication schemes which should provide a
 general API to allow authentication without the developer knowing what exactly
 is used in the background. According to the PAM manpage for Linux~\cite{pamman},
