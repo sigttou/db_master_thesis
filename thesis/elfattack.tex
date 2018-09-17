@@ -825,6 +825,39 @@ local brute-forcing. Also, there were by far the most memory accesses reported
 by the instrumentation pintool.
 
 \section{Summery of the Results}
+
+In summary, we can show, that all our tested programs can be exploited by
+bitflips. We show that Rowhammer can be used for privilege escalation and
+security bypasses in common applications used in most Linux-based operating
+systems. We can report that most bitflips can be found in the \texttt{.text}
+section of ELF files, which contains the executed machine code. Also, we show
+that not only binaries on its own are suffering such flaws, but also loaded
+libraries introduce exploitable bitflips to programs. The diffs of the
+disassembly show, that when flipping code, not only the opcode can be abused but
+also parameters in instructions.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{c|c}
+ELF File               & Shared flips \\ \hline
+\texttt{pam\_unix.so} & $52$ \\
+\texttt{libpam.so.0} & $18$ \\ \hline
+Sum of flips:                 & $70$
+\end{tabular}
+\caption{Number of flips which work for a login bypass and a \text{sudo}
+privilege escalation.}
+\label{tab:loginsudo}
+\end{table}
+
+Besides that, we can report that some bitflips cause a bypass in multiple
+application. For example most \texttt{pam} related flips can be abused in the
+\texttt{login} program and \texttt{sudo} as both check against the same user
+management. An attacker, therefore, could introduce a flip in the
+\texttt{libpam.so.0} file, log in as the user and gain super-user access if the
+user is allowed to use \texttt{sudo}. Table~\ref{tab:loginsudo} show the exact
+number of shared bitflips between the two applications. Also, for \texttt{sudo}
+and \texttt{sshd}, there was one shared bitflip found, namely one in the
+\texttt{ld-linux-x86-64.so.2} file at address \texttt{0xfc6c}.
 %}}}
 
 %% vim:foldmethod=expr
