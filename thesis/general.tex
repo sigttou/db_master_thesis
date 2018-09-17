@@ -406,6 +406,33 @@ used for testing purposes, to create packages in clean environments, to check
 compatibility, as the chrooted system could be a different system, or for
 sandboxing and privilege separation. 
 
+\subsection{Pluggable authentication module (PAM)}
+
+PAM is used by most Unix-based operating systems to authenticate users. PAM is
+just a collection of low-level authentication schemes which should provide a
+general API to allow authentication without the developer knowing what exactly
+is used in the background. According to the PAM manpage for Linux~\cite{pamman},
+modules are split into four groups:
+
+\begin{itemize}
+\item The account group verifies if the user is permitted access and if the
+password is not expired.
+\item The authentication group verifies the user\textquotesingle s credentials.
+These could be given in various ways, like a common password input, a
+fingerprint, or as a combination of multiple ways.
+\item The password groups is used to update and manage authentication
+mechanisms. Modules from this group are usually connected with those from the
+authentication group.
+\item The session group provides ways to manage permissions for users after
+authentication. It ensures the user stays authorised and also modules could
+implement ways to log out users or check session termination from other sources.
+\end{itemize}
+
+Usually, Linux-based operating systems use the default \texttt{pam\_unix.so} for
+all groups. This module looks up credentials from the \texttt{/etc/passwd} file.
+Additionally, modules as \texttt{pam\_deny.so} and \texttt{pam\_permit.so} are
+used to provide access right management for single services per default.
+
 \section{Connecting Computers}
 
 People are exchanging data between devices for several decades now. The Internet
