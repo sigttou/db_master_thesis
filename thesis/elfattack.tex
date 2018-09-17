@@ -17,10 +17,10 @@ by using Rowhammer.
 
 Our task is to find a bit in an ELF file which we can flip to change the
 behaviour in a way that it benefits us. As an example, see the code in
-listing~\ref{lst:csimbranch}. We want to change the binary in a
+Listing~\ref{lst:csimbranch}. We want to change the binary in a
 way that it will print \texttt{success.} instead of \texttt{fail.} by just
 toggling a single bit in the binary executing this code. We look at the
-disassembly of the code in listing~\ref{lst:disasmsimplebranch}. From this, we
+disassembly of the code in Listing~\ref{lst:disasmsimplebranch}. From this, we
 point out that we can start with changing the \texttt{1} to a \texttt{0} at
 the \texttt{mov} instruction on address \texttt{0x0642}. Besides that, also the
 opcode of \texttt{jnz}, namely \texttt{0x75 (1110101)}, can be changed into a
@@ -49,7 +49,7 @@ int main(void)
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=nasm,
                    caption={Disassemby of the main function created by the
-code in listing~\ref{lst:csimbranch}. Shows machine code at given address
+code in Listing~\ref{lst:csimbranch}. Shows machine code at given address
 inside the ELF file, starting at \texttt{0x063a}.},
                    label={lst:disasmsimplebranch}]
 0x063a  push rbp
@@ -101,7 +101,7 @@ Illegal instruction \\ \hline
 \end{tabular}
 \caption{Possible opcodes resulting from changing a single bit in
 \texttt{JNZ}~\texttt{0x75} and the output when applied in the assembly showed in
-listing~\ref{lst:disasmsimplebranch}.}
+Listing~\ref{lst:disasmsimplebranch}.}
 \label{tab:jnzflips}
 \end{table}
 
@@ -115,7 +115,7 @@ arises how do we automate this searching process?
 Testing all possible bitflips inside the binary and report each output would be
 a way to gain a list of all flips which would result in the printing of
 \texttt{success.}. The binary resulting from the compilation of the small
-branching code from listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
+branching code from Listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
 which means there are $66304$ flips to test. With an execution time of
 approximately $0,003$ seconds per run, this means that it would take close to
 $200$ seconds to test all bits inside the binary. For our automation, we want
@@ -219,7 +219,7 @@ Each part of the framework is designed to work on its own and has a clearly
 defined in- and output-interface. The parts can be adopted or easily used for
 other testing purposes. The configuration file for the framework defines how
 each step is applied to the application as instrumentation and verification may
-differ for each program. The file in listing~\ref{lst:expconfig} shows an
+differ for each program. The file in Listing~\ref{lst:expconfig} shows an
 example configuration file for the framework. Figure~\ref{fig:framfilesys} shows
 the layout of the framework in the file system. The configuration file tells the
 framework where to find each of the required files. The template chroot
@@ -314,7 +314,7 @@ written before reading. If so, we can also skip testing those bits, as the
 program would overwrite the flips again. Listing~\ref{lst:pinlogcode} shows a
 code snippet of the used pintool which logs all memory accesses as it
 instruments each instruction and logs the opcode position and its parameters if
-they address memory. The listing~\ref{lst:pinlogcode} also shows some API-calls
+they address memory. The Listing~\ref{lst:pinlogcode} also shows some API-calls
 for the PIN framework. In Pin, the image~\texttt{img} refers to a file on the
 hard drive. In most cases, these refer to dynamically loaded libraries. The
 \texttt{INS\_InsertPredicatedCall} function is used to insert a function call on
@@ -357,7 +357,7 @@ configured number of parallel checks, chroots are created in the \texttt{tmpfs}
 too. The framework makes sure the number of created ELF files does not require
 more than the memory available. If there are more files to test than the
 available memory allows, the framework takes multiple runs, as seen in
-figure~\ref{fig:frameworkdesign} describing the design. A test run starts
+Figure~\ref{fig:frameworkdesign} describing the design. A test run starts
 configured \texttt{CR\_exec\_file} which will copy a flipped file from
 \texttt{CR\_flip\_folder} to the original position, then run it and check if the
 output matches a defined success state. If the flipped file reaches the success
@@ -413,7 +413,7 @@ presented. For each application, we present an example bitflip and discuss why
 it caused switching to a successful state.
 
 For the results, looking at the introduced bitflips in the code in
-listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
+Listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
 bypassed similarly for the programs we looked at. As at some point jump
 instructions will point to code executed only in a positive state. We can also
 see flips causing a success which change bits in other sections than the code
@@ -546,7 +546,7 @@ label=lst:sudoex]
 \end{lstlisting}
 \end{minipage}
 
-In listing~\ref{lst:sudoex}, we show a diff for \texttt{libnss} where a call to
+In Listing~\ref{lst:sudoex}, we show a diff for \texttt{libnss} where a call to
 \texttt{strcmp} is replaced with a call to \texttt{malloc} by a single bitflip,
 causing the later \texttt{jne} instruction to behave differently.
 
@@ -628,7 +628,7 @@ label=lst:nginxex]
 \end{lstlisting}
 \end{minipage}
 
-In listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
+In Listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
 flip in this example changes a call to \texttt{test} to \texttt{add}. The
 instruction afterwards is \texttt{setn}, used to set a byte if the condition,
 in this case ``not equal'', is met. As \texttt{add}
@@ -720,7 +720,7 @@ label=lst:sshdex]
 \end{lstlisting}
 \end{minipage}
 
-In listing~\ref{lst:sshdex}, we show a diff for the \texttt{libcrypto} library
+In Listing~\ref{lst:sshdex}, we show a diff for the \texttt{libcrypto} library
 used by \texttt{ssh}. We can see how changing the function parameters
 (\texttt{rdi}) for \texttt{EVP\_MD\_CTX\_test\_flags@plt} changes the outcome
 of the libary call in a way ssh will think it is working with correct
@@ -747,7 +747,7 @@ find bitflips which would allow logging in without knowing the correct password.
 
 As the \texttt{/bin/login} binary has to be run as root, we use a similar
 approach as for \texttt{sudo}. We again make use of the preloaded library from
-listing~\ref{lst:presleeplib}. The instrumentation for \texttt{/bin/login} takes
+Listing~\ref{lst:presleeplib}. The instrumentation for \texttt{/bin/login} takes
 longer than for the other programs. A reason for this could either be the key
 derivation functions used or timeouts build in to prevent brute-forcing the
 local login. We start the program and attach to the created process shortly
@@ -774,7 +774,7 @@ the \texttt{/bin/login} binary included in the \texttt{shadow-utils 4.4}.
 
 For \texttt{/bin/login}, we can report bitflips in loaded libraries and also the
 program\textquotesingle s binary itself. All the found bitflips were in the
-\texttt{.text} section of ELF files. As table~\ref{tab:loginres} shows, there
+\texttt{.text} section of ELF files. As Table~\ref{tab:loginres} shows, there
 were $178$ flips ending in a successful bypass of the login service. Most flips
 were found in \texttt{pam} libraries, which are a major part of the user
 management in Linux-based operating systems.
@@ -813,7 +813,7 @@ label=lst:loginex]
 \end{lstlisting}
 \end{minipage}
 
-In listing~\ref{lst:loginex}, we show a diff for the \texttt{pam\_nologin.so}
+In Listing~\ref{lst:loginex}, we show a diff for the \texttt{pam\_nologin.so}
 file after a bitflip was applied at the address \texttt{0x0c3b}. With
 the applied flip, register values get changed as the value which should be
 written to register $15$ is placed in register $14$ instead, overwriting the

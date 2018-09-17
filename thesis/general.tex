@@ -572,7 +572,7 @@ view, they can be seen as a lookup table which tells which value has to be
 replaced which what other value. These lookup tables are designed in a way that
 no mathematical analysis is possible based on linear or differential
 dependencies between values. In AES the Rijndael S-box is used, the
-lookup-table describing this S-box can be seen in table~\ref{tab:sbox}. A
+lookup-table describing this S-box can be seen in Table~\ref{tab:sbox}. A
 lookup in the S-box for a byte works as the least significant nibble (four
 bytes) determines the column to be used, and the most significant nibble
 determines the row. For example, the entry byte of $0x3C$ would output $0xEB$,
@@ -711,7 +711,7 @@ $b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
   \end{tikzpicture}
   \caption{Design of the \texttt{SubBytes} function inside AES, according to
 the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is looked up in
-the S-box from table~\ref{tab:sbox} and placed in the $b$-block.}
+the S-box from Table~\ref{tab:sbox} and placed in the $b$-block.}
   \label{fig:subbytes}
 \end{figure}
 
@@ -1075,7 +1075,7 @@ Vendors of processors introduced the principle of caching to memory management
 to speed up access times for memory. Hardware components closer to the computing
 core holding a part of memory for future requests reply faster. In modern CPUs,
 there are three or four levels of caching applied. As shown in
-figure~\ref{fig:intelcache}, the design in Intel Kaby Lake assigns caches for
+Figure~\ref{fig:intelcache}, the design in Intel Kaby Lake assigns caches for
 level one and two (L1, L2) to each core and the cores share the level three
 cache (L3) between each other. L1 caches can be split up in a data and an
 instruction cache. There might also be an L0 cache for micro-operations, as it
@@ -1235,7 +1235,7 @@ information to an attacker by using side-channels inside the predicted code.
 The attack breaks multiple security measures which would usually be in place in
 modern operating systems. In their work, the researchers show multiple variants
 of exploiting the different behaviours caused by speculative execution. For
-example see the code in listing~\ref{lst:spectre1}, as shown in their work. The
+example see the code in Listing~\ref{lst:spectre1}, as shown in their work. The
 speculative execution executes the array access before the if condition check.
 The \texttt{array1[x]} can point to kernel memory, for example, returning some
 secret, then the \texttt{array2} is accessed at a page which refers to the
@@ -1308,7 +1308,7 @@ entries to read are set via the bit lines and then the desired row via the word
 lines. DRAM chips contain many memory arrays and controllers which a data bus
 connects with the processor.
 
-A one-transistor (1-T) memory cell, as seen in figure~\ref{fig:1Tstorage}, is
+A one-transistor (1-T) memory cell, as seen in Figure~\ref{fig:1Tstorage}, is
 used to store a single bit. To access memory, first, the desired bit lines are
 charged with $\frac{V_{CC}}{2}$, then the word line is also charged to switch on
 the transistors. An amplifier is then used to detect changes of charge on the
@@ -1410,7 +1410,7 @@ memory in the buffer directly.}
 Kim~\etal~\cite{rowhammergeneral} show how it is possible to cause bits to flip
 inside memory by correct access patterns. They use two rows as so-called
 aggressors, and one as target row. As the code in
-listing~\ref{lst:rowhammercode} shows, the two aggressor rows are repeatedly
+Listing~\ref{lst:rowhammercode} shows, the two aggressor rows are repeatedly
 read, causing memory accesses in the DRAM. The changes in electrical charge
 caused by the read accesses will by chance interfere with the loads in the
 target row and change content there. The \texttt{clflush} instructions are used

@@ -11,8 +11,8 @@ Rowhammer can reintroduce previous attacks.
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
 
 We look at the implementation of AES-GCM inside OpenSSL. We see the general
-AES-GCM context struct in listing~\ref{lst:aesstruct}. Additional to that we
-take a look at the cypher context struct in listing~\ref{lst:ciphctx}. The
+AES-GCM context struct in Listing~\ref{lst:aesstruct}. Additional to that we
+take a look at the cypher context struct in Listing~\ref{lst:ciphctx}. The
 interesting connection between those two is the initialisation vector
 \texttt{iv} which is updated on each call to the GCM function. The
 \texttt{GCM128\_CONTEXT} provides the hashing and multiplying function in the
@@ -79,7 +79,7 @@ decrement of the counter which makes reuse very likely. As the described attack
 states, this would cause a break of the cryptography for future messages and the
 attacker could even craft valid ciphertexts and overtake sessions. For the
 attack with Rowhammer, we would target the \texttt{iv} array in the
-\texttt{EVP\_CIPHER\_CTX} struct, as seen in the listing~\ref{lst:ciphctx}.
+\texttt{EVP\_CIPHER\_CTX} struct, as seen in the Listing~\ref{lst:ciphctx}.
 
 \subsection{Likelihood of a Nonce-Misuse introduced by Rowhammer}
 
