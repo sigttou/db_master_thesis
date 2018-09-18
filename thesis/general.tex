@@ -217,40 +217,43 @@ and its dependencies the program can be executed.
 
 \subsubsection{Loading ELF files into Memory}
 
-As we focus on GNU/Linux operating systems, we will look at how UNIX System-V
-Release 4-based operating systems handle ELF files in order to create running
-programs. These systems do not use physical addresses during execution, and
-the OS is free to change the position of sections in the virtual address space.
-Therefore, in an ELF file, a section only contains a base address and offsets
-to that address. For certain compilation settings the the operating system is
-free to change the base address in the programs virtual address space. The
-loader then places additional memory according to the offsets.
+The ELF specification~\cite{elfspec} was released by the Tool Interface Standard
+(TIS) in 1995 for UNIX System-V Release 4-based operating systems. Many
+operating systems, such as GNU/Linux-based or BSD-based ones, adapted this
+standard to execute programs. As we focus on GNU/Linux operating systems, we
+look at how to handle ELF files in order to create running programs. Most
+operating systems used on computers or mobile phones do not use physical
+addresses during the execution of programs, and the operating system is free to
+change the position of sections in the virtual address space. Therefore, in an
+ELF file, a section only contains a base address and offsets to that address.
+For certain compilation settings, the operating system is free to change the
+base address in the programs virtual address space.
 
 \subsubsection{Dynamic Linking}
 
-In modern systems it is common to have multiple functions used by different
+In modern systems, it is common to have multiple functions used by different
 programs. Shared libraries can be used to provide such general functions. When
 deploying programs, developers usually make sure all required shared libraries
 exist on the target platform or ship their software with those included. When
 depending on such system libraries, the loader will insert the shared-library
-functions into memory at the desired entry point. This technique is called
-dynamic linking. The loader fetches the information about the required library
-from the ELF file and then checks the library paths provided by the operating
-system if the library can to be loaded.
+functions into memory at the given entry point. This technique is called dynamic
+linking. The loader fetches the information about the required library from the
+ELF file and then searches the library paths provided by the operating system
+environment to find the library files. If they cannot be found in the given
+paths, an error is shown, and the program is not executed.
 
 \section{Analysis and Testing of Executables}
 
-Testing is a significant part of software development. There are a lot of
-different approaches and styles for testing. One approach to test a program is
-to provide input to it and check if the code operates as expected by validating
-the output. With increasing amount of code and an increasing number of bugs
-found, the style of testing changed over the years. On the one hand, developers
-nowadays ideally provide unit tests inside their code to test single functions
-and make sure they work as intended. On the other hand, sometimes the source
-code is not available to a tester, or it is way too much work to read the entire
-source code to create such tests. Therefore, developers came up with tools
-which can be used to test binaries on their own without knowing the entire
-source code.
+Testing is a significant part of software development. There are many different
+approaches and styles for testing. One approach to test a program is to provide
+input to it and check if the code operates as expected by validating the output.
+With increasing amount of code and an increasing number of bugs found, the style
+of testing changed over the years. On the one hand, developers nowadays ideally
+provide unit tests inside their code to test single functions and make sure they
+work as intended. On the other hand, sometimes the source code is not available
+to a tester, or it is way too much work to read the entire source code to create
+such tests. Therefore, developers came up with tools which can be used to test
+binaries on their own without knowing the entire source code.
 
 \subsection{Fuzzing}
 
@@ -266,7 +269,7 @@ on the robustness of a program. They are cheap to apply and even can find bugs
 usual white-box tests would miss.
 
 If a fuzzer would only apply random inputs, testing would take a very long
-time, as a lot of unneeded tests would run. Because of this, the technology
+time, as many unnecessary tests would run. Because of this, the technology
 improved over time and different fuzzers evolved. For simple programs, just
 testing common input mistakes, like negative numbers, newlines, end of file
 characters, format strings, or just very long strings might be enough. Advanced
@@ -1245,7 +1248,7 @@ they reach a transmission speed of $496$ kilobytes per second.
 With growing knowledge on the CPU and caching level, researchers found major
 security vulnerabilities in modern CPUs. Attacks like Meltdown, Spectre and
 Foreshadow were reported by many newspapers and influenced the awareness of
-microarchitectural attacks by the general public a lot.
+microarchitectural attacks by the general public.
 
 \subsubsection{Meltdown}
 
