@@ -97,31 +97,43 @@ at least eight SIMD registers, namely \texttt{XMM0} to \texttt{XMM7}. Newer
 generations of Intel CPUs might also provide double-precision floating point,
 64-bit registers.
 
-
 \subsubsection{Opcode}
 
-Tells the CPU what to do and how to handle the following
-parameters.
+Opcodes describe what the instruction does, if it needs parameters, like
+registers or addresses to physical memory. An opcode is usually one byte long,
+there exist two-byte opcodes, which would be declared by a prefix. The primary
+opcode also defines so-called fields, which are used to declare the direction of
+operation, size of displacements, register encoding, or sign extension. The
+\texttt{ModR/M} byte, therefore, also holds a 3-bit opcode field.
 
-\subsubsection{ModR/M}
+\subsubsection{ModR/M and SIB Bytes}
 
-This byte follows the opcode to tell the CPU what
-addressing mode to use for memory accesses.
+The ModR/M byte is split into three parts. First is the mod field, it is
+combined with the r/m field to provide eight registers and twenty-four
+addressing modes. Second is the reg/opcode field. It is used to provide a
+register number or three additional bits for the opcode. The r/m field is either
+used in combination with the mod field to name addressing modes, or it specifies
+a register as an operand for the opcode.
 
-\subsubsection{SIB}
+Some addressing modes given by the ModR/M byte require a second byte of
+information. This information is given by the Scale Index Base (SIB) byte. The
+CPU uses this byte as follows: 3 bits give the base, 3 bits give the index, and
+the last 2 bits give the scale. To get the address the value stored in the index
+register is multiplied with the scale and added to the value stored in the base
+register.
 
-This byte also needs to be parsed and evaluated for some ModR/M
-addressing-modes.
+\subsubsection{Displacement and Immediate Data}
 
-\subsubsection{Displacement}
+Besides using the ModR/M and SIB bytes for addressing, the mod field can also
+state to use a so-called displacement as an additional address offset. The
+calculated address from the SIB byte is then added to the value in the
+displacement. The displacement can have a size between zero and four bytes.
 
-Displacement - Some addressing-modes set by the ModR/M or SIB byte
-might include a displacement following them.
-
-\subsubsection{Immediate}
-
-Immediate - Immediate data might follow if required by previous
-parameters.
+Some operands may use data directly provided by the instruction instead of
+loading it from memory or a register. Such data is given in the immediate field
+of an instruction. Most arithmetic instructions allow immediate data to be
+passed, but also instructions like \texttt{mov} allow such parameters. The usage
+of immediate data is declared by the ModR/M byte.
 
 \subsection{Executable and Linkable Format (ELF)}
 
@@ -181,13 +193,13 @@ There are two views of an ELF file, the linking view and the execution view.
 Those are also called section and segment view respectively. They share the same
 ELF header but serve different purposes for the operating system.
 Figure~\ref{fig:elfstruct} show the connection between sections and segments via
-the two different headers. Sections and segments can be seen as follows:
+the two different headers. Sections and segments can be seen as follows.
 
 \subsubsection{Sections}
 
 Sections describe the binary for the linking view. A section can contain
-instructions, data, symbol table and relocation information. Sections reserved
-for the system start with a dot. There can be additional sections defined by
+instructions, data, a symbol table and relocation information. Sections reserved
+for the system, start with a dot. There can be additional sections defined by
 the user. Sections are created and managed by the linker. Sections that are
 directly loaded into the program\textquotesingle s memory image are initialized
 data (\texttt{.data, .data1}), read-only data (\texttt{.rodata, .rodata1}), and
@@ -195,7 +207,7 @@ executable instructions (\texttt{.text}).
 
 \subsubsection{Segments}
 
-They describe the virtual memory layout of a loaded binary.
+Segments describe the virtual memory layout of a loaded binary.
 Figure~\ref{fig:elfstruct} shows how segments are used in an ELF file.
 Usually, the linker splits segments into different behaviours the loader has to
 apply. For example, all read-only data sections are in the same segment. When
