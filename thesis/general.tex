@@ -250,51 +250,56 @@ input to it and check if the code operates as expected by validating the output.
 With increasing amount of code and an increasing number of bugs found, the style
 of testing changed over the years. On the one hand, developers nowadays ideally
 provide unit tests inside their code to test single functions and make sure they
-work as intended. On the other hand, sometimes the source code is not available
-to a tester, or it is way too much work to read the entire source code to create
-such tests. Therefore, developers came up with tools which can be used to test
-binaries on their own without knowing the entire source code.
+work as intended.
+
+On the other hand, sometimes the source code is not available to a tester, or it
+is way too much work to read the entire source code to create such tests.
+Therefore, developers came up with techniques to test binaries without knowing
+the entire source code. For instance, black-box testing is an approach where a
+program is tested without knowing its source code.
 
 \subsection{Fuzzing}
 
-Black-box testing is an approach where a program is tested without knowing
-its source code. Fuzzing is taking this to another level, where even knowledge
-about the program itself is just minimal. The idea of applying just random
-inputs to programs to test its robustness already came up in the 80s as
-Duran~\etal~\cite{randtest} showed. Tools applying similar techniques, like
-applying automatically-generated, often randomised, inputs are called fuzzers.
-They try to reach corner cases in programs without knowing which exist and
-detect undefined behaviour or crashes. Generally, fuzzers give an overall view
-on the robustness of a program. They are cheap to apply and even can find bugs
-usual white-box tests would miss.
+Fuzzing is a form of black-box testing, where even knowledge about the program
+itself is just minimal. Duran~\etal~\cite{randtest} already showed in the 80s
+that trying random inputs on programs provides a way to rate its robustness.
+Tools applying automatically-generated, pseudo-randomised, inputs to programs
+are called fuzzers. Fuzzers attempt to reach corner cases in programs without
+knowing which exist and detect undefined behaviour or crashes. Generally,
+fuzzers give an overall view on the robustness of a program. They are relatively
+easy to apply to programs and can even find bugs usual white-box tests would
+miss.
 
-If a fuzzer would only apply random inputs, testing would take a very long
-time, as many unnecessary tests would run. Because of this, the technology
-improved over time and different fuzzers evolved. For simple programs, just
-testing common input mistakes, like negative numbers, newlines, end of file
-characters, format strings, or just very long strings might be enough. Advanced
+If a fuzzer would only apply random inputs, testing would take a very long time,
+as many unnecessary tests would run. Because of this, the technology improved
+over time and different fuzzers evolved. For simple programs, just testing
+common input mistakes, like negative numbers, newlines, end of file characters,
+format strings, or just very long strings might be enough. More advanced
 software requires better ways of fuzzing, for example, network protocols, file
-systems, or image formats have a very complex structure which makes it hard to
-find possible crashes by random data input. Fuzzers for such kind of software
-generate inputs from given examples and apply small changes to them.
+systems, or image formats have complex structures which make it less likely to
+crash by just random data input. Fuzzers for such kind of software generate
+inputs from given examples and apply small changes to them.
 Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
 programs. Besides special format fuzzers there are more advanced ones which
 directly interact with the target, allowing to track execution paths, and
-therefore, create even more test cases automatically. The most popular fuzzer is
-``american fuzzy lop'' (afl)~\cite{aflweb}. It contains described algorithms to
-get the best possible code coverage. Another more advanced fuzzer is Steelix by
-Yuekang~\etal~\cite{steelix}, which provides program-state-based binary fuzzing.
-Steelix uses static analysis and binary instrumentation to provide more
-information about the fuzzing process and therefore gains better test cases and
-code coverage.
+therefore, create even more test cases automatically. ``American Fuzzy Lop''
+(AFL), is a fuzzer which is often used to find bugs in open source software,
+their website~\cite{aflweb} presents a list of bugs found with it. AFL contains
+algorithms which take usual test inputs which would cause successful runs of a
+program, parses those inputs and applies random changes to it. These algorithms
+allow better code coverage than just generating random input. Another more
+advanced fuzzer is Steelix by Yuekang~\etal~\cite{steelix}, which uses
+program-state-based binary fuzzing. Steelix applies static analysis and binary
+instrumentation to provide more information about the fuzzing process, and
+therefore yields better test cases and code coverage.
 
-Shoshitaishvili~\etal showed how fuzzing could find authentication bypasses in
-binary firmware with their tool Firmalice~\cite{firmalice}.
-Wang~\etal~\cite{inmemfuzzing} showed how in-memory fuzzing can be used to detect
-similarities in binary code. This is done by fuzzing every function available
-and comparing traces of program behaviours with machine learning models. They
-show that they can find similarities in binaries even when different compilers,
-and optimisations are used or when obfuscation is applied.
+Shoshitaishvili~\etal~\cite{firmalice} showed that fuzzing can find
+authentication bypasses in binary firmware with their tool Firmalice.
+Wang~\etal~\cite{inmemfuzzing} showed how in-memory fuzzing can be used to
+detect similarities in binary code. This is done by fuzzing every function
+available and comparing traces of program behaviours with machine learning
+models. They show that they can find similarities in binaries even when
+different compilers, and optimisations are used or when obfuscation is applied.
 
 \subsection{Symbolic Execution}
 
