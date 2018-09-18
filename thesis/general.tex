@@ -444,20 +444,21 @@ user\textquotesingle s password to execute commands as the target user.
 \subsection{\texttt{setuid} Binary Property}
 
 \texttt{setuid} stands for ``set user identity''~\cite{ogroupsetuid}. It allows
-an executable to change its user ID on execution. An additional bit in the file
-permissions represents the \texttt{setuid} property, namely \texttt{S\_ISUID}.
-This property allows a user to run a program with the permissions of the
-file\textquotesingle s owner. Tools like \texttt{su} and \texttt{sudo} need this
-as they require the permission to change the current context. It is also
-practical to allow normal users the usage of tools like \texttt{ping} or
-\texttt{ip}, without allowing them to use \texttt{sudo}. We refer to the GNU
-libc documentation for more details~\cite{libcpermission}.
+an executable to change its user ID during execution. An additional bit in the
+file permissions represents the \texttt{setuid} property, namely
+\texttt{S\_ISUID}. This property allows a user to run a program with the
+permissions of the file\textquotesingle s owner. Tools like \texttt{su} and
+\texttt{sudo} require this permission in order to change the current context. It
+is also convenient to allow normal users to use tools like \texttt{ping} or
+\texttt{ip}, without requiring them to authenticate as \texttt{root}. We refer
+to the GNU libc documentation for more details~\cite{libcpermission}.
 
-Whereas the \texttt{setuid} property might seem practical, it also brings
+While the \texttt{setuid} property might seem convenient, it also brings
 security risks. A bug allowing code execution in such a program allows an
 attacker to execute that code with the permission of another user. Therefore,
 the number of \texttt{setuid} binaries should be low and programs having that
-property should be well audited.
+property must be well audited and tested to not jeopardise the
+system\textquotesingle s security and integrity.
 
 \subsection{\texttt{chroot}}
 
