@@ -27,7 +27,7 @@ programs for privilege escalation or authentication-check bypasses.
 We present a way of testing binaries for possible execution path changes by
 bitflips. In our work, we pre-define an outcome for a binary and then search for
 all single bitflips which would cause the program to behave in the desired way.
-Whereas previous work mostly looked at just op-codes in machine code, we scan
+While previous work mostly looked at just op-codes in machine code, we scan
 the entire address space of the program, including all dynamically loaded
 libraries. We show results for searched bitflips in the \texttt{sudo} program,
 for bypassing user privilege checks, allowing super-user permissions without

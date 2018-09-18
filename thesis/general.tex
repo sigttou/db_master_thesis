@@ -893,7 +893,7 @@ affect real-world usages of AES.
 Way more common than such cryptoanalysis attacks on AES are attacks targeting
 software and hardware implementations. For example,
 O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in the bootloader.
-Whereas most attacks target 128 bits, they showed one against 256. They use a
+While most attacks target 128 bits, they showed one against 256. They use a
 Correlation Power Analysis (CPA) on a bootloader which loads an AES-256-CBC
 encrypted firmware. Besides recovering the full key, they also achieve recovery
 of the initialisation vector. Another hardware side-channel attack was made by
@@ -989,8 +989,8 @@ with the irreducible polynomial $g = g(x) = x^{128} + x^{7} + x^{2} + x + 1$.
     \draw [arrow] (mult4) -- (xor41);
     \draw [arrow] (xor41) -- (tag);
   \end{tikzpicture}
-  \caption{Schematic of AES-GCM. Whereas the $E_k$ blocks apply
-AES-encryption with the key $k$. The $mult_H$ blocks apply a multiplication in
+  \caption{Schematic of AES-GCM. The $E_k$ blocks apply AES-encryption with the
+key $k$. The $mult_H$ blocks apply a multiplication in
 the Galois-field. $A$ represents a block of authenticated data, which is added
 to the MAC $TAG$ but not encrypted.}
   \label{fig:aesgcm}
