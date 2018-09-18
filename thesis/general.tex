@@ -336,28 +336,28 @@ of symbolic and concrete execution of a program.
 
 Instrumentation comes down to adding new code to already existing one in an
 automated manner. Developers use instrumentation as a tool for debugging or
-performance measures by adding calls to timing functions or information logging
-to the code. Information from instrumentation could be something like what
-functions are called and how often, what execution branches are taken, how long
-does a subroutine take, what memory is accessed and many more. It usually also
+performance measurements by adding calls to timing functions or information
+logging to the code. Information from instrumentation could be something like
+what functions are called and how often, what execution branches are taken, how
+long a subroutine takes, what memory is accessed and many more. It usually also
 allows the developer to change the runtime environment of a program, like change
 return values or skip instruction calls.
 
 Two different styles of instrumentation exist, one is source instrumentation,
-and one is binary instrumentation, where so-called instrumenter-calls are either
-added pre-compilation to the source of the program or later added to the binary
-context of the program. The first style might bring the advantage that it is
-easier to apply and the structure of the program is better known to the
-instrumenter, calls for performance checks over functions are done by adding
-timer calls at the entry and exit points. However, binary instrumentation also
-has its perks. For example, users do not require the source of the program,
-which might not be available in proprietary programs. Also, recompilation of the
-program is not needed if the code for the instrumentation changes. Given enough
-debug information in the binary the instrumentation information might not differ
-much from the source-based one. With binary instrumentation it is also possible
-to change and read register values before and after CPU instructions are called,
-which might not be possible at source code level, as used registers and memory
-areas are unknown to the instrumenter at this point.
+and one is binary instrumentation, where so-called instrumenter calls are either
+added to the source of the program before compilation or later added to the ELF
+file of the program. The first style can be easier to apply. Furthermore, the
+structure of the program is known to the instrumenter. Calls for performance
+checks over functions can be done by adding timer calls at the entry and exit
+points. However, binary instrumentation also has advantages. For example, users
+do not require the source of the program, which might not be available for
+proprietary programs. Also, recompilation of the program is not required if the
+code for the instrumentation changes. Given enough debug information in the
+binary the instrumentation information might not differ much from the
+source-based one. With binary instrumentation, it is also possible to change and
+read register values before and after specific CPU instructions are executed,
+which might not be possible at the source code level, as used registers and
+memory areas are unknown to the instrumenter at this point.
 
 \subsubsection{Intel Pin}
 
