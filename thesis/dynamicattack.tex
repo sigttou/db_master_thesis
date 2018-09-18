@@ -100,7 +100,7 @@ unlikely, as also, only lower bits are allowed to be hit, to make a nonce
 counter reuse likely. Also, we cannot just hold these structs in memory, and the
 operating system usually limits the number of parallel TLS connections.
 
-\subsection{Practical Analysis of Nonce-Reuse caused by Rowhammer}
+\subsection{Analysis of Practical Nonce-Reuse caused by Rowhammer}
 
 We set up two versions for the practical analysis of the nonce misusage, where
 one uses multiple processes, and one uses multithreading. In both cases, we
