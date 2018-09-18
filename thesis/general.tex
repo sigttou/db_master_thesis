@@ -260,11 +260,11 @@ program is tested without knowing its source code.
 
 \subsection{Fuzzing}
 
-Fuzzing is a form of black-box testing, where even knowledge about the program
-itself is just minimal. Duran~\etal~\cite{randtest} already showed in the 80s
-that trying random inputs on programs provides a way to rate its robustness.
-Tools applying automatically-generated, pseudo-randomised, inputs to programs
-are called fuzzers. Fuzzers attempt to reach corner cases in programs without
+Fuzzing is a form of black-box testing, where knowledge about the program itself
+is just minimal. Duran~\etal~\cite{randtest} already showed in the 80s that
+trying random inputs on programs provides a way to rate its robustness. Tools
+applying automatically-generated, pseudo-randomised, inputs to programs are
+called fuzzers. Fuzzers attempt to reach corner cases in programs without
 knowing which exist and detect undefined behaviour or crashes. Generally,
 fuzzers give an overall view on the robustness of a program. They are relatively
 easy to apply to programs and can even find bugs usual white-box tests would
@@ -280,7 +280,7 @@ systems, or image formats have complex structures which make it less likely to
 crash by just random data input. Fuzzers for such kind of software generate
 inputs from given examples and apply small changes to them.
 Xmlfuzzer~\cite{xmlfuzzer} is a tool crafted specially to test XML schemes in
-programs. Besides special format fuzzers there are more advanced ones which
+programs. Besides special format fuzzers, there are more advanced ones which
 directly interact with the target, allowing to track execution paths, and
 therefore, create even more test cases automatically. ``American Fuzzy Lop''
 (AFL), is a fuzzer which is often used to find bugs in open source software,
@@ -304,26 +304,31 @@ different compilers, and optimisations are used or when obfuscation is applied.
 \subsection{Symbolic Execution}
 
 Fuzzing provides a pseudo-random input to a program to test it. Therefore, it
-might not catch all possible execution paths of a program. Techniques to test
-all possible paths by simplifying the program, one of these techniques is
-symbolic execution. The idea was already in place in 1976, when James C. King
-released his work~\cite{symbolexechist} about symbolic execution. It makes use
-of the possible simplification of inputs where they use a logic symbol with
-fewer possible states instead. For example, a number can be represented by the
-possible states: maximal value, minimum value, positive, negative, zero. The
-possible symbolic-state inputs then run through the program in combination with
-a constraint solver to report possible violations of the program\textquotesingle
-s specification. The solver can also be used to find possible paths to reach a
-pre-defined goal inside the binary.
+might not cover all possible execution paths of a program. Simplifying a program
+to cover all possible execution paths is done in symbolic execution. James C.
+King was the first to mentioned this technique in 1976~\cite{symbolexechist}.
+Symbolic execution simplifies possible inputs for programs by replacing them
+with a logic symbol which could hold fewer possible states than usual data
+types. For example, a number can be represented by the following states: maximal
+value, minimum value, positive, negative, and zero. The possible symbolic-state
+inputs then run through the program to report possible violations of the
+program\textquotesingle s specification. King~\cite{symbolexechist} used a
+decision tree to cover all possible execution paths in a binary. Modern
+frameworks, like \texttt{angr}~\cite{angrpaper}, use different techniques to
+analyse a binary.
 
-One of the most used symbolic analysis frameworks is
-\texttt{angr}~\cite{angrpaper}. Besides the symbolic execution of binaries, it
-also allows various other analysis methods such as control-flow graph recovery,
-automatic exploit generation or automatic binary hardening.
+On the one hand \texttt{angr} can still use a tree structure to cover program
+paths, on the other hand, it also provides a fuzzing assisted symbolic execution
+technique. AFL is used to provide a crash report, and the symbolic execution
+path is used to identify what code sections are reached by the mutation of the
+input. By this, the user running the test get better knowledge about where the
+program crashes and why it crashes. Besides the symbolic execution of binaries,
+\texttt{angr} also allows various other analysis methods such as control-flow
+graph recovery, automatic exploit generation or automatic binary hardening.
 
 Stephens~\etal~\cite{driller} showed with Driller how symbolic execution could
-be beneficial to fuzzing approaches. This allows keeping the number of execution
-paths to test lower but also try to cover as much code as possible. Driller uses
+be beneficial to fuzzing approaches. Symbolic execution reduces the number of
+execution paths to test while covering much code as possible. Driller uses
 concolic execution for the path exploring. Concolic execution is the combination
 of symbolic and concrete execution of a program.
 
