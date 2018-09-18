@@ -504,15 +504,21 @@ used to provide access right management for single services per default.
 People are exchanging data between devices for several decades now. The Internet
 started when scientists found a way to have universities share research results
 between computers over the back then used Advanced Research Projects Agency
-Network (ARPANET).  The ARPANET already used the TCP/IP protocol and showed
-requirements for future interconnection networks. With easier access to
-computers, more universities, companies and private households wanted to be
-connected and exchange data. Many protocols were introduced with the creation of
-the Internet, where Hypertext protocols are shared in the World Wide Web,
-electronic mail is used to transmit messages, and file sharing became common.
-With the growing amount of users, security in the network and the connected
-devices became more relevant every day. Therefore, protocols to ensure security
-for the participants became standard and regularly improved.
+Network (ARPANET). Clark~\cite{arpanet} released a paper in 1988 about the
+protocols used by the ARPANET and gives arguments on why stated protocols were
+used. The network already used the TCP/IP protocol and showed requirements for
+future interconnection networks. Furthermore, Clark~\cite{arpanet} also explains
+the evolution of the Internet by stating the plans of connecting other networks
+with the ARPANET.
+
+With easier access to computers, more universities, companies and private
+households wanted to be connected and exchange data. The Internet provided the
+possibility to do this. The standard for Hyper-Text Transfer Protocol
+(HTTP)~\cite{rfc7231} was introduced to provide files from servers to users. The
+standard for network mail~\cite{rfc561} provides a uniform way to send messages
+between users over the Internet. With the growing amount of users, security in
+the network and the connected devices became more relevant. Therefore, protocols
+to ensure security for the participants were introduced as standards.
 
 \subsection{Webserver}
 
@@ -520,32 +526,33 @@ Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
 such servers available, most of them being open source and free, such as
 Apache~\cite{apacheweb} and \texttt{nginx}~\cite{nginxweb}. Web servers use the
-Hypertext Transfer Protocol (HTTP) to handle requests and deliver the content to
-the client. Web servers usually deliver websites encoded in Hypertext Markup
-Language (HTML) but can also deliver all kind of files including JavaScript (JS)
-and Content Style Sheet (CSS), which are rendered together with HTML by web
-browsers on the client.
+Hyper-Text Transfer Protocol (HTTP)~\cite{rfc7231} to handle requests and
+deliver the content to the client. Web servers usually deliver websites encoded
+in Hypertext Markup Language (HTML) but can also deliver all kinds of files
+including JavaScript (JS) and Content Style Sheet (CSS), which are rendered
+together with HTML by web browsers on the client.
 
 A client requests content from the server by sending a Uniform Resource Locator
-(URL). The server then looks up the given path in the URL and answers the
-request by sending the desired file or an error, if one occurs during the
-handling of the request. As not all requests and answers should publicly
-visible, web servers adapted TLS for security and privacy reasons to provide
-content over HTTPS. The client, most of the time a web browser, can thereby
-verify the server\textquotesingle s identity and apply encryption to the
+(URL)~\cite{rfc3986}. The server then looks up the given path in the URL and
+answers the request by sending the requesting file or an error, if one occurs
+during the handling of the request. As not all requests and answers should be
+publicly visible, web servers adopted TLS for security and privacy reasons to
+provide content over HTTPS. The client, most of the time a web browser, can
+thereby verify the server\textquotesingle s identity and apply encryption to the
 connection if required.
 
-\subsubsection{HTTP - Basic Access Authentication (BA)}
+\subsubsection{HTTP - Basic Access Authentication}
 
-To allow only authorised users to access specified paths on a web server HTTP
-added access-control to the protocol described in RFC 7617~\cite{rfc7617}. This
-technique makes use of a header field in HTTP, namely \texttt{WWW-Authenticate}.
-Where RFC 3986~\cite{rfc3986} deprecates the functionality to transmit
-credentials inside the requesting URL. BA is a straightforward access-control
-technique and does not protect the transmitted credentials. Therefore, it is
-used together with HTTPS at most times. The client has to transmit the
-credentials with every request, and there is no logout function as in other
-techniques using cookies or session identifiers.
+A standard for access control was added to HTTP, as described in RFC
+7617~\cite{rfc7617}, to allow only authorised users to access specified paths on
+web servers. This technique makes use of a header field in HTTP, namely
+\texttt{WWW-Authenticate}. RFC 3986~\cite{rfc3986} deprecates the functionality
+to transmit credentials inside the requesting URL, only the HTTP header may be
+used for authentication. Basic Access Authentication is an access-control
+technique which does not protect the transmitted credentials. Therefore, it
+should be used together with HTTPS to protect the transmitted data. The client
+has to transmit the credentials with every request, and there is no logout
+function as in other techniques using cookies or session identifiers.
 
 \subsubsection{Access control in Apache and \texttt{nginx}}
 
