@@ -869,23 +869,26 @@ cryptography.
 
 \section{Software-based Microarchitectural Attacks}
 
-Attacks against desktop computers and mobile devices have been widespread over
-the last couple of years. As programmers and vendors became more aware of
-classic issues in such systems, attackers moved to other layers to find bugs and
-security issues. One of these other layers is side-channel information leakage.
-Like Kelsey~\etal~\cite{kelsey1998side} showed how little information was needed
-to break cryptographic cypher implementations. They used time, processor flags,
-and power consumption as their sources to break various implementations. But not
-only cryptography was affected by side-channel attacks. As
+Computers can leak information by behaving differently during the computation of
+different data. Aciicmez~\etal~\cite{branchpower, rsaanal, branchopenssl}
+released work on timing leaks which leak information about used key or data.
+Aciicmez~\etal~\cite{rsaanal} show how RSA implementations were attackable with
+microarchitectural analysis. For the implementation in OpenSSL, it was possible
+to detect called reduction steps in the Montgomery multiplication, which lead to
+a total break of the RSA implementation. Aciicmez~\etal~\cite{branchopenssl},
+also show further microarchitectural attacks against OpenSSL, which break other
+functions implemented in the open source library.
+
+But not only cryptography is affected by side-channel attacks.
 Weinberg~\etal~\cite{weinberg2011still} showed, it is also possible to gather
 information about a users browser history by using side-channels.
 
-\subsection{Low Level Performance Measuring}
+\subsection{Low-Level Performance Measuring}
 
 Many side-channel attacks are based on timings. Like, predicting what a machine
-currently does because of the time needed to compute something. To measure
-timings in a high resolution, researchers want as precise time stamps as
-possible.
+currently does because of the time it takes to compute something. Researchers
+and attackers using time measurement as an information source, therefore usually
+try to find a way to measure time with a high resolution.
 
 \subsubsection{Native Timing Measurement}
 
