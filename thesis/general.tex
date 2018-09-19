@@ -636,270 +636,27 @@ nonce reuse in WPA2.
 \subsection{Advanced Encryption Standard (AES)}
 
 The Advanced Encryption Standard is a block cypher proposed to the US National
-Institute of Standards and Technology (NIST) by Vincent Rijmen and Joan Daemen
-in 1999~\cite{aesproposal}. In 2001 NIST released AES as a specification for
+Institute of Standards and Technology (NIST) by Rijmen and Daemen in
+1999~\cite{aesproposal}. In 2001, NIST released AES as a specification for
 encryption of electronic data. It is the successor of the Data Encryption
-Standard (DES). AES is also part of ISO/IEC 18033-3~\cite{iso18033}, the ISO
+Standard (DES). AES is also part of ISO/IEC 18033-3~\cite{iso18033}, an ISO
 standard related to security techniques and encryption algorithms.
 
-\subsubsection{Design of AES}
-
-AES is a block cypher, it is applied to data blocks, as the plaintext and a
-given key are permutated together to create the ciphertext.
-
-\subsubsection{Substitution Boxes}
-
-So-called S-boxes are a significant part of the AES algorithm. In a simplified
-view, they can be seen as a lookup table which tells which value has to be
-replaced which what other value. These lookup tables are designed in a way that
-no mathematical analysis is possible based on linear or differential
-dependencies between values. In AES the Rijndael S-box is used, the
-lookup-table describing this S-box can be seen in Table~\ref{tab:sbox}. A
-lookup in the S-box for a byte works as the least significant nibble (four
-bytes) determines the column to be used, and the most significant nibble
-determines the row. For example, the entry byte of $0x3C$ would output $0xEB$,
-using the given S-box.
-
-\begin{table}[]
-\centering
-\begin{tabular}{c|cccccccccccccccc}
-   & 00 & 01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 0a & 0b & 0c & 0d & 0e &
-0f \\ \hline
-00 & 63 & 7c & 77 & 7b & f2 & 6b & 6f & c5 & 30 & 01 & 67 & 2b & fe & d7 & ab &
-76 \\
-10 & ca & 82 & c9 & 7d & fa & 59 & 47 & f0 & ad & d4 & a2 & af & 9c & a4 & 72 &
-c0 \\
-20 & b7 & fd & 93 & 26 & 36 & 3f & f7 & cc & 34 & a5 & e5 & f1 & 71 & d8 & 31 &
-15 \\
-30 & 04 & c7 & 23 & c3 & 18 & 96 & 05 & 9a & 07 & 12 & 80 & e2 & eb & 27 & b2 &
-75 \\
-40 & 09 & 83 & 2c & 1a & 1b & 6e & 5a & a0 & 52 & 3b & d6 & b3 & 29 & e3 & 2f &
-84 \\
-50 & 53 & d1 & 00 & ed & 20 & fc & b1 & 5b & 6a & cb & be & 39 & 4a & 4c & 58 &
-cf \\
-60 & d0 & ef & aa & fb & 43 & 4d & 33 & 85 & 45 & f9 & 02 & 7f & 50 & 3c & 9f &
-a8 \\
-70 & 51 & a3 & 40 & 8f & 92 & 9d & 38 & f5 & bc & b6 & da & 21 & 10 & ff & f3 &
-d2 \\
-80 & cd & 0c & 13 & ec & 5f & 97 & 44 & 17 & c4 & a7 & 7e & 3d & 64 & 5d & 19 &
-73 \\
-90 & 60 & 81 & 4f & dc & 22 & 2a & 90 & 88 & 46 & ee & b8 & 14 & de & 5e & 0b &
-db \\
-a0 & e0 & 32 & 3a & 0a & 49 & 06 & 24 & 5c & c2 & d3 & ac & 62 & 91 & 95 & e4 &
-79 \\
-b0 & e7 & c8 & 37 & 6d & 8d & d5 & 4e & a9 & 6c & 56 & f4 & ea & 65 & 7a & ae &
-08 \\
-c0 & ba & 78 & 25 & 2e & 1c & a6 & b4 & c6 & e8 & dd & 74 & 1f & 4b & bd & 8b &
-8a \\
-d0 & 70 & 3e & b5 & 66 & 48 & 03 & f6 & 0e & 61 & 35 & 57 & b9 & 86 & c1 & 1d &
-9e \\
-e0 & e1 & f8 & 98 & 11 & 69 & d9 & 8e & 94 & 9b & 1e & 87 & e9 & ce & 55 & 28 &
-df \\
-f0 & 8c & a1 & 89 & 0d & bf & e6 & 42 & 68 & 41 & 99 & 2d & 0f & b0 & 54 & bb &
-16
-\end{tabular}
-\caption{The S-box for AES as a lookup-table for single bytes. The least
-significant nibble determines the column the most significant one the row.}
-\label{tab:sbox}
-\end{table}
-
-The permutation of plaintext is done as the algorithm applies some steps to the
-data. These steps are repeated in so-called rounds. Depending on the key length
-the used the number of rounds differs. Usually, in AES the steps are:
-
-\begin{itemize}
-\begin{samepage}
-\item \texttt{AddRoundKey} - In this step, the round-key is added to the block
-via the XOR operation. Figure~\ref{fig:addroundkey} shows how the byte blocks
-are combined to craft the new encrypted one.
-\item \texttt{SubBytes} - In the substitute bytes step, every byte inside the
-block is substituted with the equivalent S-box entry. This is an alphabetic
-replace encryption. Figure~\ref{fig:subbytes} illustrates how the function
-works on an example block.
-\item \texttt{ShiftRows} - Blocks can be seen as two-dimensional arrays. In this
-phase, the rows of the arrays are shifted to the left. The number of shifts
-depends on the block-size and the number of rows. The overflowing rows are
-re-added on the right side. Figure~\ref{fig:shiftrows} shows how this function
-is applied to the matrix-blocks.
-\item \texttt{MixColumns} - In this phase, the data in the columns get changed.
-This happens with a matrix multiplication where each column-vector is multiplied
-with a constant matrix to form a new vector. The multiplication happens in the
-modulo of a Galois-Field polynomial, making this operation irreversible.
-Figure~\ref{fig:mixcolumns} shows this function application. The multiplication
-happens modulo $x^4 + 1$ and the polynomial of $c(x) = 3x^3 + x^2 + x + 2$ is
-multiplied.
-\end{samepage}
-\end{itemize}
-
-\begin{figure}
-  \centering
-  \begin{tikzpicture}[remember picture]
-\matrix(m1)[matrixstyle]
-{
-$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
-$a_{1,0}$ & $a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$  \\
-$a_{2,0}$ & |[draw, fill=red!20]|\rn{a1}{a_{2,1}} & $a_{2,2}$ & $a_{2,3}$  \\
-$a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
-};
-\matrix(km)[matrixstyle, below of=m1, yshift=-3cm]
-{
-$k_{0,0}$ & $k_{0,1}$ & $k_{0,2}$ & $k_{0,3}$  \\
-$k_{1,0}$ & $k_{1,1}$ & $k_{1,2}$ & $k_{1,3}$  \\
-$k_{2,0}$ & |[draw, fill=red!20]|\rn{k1}{k_{2,1}} & $k_{2,2}$ & $k_{2,3}$  \\
-$k_{3,0}$ & $k_{3,1}$ & $k_{3,2}$ & $k_{3,3}$  \\
-};
-\node (xorbox) [XOR, right of=m1, scale=2, xshift=1cm, yshift=-0.5cm] {};
-\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
-{
-$b_{0,0}$ & $b_{0,1}$ & $b_{0,2}$ & $b_{0,3}$  \\
-$b_{1,0}$ & $b_{1,1}$ & $b_{1,2}$ & $b_{1,3}$  \\
-$b_{2,0}$ & |[draw, fill=red!20]|\rn{b1}{b_{2,1}} & $b_{2,2}$ & $b_{2,3}$  \\
-$b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
-};
-  \end{tikzpicture}
-  \begin{tikzpicture}[overlay, remember picture]
-\draw [arrow] (a1) -- (xorbox.west);
-\draw [arrow] (k1) -- (xorbox.south);
-\draw [arrow] (xorbox.east) -- (b1);
-  \end{tikzpicture}
-  \caption{Design of the \texttt{AddRoundKey} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is XORed with
-one byte of the key-block and placed in the $b$-block.}
-  \label{fig:addroundkey}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \begin{tikzpicture}[remember picture]
-\matrix(m1)[matrixstyle]
-{
-$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
-$a_{1,0}$ & $a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$  \\
-$a_{2,0}$ & |[draw, fill=red!20]|\rn{b1}{a_{2,1}} & $a_{2,2}$ & $a_{2,3}$  \\
-$a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
-};
-\node (sbox) [segblock, right of=m1, xshift=2cm] {S-box};
-\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
-{
-$b_{0,0}$ & $b_{0,1}$ & $b_{0,2}$ & $b_{0,3}$  \\
-$b_{1,0}$ & $b_{1,1}$ & $b_{1,2}$ & $b_{1,3}$  \\
-$b_{2,0}$ & |[draw, fill=red!20]|\rn{b2}{b_{2,1}} & $b_{2,2}$ & $b_{2,3}$  \\
-$b_{3,0}$ & $b_{3,1}$ & $b_{3,2}$ & $b_{3,3}$  \\
-};
-  \end{tikzpicture}
-  \begin{tikzpicture}[overlay, remember picture]
-\draw [arrow] (b1) -- (sbox);
-\draw [arrow] (sbox) -- (b2);
-  \end{tikzpicture}
-  \caption{Design of the \texttt{SubBytes} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each byte in the $a$-block is looked up in
-the S-box from Table~\ref{tab:sbox} and placed in the $b$-block.}
-  \label{fig:subbytes}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \begin{tikzpicture}[remember picture]
-\matrix(m1)[matrixstyle]
-{
-$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
-$a_{1,0}$ & $a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$  \\
-$a_{2,0}$ & $a_{2,1}$ & $a_{2,2}$ & $a_{2,3}$  \\
-$a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$ & $a_{3,3}$  \\
-};
-\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
-{
-$a_{0,0}$ & $a_{0,1}$ & $a_{0,2}$ & $a_{0,3}$  \\
-$a_{1,1}$ & $a_{1,2}$ & $a_{1,3}$ & $a_{1,0}$  \\
-$a_{2,2}$ & $a_{2,3}$ & $a_{2,0}$ & $a_{2,1}$  \\
-$a_{3,3}$ & $a_{3,0}$ & $a_{3,1}$ & $a_{3,2}$  \\
-};
-  \end{tikzpicture}
-  \begin{tikzpicture}[overlay, remember picture]
-\draw [arrow] (m1) -- (m2);
-  \end{tikzpicture}
-  \caption{Design of the \texttt{ShiftRows} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each row is shifted according to their
-Y-axis index.}
-  \label{fig:shiftrows}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \begin{tikzpicture}[remember picture]
-\matrix(m1)[matrixstyle]
-{
-$a_{0,0}$ & $a_{0,1}$ & |[draw, fill=red!20]|\rn{b11}{a_{0,2}} & $a_{0,3}$  \\
-$a_{1,0}$ & $a_{1,1}$ & |[draw, fill=red!20]|\rn{b12}{a_{1,2}} & $a_{1,3}$  \\
-$a_{2,0}$ & $a_{2,1}$ & |[draw, fill=red!20]|\rn{b13}{a_{2,2}} & $a_{2,3}$  \\
-$a_{3,0}$ & $a_{3,1}$ & |[draw, fill=red!20]|\rn{b14}{a_{3,2}} & $a_{3,3}$  \\
-};
-\node (cxmul) [segblock, right of=m1, xshift=2cm] {$\otimes c(x)$};
-\matrix(m2)[matrixstyle, right of=m1, xshift=5cm]
-{
-$b_{0,0}$ & $b_{0,1}$ & |[draw, fill=red!20]|\rn{b21}{b_{0,2}} & $b_{0,3}$  \\
-$b_{1,0}$ & $b_{1,1}$ & |[draw, fill=red!20]|\rn{b22}{b_{1,2}} & $b_{1,3}$  \\
-$b_{2,0}$ & $b_{2,1}$ & |[draw, fill=red!20]|\rn{b23}{b_{2,2}} & $b_{2,3}$  \\
-$b_{3,0}$ & $b_{3,1}$ & |[draw, fill=red!20]|\rn{b24}{b_{3,2}} & $b_{3,3}$  \\
-};
-  \end{tikzpicture}
-  \begin{tikzpicture}[overlay, remember picture]
-  \draw [arrow] (b12) -- (cxmul);
-  \draw [arrow] (cxmul) -- (b22);
-  \end{tikzpicture}
-  \caption{Design of the \texttt{MixColumns} function inside AES, according to
-the AES propsal~\cite{aesproposal}. Each column-vector in the $a$-block is
-multiplied with a polynomial matrix $c(x)$ and then placed in the $b$-block.}
-  \label{fig:mixcolumns}
-\end{figure}
-
-The algorithm applies these steps in the following order:
-
-\begin{enumerate}
-\begin{samepage}
-\item Key expansion - In this phase the round keys are generated to be later
-applied in the repeating steps. Those keys are derived from the main key. The
-round keys have the same size as the blocks used.
-\item Pre-round - In the first round only the key is added, no S-box lookup or
-shifting is applied.
-\begin{itemize}
-\item \texttt{AddRoundKey}
-\end{itemize}
-\item Encryption rounds - These are the default rounds, which can be applied
-multiple times. The number of repetitions depends on the size of key.
-\begin{itemize}
-\item \texttt{SubBytes}
-\item \texttt{ShiftRows}
-\item \texttt{MixColumns}
-\item \texttt{AddRoundKey}
-\end{itemize}
-\item Last-round - The last round  does not include the call to
-\texttt{MixColumns}, it was removed because of implementation reasons and with
-the ommiting the security was still provided, this matter is discussed in the
-Rijnadael design document~\cite{aesproposal}.
-\begin{itemize}
-\item \texttt{SubBytes}
-\item \texttt{ShiftRows}
-\item \texttt{AddRoundKey}
-\end{itemize}
-\end{samepage}
-\end{enumerate}
-
-Decryption happens in the same manner as encryption with just the order of
-function calls reversed. The only thing is that a different S-box is used, but
-that one can be derived from the encryption one. All other operations usually
-have an inverse implementation or use the same, as for example, XOR calls do not
-differ in that regard.
-
-AES is used in most encryption schemes and protocols. Like WPA2 adapts it to
-secure wireless networks. SSH uses it to have secure communication between
-computers. Intel CPUs even include AES instructions in their architectures,
-which speeds up encryption and decryption for libraries as OpenSSL.
+As Rijmen and Daemen~\etal~\cite{aesproposal} proposed, AES is a block cypher
+which operates on data blocks. The blocks are stored in a memory array,
+represented as a matrix of bytes. The algorithm consists of four steps, which
+are reused in multiple rounds, the steps operate on the memory matrix by
+shifting entries or replacing them with using a substitution box (S-BOX), this
+provides non-linearity to the algorithm. The algorithm works very similar for
+encryption and decryption, where most steps can be reused, this makes it very
+convenient to provide these functionalities directly in hardware. Intel
+processors already provide instructions, which can directly be used for
+AES~\cite{intelaes}.
 
 \subsubsection{Attacks on AES}
 
-Since AES was released, researchers and attackers targeted the cypher and tried
-to find weak spots in it. Most of these attacks targeted a smaller number of
+Researchers and attackers targeted AES since it was proposed for cryptographic
+usage. Most of these attacks targeted a smaller number of
 rounds than the algorithm describes. In 2011, Bogdanov~\etal~\cite{bicliqueaes}
 showed an attack against AES which targets all of the rounds. Their attack
 weakens the security of AES slightly, where for 128-bit key recovery the
@@ -907,25 +664,26 @@ computational complexity drops to $2^{126.1}$ and for 256-bit keys to
 $2^{254.4}$. As these are still very high complexities, the attack does not
 affect real-world usages of AES.
 
-Way more common than such cryptoanalysis attacks on AES are attacks targeting
+Way more common than cryptoanalysis attacks on AES are attacks targeting
 software and hardware implementations. For example,
-O'Flynn~\etal~\cite{aespowerboot} showed an attack on AES in the bootloader.
-While most attacks target 128 bits, they showed one against 256. They use a
-Correlation Power Analysis (CPA) on a bootloader which loads an AES-256-CBC
-encrypted firmware. Besides recovering the full key, they also achieve recovery
-of the initialisation vector. Another hardware side-channel attack was made by
-Lo~\etal~\cite{sboxpoweranal}. They target the implementation of the S-box used
-in AES-128 besides using CPA, they also use differential power analysis (DPA).
-In their work they compare both methods as they try to recover cypher keys from
-the \texttt{AddRoundKey} and \texttt{SubBytes} function calls. Their work was
-done with widespread hardware, the Arduino Uno, making it possible for more
-people to learn from such attacks, as they can replicate it with cheap
-hardware. With an increasing number of side-channel attacks on software and
-hardware, vendors increased the key-size of AES in their implementations. In
-their work, Neve~\etal~\cite{sidecomplex}, show that increasing the key-size
-does not increase the complexity of side-channel attacks in the same manner.
-They show for cache-based side-channel attacks an upgrade from 128 bits to 256
-only increases the complexity of an attack by a factor of 6 to 7.
+O'Flynn~\etal~\cite{aespowerboot} showed an attack against an AES implementation
+used to decrypt a firmware image during the bootup process. Whereas most attacks
+target 128 bits, they showed one against 256. O'Flynn~\etal~\cite{aespowerboot}
+use a correlation power analysis on the software run by the bootloader which
+loads an AES-256-CBC encrypted image. Besides recovering the full key, also the
+initialisation vector is recovered by the attack.
+
+Lo~\etal~\cite{sboxpoweranal} published another hardware side-channel attack.
+The attack targets the implementation of the S-box used in AES-128. Besides
+using correlation power analysis, they also use differential power analysis.
+They compare both methods and recover cypher keys from function calls accessing
+the S-BOX.
+
+Neve~\etal~\cite{sidecomplex}, show that increasing the key-size in AES from 128
+to 256 bits does not increase the complexity of side-channel attacks by the same
+factor. Neve~\etal~\cite{sidecomplex} show that for cache-based side-channel
+attacks an upgrade from 128 bits to 256 only increases the complexity of an
+attack by a factor of 6 to 7.
 
 \subsection{AES-GCM}
 
