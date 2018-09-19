@@ -525,12 +525,14 @@ to ensure security for the participants were introduced as standards.
 Web servers provide users with content on the Internet, mostly referred to as
 the World Wide Web (WWW). There are many different software implementations for
 such servers available, most of them being open source and free, such as
-Apache~\cite{apacheweb} and \texttt{nginx}~\cite{nginxweb}. Web servers use the
-Hyper-Text Transfer Protocol (HTTP)~\cite{rfc7231} to handle requests and
-deliver the content to the client. Web servers usually deliver websites encoded
-in Hypertext Markup Language (HTML) but can also deliver all kinds of files
-including JavaScript (JS) and Content Style Sheet (CSS), which are rendered
-together with HTML by web browsers on the client.
+Apache~\cite{apacheweb} and \texttt{nginx}~\cite{nginxweb}, which are according
+to Netcraft the two most used open source web servers~\cite{webserverpoll}.
+
+Web servers use the Hyper-Text Transfer Protocol (HTTP)~\cite{rfc7231} to handle
+requests and deliver the content to the client. Web servers usually deliver
+websites encoded in Hypertext Markup Language (HTML) but can also deliver all
+kinds of files including JavaScript (JS) and Content Style Sheet (CSS), which
+are rendered together with HTML by web browsers on the client.
 
 A client requests content from the server by sending a Uniform Resource Locator
 (URL)~\cite{rfc3986}. The server then looks up the given path in the URL and
@@ -556,19 +558,19 @@ function as in other techniques using cookies or session identifiers.
 
 \subsubsection{Access control in Apache and \texttt{nginx}}
 
-Basic Access Authentication is used by these two web servers in the default
-configuration. Apache makes use of \texttt{ht} files, which are an extension to
-the usual server configuration for users with limited permissions, see
-their documentation~\cite{apacheauthdoc} for further details. Apache introduced
-\texttt{htpasswd}-files to make use of BA, which stores the user credentials.
-\texttt{nginx} later adapted these files for their web server implementation.
-The \texttt{htpasswd}-files keep the data either in plaintext or hashed. To
-create these files Apache provides the tool
+Apache makes use of so-called \texttt{ht} files, which are an extension to the
+usual server configuration for users with limited
+permissions~\cite{apacheauthdoc}. Apache introduced \texttt{htpasswd}-files to
+make use of Basic Authentication, these files store user credentials. The
+developers of \texttt{nginx} later adapted these files for their web server
+implementation. The \texttt{htpasswd}-files keep the data either in plaintext or
+hashed. To create these files Apache provides the tool
 \texttt{htpasswd}~\cite{htpasswddoc}. This tool uses MD5 hashing per default (as
 of version 2.2.18), but it is possible to change the hashing algorithm to
-something more secure, like bcrypt. On a request including BA, the web server
-will look up the \texttt{htpasswd}-file to verify given credentials and then
-return the requested content or an error according to RFC 7231~\cite{rfc7231}.
+something more secure, like bcrypt by Provos~\etal~\cite{bcrypt}. On a request
+including Basic Authentication, the web server checks the \texttt{htpasswd} file
+to verify the given credentials and then returns the requested content or a
+permission error according to RFC 7231~\cite{rfc7231}.
 
 \subsection{Transport Layer Security}
 
