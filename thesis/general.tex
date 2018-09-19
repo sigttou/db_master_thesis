@@ -919,36 +919,26 @@ side-channels by providing accurate timing measurements. They show how the
 JavaScript timestamp function \texttt{performance.now()} can be used for timing
 measurements. Mozilla reacted to the released timing attack by lowering the
 resolution of the timing API to five microseconds~\cite{moztime}.
-Schwarz~\etal~\cite{fantasictimers} show how this countermeasure can be
+Schwarz~\etal~\cite{fantastictimers} show how this countermeasure can be
 bypassed and give an evaluation of new sources of timing information in
 JavaScript. Lipp~\etal~\cite{armageddon, keytimejs} show how a counting thread
 can be used as an accurate timing source in JavaScript and also state that the
 time measurement is accurate enough to detect keystroke interrupts.
+Schwarz~\etal~\cite{fantastictimers} state that with this accuracy of timings it
+is possible to perform cache-attacks and Rowhammer inside web browsers.
 
 \subsection{Caches}
 
 Vendors of processors introduced the principle of caching to memory management
-to speed up access times for memory. Hardware components closer to the computing
-core holding a part of memory for future requests reply faster. In modern CPUs,
-there are three or four levels of caching applied. As shown in
-Figure~\ref{fig:intelcache}, the design in Intel Kaby Lake assigns caches for
-level one and two (L1, L2) to each core and the cores share the level three
-cache (L3) between each other. L1 caches can be split up in a data and an
-instruction cache. There might also be an L0 cache for micro-operations, as it
-is implemented in the Intel Haswell architecture.
+to speed up access times for memory. According to the Intel architecture white
+paper~\cite{intelwhite}, modern CPUs implement three or four levels of caching.
+As shown in Figure~\ref{fig:intelcache}, the design in Intel Kaby Lake and Intel
+Haswell assigns caches for level one and two (L1, L2) to each core and the cores
+share the level three cache (L3) between each other. L1 caches can be split up
+in a data and an instruction cache. There might also be an L0 cache for
+micro-operations, as it is also implemented in the two described architectures.
 
-Caches are updated on each memory access. Inclusive caching is a form of
-managing the caches in a way where data stored on one level is also at lower
-levels. The architecture defines if the CPU uses inclusive caches and which ones
-are inclusive to others. The memory management part of the processor needs to
-validate memory all the time to make sure memory accesses do not get wrong data
-from other cache levels or the DRAM. Computation at rates of about four
-gigahertz would not be possible without such caching mechanisms.
-
-We refer to the Intel manual~\cite{intelsys} chapter 11.1 for more details about
-cache management in modern CPUs.
-
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \begin{tikzpicture}
     % Level 1 caching blocks
@@ -984,6 +974,19 @@ sent from the processing core to each memory storage, the one finding the
 desired memory first will answer before the others. Caches get updated with
 each request.} \label{fig:intelcache}
 \end{figure}
+
+Caches are updated on each memory access. Inclusive caching is a form of
+managing the caches in a way where data stored on one level of caching is also
+placed in lower cache levels. The microarchitecture defines if the CPU uses
+inclusive caches and which ones are inclusive to others. The memory management
+part of the processor needs to validate memory all the time to make sure memory
+accesses do not get wrong data from other cache levels or the DRAM. Computation
+at rates of about four gigahertz would not be possible without such caching
+mechanisms.
+
+We refer to the Intel manual~\cite{intelsys} chapter 11.1 and the Intel white
+paper about the architecture~\cite{intelwhite} for more details about cache
+management in modern CPUs.
 
 \subsubsection{Cache Attacks}
 
