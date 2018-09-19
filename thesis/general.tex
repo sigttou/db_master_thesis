@@ -574,56 +574,64 @@ permission error according to RFC 7231~\cite{rfc7231}.
 
 \subsection{Transport Layer Security}
 
-Transport Layer Security (TLS) describes a collection of cryptographic
-protocols. It is a standard proposed by the Internet Engineering Task Force
-(IETF), RFC 5246~\cite{rfc5246} describes this standard in detail. The IETF
-regularly updates the TLS standard by adding new protocols and removing old,
-seen as insecure, ones.
+Transport Layer Security (TLS) is a protocol proposed by the Internet
+Engineering Task Force (IETF). The TLS protocol was released to provide secure
+communication on the Internet. The current version of TLS, 1.2, as in RFC
+5246~\cite{rfc5246}, will be obsolete with the upcoming release of TLS 1.3, as
+described in RFC 8446~\cite{rfc8446}.
+
+TLS is used in web servers to provide secure connections with their clients.
+Also, applications like Virtual Private Networks (VPNs) and Secure Shell (SSH)
+make use of protocols and cyphers described in the TLS standard.
+OpenSSL~\cite{opensslweb} is an open source library providing the functionality
+described by the standard.
 
 TLS provides a secure connection between various devices, usually clients and a
-server. The connection holds the following properties:
-\begin{itemize}
-  \item Authenticated identities are provided by public-key cryptography. This
-is needed for clients to make sure they communicate with the correct server. TLS
-certificates provide the ability to prove the identity of a server. Protocols
-use the certificates as they contain the public key of the server.
-  \item Private connections between the parties are provided by symmetric
-cryptography. The participants in a connection have to agree on how they
-exchange the key for the symmetric encryption.
-  \item Reliability is provided by the so-called message authentication code
-(MAC), which prevents undetected alteration or losses during TLS communication.
-\end{itemize}
+server. The connection holds the following properties.
 
-As TLS is just a collection of protocols, the parties have to agree on which one
-they use for each part of the connection, which happens during the TLS
-Handshake. A common name for a TLS connection protocol would be
-\texttt{ECDHE-RSA-AES256-GCM-HMAC-SHA1}, which contains all three protocols used
-for the connection. Whereas \texttt{ECDHE-RSA} provides the key exchange,
-\texttt{AES256-GCM} is the  symmetric cypher during the communication and
-\texttt{HMAC-SHA1} is used to check the integrity of the transmitted data.
+\subsubsection{Authenticated Identities}
 
-TLS is commonly used in web servers to guarantee user\textquotesingle s safety,
-but also applications like Virtual Private Networks (VPNs) and Secure Shell
-(SSH) make use of protocols and cyphers described in the TLS standard. The most
-commonly used TLS implementation is OpenSSL~\cite{opensslweb}.
+Parties using TLS want to ensure that the other party is the one they claim to
+be. To protect users from phishing or accessing wrong servers, TLS provides
+certificates to authenticate identities. The client requests the certificate
+from the server, which contains its public key and possible key exchange methods
+it supports. The certificates may be signed by a certificate authority which the
+client already trusts.
+
+\subsubsection{Private Connections}
+
+According to the TLS handshake protocol, described in RFC 5246~\cite{rfc5246}
+Section 7. The server and the client agree on a cypher to encrypt data sent
+between them. TLS 1.2 states that 128-bit AES needs to be supported, but parties
+may agree on another cypher during the handshake. As AES uses a symmetric key to
+encrypt data, this key has to be exchanged between the two parties. Therefore
+the parties agree on a key exchange protocol during the handshake. TLS 1.2
+states that RSA~\cite{rsapaper} needs to be supported, but parties can choose a
+different method, such as Diffie-Hellman key exchange~\cite{deffhellpaper}, or
+use a pre-shared key.
+
+\subsubsection{Reliability}
+
+The TLS standard describes message authentication codes (MAC) to allow parties
+to detect alteration of sent messages. These codes are cryptographic hashes,
+which use the data contained in a message plus some secret data. Methods to
+protect message integrity in such a way are described in RFC 2104~\cite{rfc2104}
 
 \subsection{Cryptographic Nonces}
 
 In the early days of encrypted communication, replay-attacks were a common
 problem, as Syverson showed in his taxonomy of replay attacks in
-1994~\cite{replaytax}. Following protocols introduced nonces to resolve this
-issue. Cryptographic nonces are one-time, often pseudorandom, numbers used for
-each packet sent. They are combined with the key so that the encryption differs
-for each packet. This technique makes replay-attacks harder.
+1994~\cite{replaytax}. Rogaway~\cite{nonceintro, nonceassoc}, published a
+solution to this problem. In his work, he proposes to use one-time,
+pseudo-random data to protect symmetric cryptography from replay-attacks. He
+calls such data nonce. Rogeway~\cite{nonceassoc} states, that to ensure that
+nonces will not be reused, they should be used as a counter with a random start
+value.
 
-In most cases, nonce reuse is a problem for the protocol and results in breakage
-of the encryption of future or past packages. Hence, most protocol standards
-define a nonce as a pseudorandom, non-repeating or unpredicted
-value~\cite{noncegeneral}. It is also possible to use the nonce as a counter
-which has a random start value and increases for each packet sent. However, also
-current protocols and technologies still face problems with nonces, like
-Vanhoef~\etal showed in their work in 2017, that it is possible to force nonce
-reuse in WPA2~\cite{wpanoncereuse}.
+However, even with this idea of replay-attack protection, current
+protocols and technologies still face problems with nonces, like
+Vanhoef~\etal~\cite{wpanoncereuse} showed in 2017, that it is possible to force
+nonce reuse in WPA2.
 
 \subsection{Advanced Encryption Standard (AES)}
 
