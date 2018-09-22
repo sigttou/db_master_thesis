@@ -1118,59 +1118,7 @@ entries to read are set via the bit lines and then the desired row via the word
 lines. DRAM chips contain many memory arrays and controllers which a data bus
 connects with the processor.
 
-A one-transistor (1-T) memory cell, as seen in Figure~\ref{fig:1Tstorage}, is
-used to store a single bit. To access memory, first, the desired bit lines are
-charged with $\frac{V_{CC}}{2}$, then the word line is also charged to switch on
-the transistors. An amplifier is then used to detect changes of charge on the
-bit lines. A discharged capacitor would cause the voltage on the bit line to
-drop, whereas a charged capacitor would raise the voltage to its load. If a
-charged or discharged capacitor represents true or false for the bit state,
-depends on the design of the DRAM chip. Writing the bits works in a similar way,
-where the bit lines of a row are either set to $V_{CC}$ or $0$, and then the
-word line is used to switch on the capacitors on the row, making the capacitors
-change their charge to the level of the connected bit line.
-
-The capacitor used for the 1-T cell will either lose load over time or on
-reading access. Therefore, these capacitors need to be periodically refreshed.
-The JEDEC standard~\cite{jedec} sets the refresh cycle to a 64-millisecond
-interval. For a usual chip with $8192$ rows, this means a refresh happens all
-$7,8$ microseconds. The easiest way to do this is by reading a bit and writing
-the response back to it. In the DRAM design, it is possible to refresh each row
-at a time with a RAS without the following CAS. With this refresh cycle, the
-chip needs to hold the information which was the last refreshed row. Some DRAM
-designs, therefore, implement a so-called row refresh pointer holding this
-information.
-
-\begin{figure}
-  \centering
-  \begin{circuitikz}
-  \ctikzset{label/align = smart}
-  \draw
-  (0,0) to[short, l_=$bit\ line$] (0,-4)
-  (-1,-1) to[short, l^=$word\ line$] (4,-1)
-  (1,-2) node[nmos, rotate=-90] (mos) {}
-  (mos.gate) node[anchor=north] {}
-  (mos.drain) node[anchor=east] {}
-  (mos.source) node[anchor=west] {}
-  ;
-  \draw
-  (mos.gate) to[short] (1,-1)
-  (mos.source) to[short] (0,-2)
-  ;
-  \draw
-  (mos.drain) to[short] (2,-2)
-  (2,-3) node[rground] (A) {}
-  node[anchor=west, yshift=-0.4cm, xshift=0.2cm] {} to[pC, l_=$C$] (2,-2)
-  ;
-  \end{circuitikz}
-  \caption{Schematic of a 1-T memory storage element. The capacitor $C$ is used
-to store information. The transistor makes it possible to access the storage by
-applying charge on the connected lines. Depending on the voltage used it is a
-read or a write access.}
-  \label{fig:1Tstorage}
-\end{figure}
-
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \begin{tikzpicture}
   %blocks
@@ -1215,7 +1163,59 @@ memory in the buffer directly.}
   \label{fig:DRAMscheme}
 \end{figure}
 
-\subsubsection{Introducing bitflips to DRAM}
+A one-transistor (1-T) memory cell, as seen in Figure~\ref{fig:1Tstorage}, is
+used to store a single bit. To access memory, first, the desired bit lines are
+charged with $\frac{V_{CC}}{2}$, then the word line is also charged to switch on
+the transistors. An amplifier is then used to detect changes of charge on the
+bit lines. A discharged capacitor would cause the voltage on the bit line to
+drop, whereas a charged capacitor would raise the voltage to its load. If a
+charged or discharged capacitor represents true or false for the bit state,
+depends on the design of the DRAM chip. Writing the bits works in a similar way,
+where the bit lines of a row are either set to $V_{CC}$ or $0$, and then the
+word line is used to switch on the capacitors on the row, making the capacitors
+change their charge to the level of the connected bit line.
+
+\begin{figure}[!htb]
+  \centering
+  \begin{circuitikz}
+  \ctikzset{label/align = smart}
+  \draw
+  (0,0) to[short, l_=$bit\ line$] (0,-4)
+  (-1,-1) to[short, l^=$word\ line$] (4,-1)
+  (1,-2) node[nmos, rotate=-90] (mos) {}
+  (mos.gate) node[anchor=north] {}
+  (mos.drain) node[anchor=east] {}
+  (mos.source) node[anchor=west] {}
+  ;
+  \draw
+  (mos.gate) to[short] (1,-1)
+  (mos.source) to[short] (0,-2)
+  ;
+  \draw
+  (mos.drain) to[short] (2,-2)
+  (2,-3) node[rground] (A) {}
+  node[anchor=west, yshift=-0.4cm, xshift=0.2cm] {} to[pC, l_=$C$] (2,-2)
+  ;
+  \end{circuitikz}
+  \caption{Schematic of a 1-T memory storage element. The capacitor $C$ is used
+to store information. The transistor makes it possible to access the storage by
+applying charge on the connected lines. Depending on the voltage used it is a
+read or a write access.}
+  \label{fig:1Tstorage}
+\end{figure}
+
+The capacitor used for the 1-T cell will either lose load over time or on
+reading access. Therefore, these capacitors need to be periodically refreshed.
+The JEDEC standard~\cite{jedec} sets the refresh cycle to a 64-millisecond
+interval. For a usual chip with $8192$ rows, this means a refresh happens all
+$7,8$ microseconds. The easiest way to do this is by reading a bit and writing
+the response back to it. In the DRAM design, it is possible to refresh each row
+at a time with a RAS without the following CAS. With this refresh cycle, the
+chip needs to hold the information which was the last refreshed row. Some DRAM
+designs, therefore, implement a so-called row refresh pointer holding this
+information.
+
+\subsubsection{Introducing Bitflips to DRAM}
 
 Kim~\etal~\cite{rowhammergeneral} show how it is possible to cause bits to flip
 inside memory by correct access patterns. They use two rows as so-called
