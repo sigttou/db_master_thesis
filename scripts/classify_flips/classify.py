@@ -48,20 +48,34 @@ def print_diff(dis_a, dis_b, offset):
 
     print_dis = False
     if(index_a != index_b):
-        print("CONTEXT")
+        print("CONTEXT " + str(hex(offset)))
         print_dis = True
     elif(dis_a[index_a][0] != dis_b[index_b][0]):
-        print("OPCODE")
+        print("OPCODE " + str(hex(offset)))
     elif(dis_a[index_a][1] != dis_b[index_b][1]):
-        print("PARAM")
+        print("PARAM " + str(hex(offset)))
     else:
         # this should never pop up:
-        print("OTHER")
+        print("OTHER " + str(hex(offset)))
         print_dis = True
 
     if(print_dis):
         print("ORIG: 0x%x:\t%s\t%s" % (index_a, dis_a[index_a][0], dis_a[index_a][1]))
+
+        if(index_b > index_a):
+            search_index = index_b - 1
+            while(not dis_b.get(search_index)):
+                search_index -= 1
+            print("DIFF: 0x%x:\t%s\t%s" % (search_index, dis_b[search_index][0], dis_b[search_index][1]))
+
         print("DIFF: 0x%x:\t%s\t%s" % (index_b, dis_b[index_b][0], dis_b[index_b][1]))
+
+        if(index_b < index_a):
+            search_index = index_b + 1
+            while((not dis_b.get(search_index)) and search_index <= list(dis_b.keys())[-1]):
+                search_index += 1
+            if(search_index <= list(dis_b.keys())[-1]):
+                print("DIFF: 0x%x:\t%s\t%s" % (search_index, dis_b[search_index][0], dis_b[search_index][1]))
 
 
 def classify(filename, offset, bit):
@@ -72,7 +86,11 @@ def classify(filename, offset, bit):
     data = bytearray(section.data())
 
     dis_a = get_disass(data, base_addr)
-    data[offset - base_addr] ^= 1 << bit
+    try:
+        data[offset - base_addr] ^= 1 << bit
+    except IndexError:
+        print("CONTEXT " + str(hex(offset)))
+        return
     dis_b = get_disass(data, base_addr)
 
     print_diff(dis_a, dis_b, offset)
