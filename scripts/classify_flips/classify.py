@@ -39,26 +39,29 @@ def get_disass(data, base_addr):
 
 
 def print_diff(dis_a, dis_b, offset):
-    search = offset
-    while(not dis_a.get(search)):
-        search -= 1
-    search_b = search
-    while(not dis_b.get(search_b)):
-        search_b -= 1
+    index_a = offset
+    while(not dis_a.get(index_a)):
+        index_a -= 1
+    index_b = offset
+    while(not dis_b.get(index_b)):
+        index_b -= 1
 
-    if(search != search_b):
+    print_dis = False
+    if(index_a != index_b):
         print("CONTEXT")
-        print("ORIG: 0x%x:\t%s\t%s" % (search, dis_a[search][0], dis_a[search][1]))
-        print("DIFF: 0x%x:\t%s\t%s" % (search, dis_b[search_b][0], dis_b[search_b][1]))
-    elif(dis_a[search][0] != dis_b[search_b][0]):
+        print_dis = True
+    elif(dis_a[index_a][0] != dis_b[index_b][0]):
         print("OPCODE")
-    elif(dis_a[search][1] != dis_b[search_b][1]):
+    elif(dis_a[index_a][1] != dis_b[index_b][1]):
         print("PARAM")
     else:
         # this should never pop up:
         print("OTHER")
-        print("ORIG: 0x%x:\t%s\t%s" % (search, dis_a[search][0], dis_a[search][1]))
-        print("DIFF: 0x%x:\t%s\t%s" % (search, dis_b[search_b][0], dis_b[search_b][1]))
+        print_dis = True
+
+    if(print_dis):
+        print("ORIG: 0x%x:\t%s\t%s" % (index_a, dis_a[index_a][0], dis_a[index_a][1]))
+        print("DIFF: 0x%x:\t%s\t%s" % (index_b, dis_b[index_b][0], dis_b[index_b][1]))
 
 
 def classify(filename, offset, bit):
