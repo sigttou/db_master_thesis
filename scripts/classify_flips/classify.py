@@ -40,11 +40,15 @@ def get_disass(data, base_addr):
 
 def print_diff(dis_a, dis_b, offset):
     index_a = offset
-    while(not dis_a.get(index_a)):
+    while(not dis_a.get(index_a) and index_a >= list(dis_a.keys())[0]):
         index_a -= 1
+    if(index_a < list(dis_a.keys())[0]):
+        return
     index_b = offset
-    while(not dis_b.get(index_b)):
+    while(not dis_b.get(index_b) and index_b >= list(dis_b.keys())[0]):
         index_b -= 1
+    if(index_b < list(dis_b.keys())[0]):
+        return
 
     print_dis = False
     if(index_a != index_b):
@@ -91,7 +95,10 @@ def classify(filename, offset, bit):
         return
     dis_b = get_disass(data, base_addr)
 
-    print_diff(dis_a, dis_b, offset)
+    if(dis_a and dis_b):
+        print_diff(dis_a, dis_b, offset)
+    else:
+        print("FAIL " + str(hex(offset)))
 
     f.close()
     return
