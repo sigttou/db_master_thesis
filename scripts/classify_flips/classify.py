@@ -55,9 +55,7 @@ def print_diff(dis_a, dis_b, offset):
     elif(dis_a[index_a][1] != dis_b[index_b][1]):
         print("PARAM " + str(hex(offset)))
     else:
-        # this should never pop up:
-        print("OTHER " + str(hex(offset)))
-        print_dis = True
+        print("PREFIX " + str(hex(offset)))
 
     if(print_dis):
         print("ORIG: 0x%x:\t%s\t%s" % (index_a, dis_a[index_a][0], dis_a[index_a][1]))
