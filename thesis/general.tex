@@ -988,38 +988,39 @@ management in modern CPUs.
 
 \subsubsection{Cache Attacks}
 
-Cache Attacks are part of microarchitectural attacks, where scientists have
-shown that caching also introduces security risks to systems.
-Gruss~\etal~\cite{gruss2015cache} showed how caches provide information by
-measuring memory access-timings. They also showed how to automate attacks on
-last-level caches. Knowledge gained from this kind of attack has also played
-a role in the exploitation of the Rowhammer bug or other hardware bugs, such as
-Meltdown~\cite{meltdown} and Spectre~\cite{spectre}.
+Cache attacks are part of microarchitectural attacks where scientists have
+shown that caching also introduces security risks to systems. Dan
+Page~\cite{firstcacheside} showed that caches can be used for side channels in
+2002. Tsunoo~\etal~\cite{firstcacheDES} published an attack on Data Encryption
+Standard implementations in 2003, using timing-side-channel information gathered
+from the CPU delays caused by cache accesses. Knowledge gained from cache
+attacks is reused in the exploitation of Rowhammer, and other hardware bugs,
+such as Meltdown~\cite{meltdown} and Spectre~\cite{spectre}.
 
 \subsubsection{FLUSH+RELOAD}
 
-This cache attack is a low noise, L3 cache side-channel attack, released
-by Yarom~\etal~\cite{flushreload}. The attack provides a possibility of leaking
-information about memory accesses on shared pages between two processes. As the
-attack targets the last-level cache, it does not require the two processes to
-run on the same core. Pages are either shared when actively mapped with such
-property or mapped as shared with copy-on-write when a process is forked. One
-process is referred to as spy and the other as victim. The attack consists of
-three phases.
+This cache attack is a low noise, L3 cache side-channel attack, discovered by
+Yarom~\etal~\cite{flushreload}. The attack allows leaking information about
+memory accesses on pages shared between two processes. As the attack targets the
+last-level cache, it does not require the two processes to run on the same core.
+Pages are either shared when actively mapped with such property or mapped as
+shared with copy-on-write when a process is forked. One process is referred to
+as the spy and the other as the victim. The attack is build of rounds of attack,
+where one round is split into three phases:
 
 \begin{enumerate}
-\begin{samepage}
-\item The spy uses the instruction \texttt{clflush} to remove the given address
-from the CPU caches.
-\item The spy waits a pre-defined time.
-\item The spy accesses the flushed memory with reading access. If it takes less
-than a defined time, the victim has accessed the memory in this timespan.
-\end{samepage}
+\item The spy uses the instruction \texttt{clflush} to remove the monitored
+memory line from all CPU caches.
+\item The spy waits a pre-defined time to allow the victim to access the memory
+line.
+\item The spy measures how long it takes to read the flushed memory line. If the
+victim accessed the line, the memory would be back in the cache, which would
+take a significantly shorter time than reloading the memory from the DRAM.
 \end{enumerate}
 
-With this attack, certain information can be leaked to the spy processes. For
-example, in cryptographic algorithms, accessed code lines could leak the private
-key to the attacker.
+With this attack, information can be leaked to the spy processes. For example,
+in cryptographic algorithms, accessed code lines could leak the private key to
+the attacker.
 
 \subsection{Other Microarchitectural Attacks}
 
@@ -1035,7 +1036,8 @@ CPU\textquotesingle s out-of-order execution can lead to a leak of information
 from kernel memory to a user program. Meltdown uses cache-accesses timings to
 transmit data from the out-of-order execution to the userland program.
 Spectre~\cite{spectre} uses a similar technique to leak information, by
-exploiting the branch-prediction unit of modern CPUs.
+exploiting the branch-prediction unit of modern CPUs. The attack is used to leak
+memory between processes, where Meltdown is used to leak kernel memory.
 Kocher~\etal~\cite{spectre} state that this attack is also possible in
 JavaScript. Bulck~\etal~\cite{foreshadow} showed that it is possible to use
 another similar approach to attack the Guard eXtension (SGX) in Intel CPUs. In
