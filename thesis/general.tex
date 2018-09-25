@@ -827,9 +827,9 @@ defined in \texttt{crypto/evp/evp\_locl.h},
 file \texttt{crypto/evp/evp\_lib.c} shows the implementation for the creation of
 the cypher data.
 
-In the OpenSSL library, the $IV$ for AES-GCM is computed by using twelve
-bytes, where four bytes are a salt computed during the TLS handshake, and
-additional eight bytes represent the used nonce.
+In the OpenSSL library, the $IV$ for AES-GCM is computed by using
+\SI{12}{\byte}, where \SI{4}{\byte} are a salt computed during the TLS
+handshake, and additional \SI{8}{\byte} represent the used nonce.
 
 \subsubsection{AES-GCM Nonce Reuse Attack}
 

@@ -115,7 +115,7 @@ arises how do we automate this searching process?
 Testing all possible bitflips inside the binary and report each output would be
 a way to gain a list of all flips which would result in the printing of
 \texttt{success.}. The binary resulting from the compilation of the small
-branching code from Listing~\ref{lst:csimbranch} has a size of $8288$ bytes,
+branching code from Listing~\ref{lst:csimbranch} has a size of \SI{8288}{\byte},
 which means there are $66304$ flips to test. With an execution time of
 approximately $0,003$ seconds per run, this means that it would take close to
 $200$ seconds to test all bits inside the binary. For our automation, we want
@@ -423,8 +423,8 @@ promising for flips to be found.
 
 We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
 the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
-\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of 16
-gigabyte DRAM memory.
+\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of
+\SI{16}{\giga\byte} DRAM memory.
 
 \section{\texttt{sudo} - Privilege Escalation}
 

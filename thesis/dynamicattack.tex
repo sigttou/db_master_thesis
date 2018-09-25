@@ -92,13 +92,14 @@ sessions with only remote access to the network.
 Looking at the OpenSSL source code, we can see that for each TLS connection at
 least those two context structs are generated. There is one general SSL struct
 needed, one AES-GCM context struct and two cypher contexts, as one is used for
-sending and one for receiving. The working IVs make 32 bytes of this memory. The
-sum of the structs for one TLS connection is 1960 bytes. If we could fill the
-DRAM with just these structs, a Rowhammer flip hitting an IV happens with a
-probability of about 1.5 per cent. The attack is therefore already quite
-unlikely, as also, only lower bits are allowed to be hit, to make a nonce
-counter reuse likely. Also, we cannot just hold these structs in memory, and the
-operating system usually limits the number of parallel TLS connections.
+sending and one for receiving. The working IVs make \SI{32}{\byte} of this
+memory. The sum of the structs for one TLS connection is \SI{1960}{\byte}. If we
+could fill the DRAM with just these structs, a Rowhammer flip hitting an IV
+happens with a probability of about \SI{1.5}{\percent}. The attack is
+therefore already quite unlikely, as also, only lower bits are allowed to be
+hit, to make a nonce counter reuse likely. Also, we cannot just hold these
+structs in memory, and the operating system usually limits the number of
+parallel TLS connections.
 
 \subsection{Analysis of Practical Nonce-Reuse caused by Rowhammer}
 
@@ -133,18 +134,19 @@ close(client);
 We force the server to use AES-GCM by using the \texttt{netcat} tool with the
 parameter \texttt{--ssl-ciphers ECDHE-RSA-AES256-GCM-SHA384} as client.
 
-For our experiments, we had a memory increase of about 5440 bytes for each
+For our experiments, we had a memory increase of about \SI{5440}{\byte} for each
 forked process. With threading, the increase was slightly less. We never
 achieved filling a major part of the memory with TLS structs so that we came
-near the 1.5 per cent, the probability in practical implementations is therefore
-even lower. If it is possible to get a thousand parallel connections, with 5440
-bytes each, with 32 bytes in initialisation vectors, it will result in 5.19
-megabytes of memory representing TLS connections, with \SI{0.59}{\percent} of
-this being IVs. In a server setup with four gigabytes of DRAM, the IVs would
-only make \SI{74.5e-6}{\percent}. Even if an attacker could gain knowledge
-about the four-kilobyte pages used to store TLS structs, it would be tough to
-hit IVs with Rowhammer. Given this knowledge, we can conclude that a remote
-attack with nethammer is very unlikely to succeed in nonce misusage.
+near the \SI{1.5}{\percent}, the probability in practical implementations is
+therefore even lower. If it is possible to get a thousand parallel connections,
+with \SI{5440}{\byte} each, with \SI{32}{\byte} in initialisation vectors, it
+will result in \SI{5.19}{\mega\byte} of memory representing TLS connections,
+with \SI{0.59}{\percent} of this being IVs. In a server setup with
+\SI{4}{\giga\byte} of DRAM, the IVs would only make \SI{74.5e-6}{\percent}. Even
+if an attacker could gain knowledge about the \SI{4}{\kilo\byte} pages used to
+store TLS structs, it would be tough to hit IVs with Rowhammer. Given this
+knowledge, we can conclude that a remote attack with nethammer is very unlikely
+to succeed in nonce misusage.
 %}}}
 
 %% vim:foldmethod=expr
