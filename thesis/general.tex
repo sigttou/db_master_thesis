@@ -1232,17 +1232,30 @@ address mapping for Intel CPUs~\cite{reversemap1, reversemap2}. By using these
 addresses, they get accesses resulting in the same bank of DRAM but different
 rows. Kim~\etal~\cite{rowhammergeneral} state in their paper that they use two
 memory locations as by using just a single one, no bitflips occurred in their
-tests.
+tests. Seaborn and Dullien~\cite{blackhatrow} describe single-sided Rowhammer as
+a technique where only one row is used as the aggressor, but multiple memory
+accesses are applied to this row. The advantage of the single-sided hammering is
+that no knowledge about the DRAM address mapping is needed.
 
 \subsubsection{Exploits using Rowhammer}
 
 Seaborn and Dullien~\cite{projectzerorow} show how it is possible to use
-Rowhammer to gain privilege escalation on a standard \texttt{x86\_64} CPU and an
-escape from a sandbox. After vendors of operating systems started to introduce
-countermeasures, Gruss~\etal~\cite{flipinthewall}, came up with further,
-improved attacks making use of Rowhammer. They show more possible
-targets for flips and also show that Rowhammer can be mounted
-JavaScript~\cite{rowhammerjs}.
+Rowhammer to escape the NaCl sandbox and how to gain privilege escalation on
+\texttt{x86\_64} based systems by flipping bits in page table entries.
+Bhattacharya~\etal~\cite{rowhammerrsa} show how Rowhammer can be combined with
+timing analysis to break implementations of RSA. As
+Kim~\etal~\cite{rowhammergeneral} state, bitflips might be very likely to
+reoccur in the same position, but it is still a problem to target an exact
+memory location when just a virtual address is known. To provide higher reliable
+attacks memory spraying~\cite{projectzerorow, rowhammerjs, rowhammercloud} is
+used. Memory spraying is used to fill the memory of a system with as much
+targetable memory as possible. For example, Seaborn and
+Dullien~\cite{projectzerorow} would spray the memory with page tables.
+Razavi~\etal~\cite{flipfeng} present their work ``Flip Feng Shui'', which allows
+introducing bitflips in a fully controlled way. In their work, it is shown how
+to target specific memory areas by using Rowhammer and memory deduplication.
+Razavi~\etal~\cite{flipfeng} present an attack which allows breaking of OpenSSH
+public-key authentication and forging of GPG signatures.
 %}}}
 
 %% vim:foldmethod=expr
