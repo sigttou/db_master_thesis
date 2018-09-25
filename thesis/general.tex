@@ -929,15 +929,6 @@ is possible to perform cache-attacks and Rowhammer inside web browsers.
 
 \subsection{Caches}
 
-Vendors of processors introduced the principle of caching to memory management
-to speed up access times for memory. According to the Intel architecture white
-paper~\cite{intelwhite}, modern CPUs implement three or four levels of caching.
-As shown in Figure~\ref{fig:intelcache}, the design in Intel Kaby Lake and Intel
-Haswell assigns caches for level one and two (L1, L2) to each core and the cores
-share the level three cache (L3) between each other. L1 caches can be split up
-in a data and an instruction cache. There might also be an L0 cache for
-micro-operations, as it is also implemented in the two described architectures.
-
 \begin{figure}[!htb]
   \centering
   \begin{tikzpicture}
@@ -968,21 +959,28 @@ micro-operations, as it is also implemented in the two described architectures.
     \node (DDR32) [block, below of=MC, yshift=0.2cm, xshift=1cm] {DRAM};
     \draw [doublearrow] (L3) -- (MC);
   \end{tikzpicture}
-  \caption{Schematic of Intel Kaby Lake caching architecture. Whereas $C_x$
-represents each processing core and $L_x$ the level of the cache. Requests are
-sent from the processing core to each memory storage, the one finding the
-desired memory first will answer before the others. Caches get updated with
-each request.} \label{fig:intelcache}
+  \caption{Schematic of Intel caching architecture. $C_x$ represents each
+processing core and $L_x$ the level of the cache. Intel~\cite{intelwhite}
+states that cache content and memory requests are handled by a memory
+controller inside the processor.}
+\label{fig:intelcache}
 \end{figure}
 
-Caches are updated on each memory access. Inclusive caching is a form of
-managing the caches in a way where data stored on one level of caching is also
-placed in lower cache levels. The microarchitecture defines if the CPU uses
-inclusive caches and which ones are inclusive to others. The memory management
-part of the processor needs to validate memory all the time to make sure memory
-accesses do not get wrong data from other cache levels or the DRAM. Computation
-at rates of about four gigahertz would not be possible without such caching
-mechanisms.
+Vendors of processors introduced the principle of caching to memory management
+to speed up access times for memory. According to the Intel architecture white
+paper~\cite{intelwhite}, modern CPUs implement three or four levels of caching.
+As shown in Figure~\ref{fig:intelcache}, the design in Intel Kaby Lake and Intel
+Haswell assigns caches for level one and two (L1, L2) to each core and the cores
+share the level three cache (L3) between each other. L1 caches can be split up
+in a data and an instruction cache. There might also be an L0 cache for
+micro-operations, as it is also implemented in the two described architectures.
+
+Caches are managed and updated by the CPU\textquotesingle s memory controller.
+Inclusive caching is a form of managing the caches in a way where data stored on
+one level of caching is also placed in lower cache levels. The microarchitecture
+defines if the CPU uses inclusive caches and which ones are inclusive to others.
+The memory controller of the processor needs to keep caches up to date to make
+sure memory accesses do not get wrong data from other cache levels or the DRAM.
 
 We refer to the Intel manual~\cite{intelsys} chapter 11.1 and the Intel white
 paper about the architecture~\cite{intelwhite} for more details about cache
