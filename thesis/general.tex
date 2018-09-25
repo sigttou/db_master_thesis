@@ -1053,41 +1053,26 @@ secured against Meltdown but remain attackable against some Spectre variants.
 
 Technology is steadily changing and improving, with vendors of computer parts
 being forced to produce cheaper and better hardware every year. For DRAM this
-resulted in less quality management and a declining number of proper checks for
-hardware faults. However, the industry produced smaller and faster memory chips.
-These new chips need less space and energy to store electric load, which
-represents data. Years after vendors introduced increased densities in DRAM to
-the market, researchers like Kim~\etal~\cite{rowhammergeneral} found a critical
-bug in the chip design. With the little space and energy stored it was possible
-to use changes of charges in memory rows to interfere with data of nearby cells.
-This interference resulted in a change of bits in other memory rows.
+resulted in faster memory chips, with less space required for the same amount of
+memory and less energy required to store electric load, to represent data. After
+years of decreasing memory densities, researchers like
+Kim~\etal~\cite{rowhammergeneral} found a flaw in the DRAM chip design. With the
+little space and energy stored it was possible to use changes of charges in
+memory rows to interfere with data of nearby cells. This interference resulted
+in a change of bits in other memory rows.
 
-This behaviour and bug then caused researchers to dig deeper into the
-possibilities, and several attacks were found based on the Rowhammer bug. For
-example, Google\textquotesingle s ``Project Zero''~\cite{projectzerorow} showed,
-it is possible to use Rowhammer for privilege escalation and sandbox escapes.
-Van der Veen~\etal~\cite{drammer} state that this attack not only affects
-desktop computers but also memory in mobile devices. In their work,
-Gruss~\etal~\cite{flipinthewall} show that flipping bits in memory has further
-risks than previously thought and that Rowhammer defences need a general
-overhaul. They state that the only solution is to fix the hardware.
-Gruss~\etal~\cite{rowhammerjs} also showed that it is possible to trigger
-bitflips from JavaScript.
+This behaviour caused researchers to dig deeper into the possibilities, and
+several attacks were found based on the Rowhammer bug. For example, Seaborn and
+Dullien~\cite{projectzerorow} show that it is possible to use Rowhammer for
+privilege escalation and sandbox escapes. Van der Veen~\etal~\cite{drammer}
+state that this attack not only affects desktop computers but also memory in
+mobile devices. Gruss~\etal~\cite{rowhammerjs} published work showing that it is
+possible to trigger bitflips from JavaScript. Gruss~\etal~\cite{flipinthewall}
+also show that flipping bits in memory has further risks than previously thought
+and that Rowhammer defences need a general overhaul. They state that the only
+solution is to fix the hardware.
 
 \subsubsection{Design of Dynamic Random-Access Memory (DRAM)}
-
-Random-access memory is designed to store information as bits. A simplified view
-of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
-address decoder and buffers for input and output of the memory.
-Figure~\ref{fig:DRAMscheme} shows a simple schematic of a DRAM module. The
-storage matrix is a two-dimensional array of one-bit storage cells. Accesses to
-DRAM do not happen per bit but per row. The size of a row depends on the DRAM
-design, but it is usually a multiple of the word size. In modern systems, rows
-are larger than 64 kilobytes. The CPU sends requests for memory to the
-controller which then translates it to a sequence, where first the column
-entries to read are set via the bit lines and then the desired row via the word
-lines. DRAM chips contain many memory arrays and controllers which a data bus
-connects with the processor.
 
 \begin{figure}[!htb]
   \centering
@@ -1134,17 +1119,18 @@ memory in the buffer directly.}
   \label{fig:DRAMscheme}
 \end{figure}
 
-A one-transistor (1-T) memory cell, as seen in Figure~\ref{fig:1Tstorage}, is
-used to store a single bit. To access memory, first, the desired bit lines are
-charged with $\frac{V_{CC}}{2}$, then the word line is also charged to switch on
-the transistors. An amplifier is then used to detect changes of charge on the
-bit lines. A discharged capacitor would cause the voltage on the bit line to
-drop, whereas a charged capacitor would raise the voltage to its load. If a
-charged or discharged capacitor represents true or false for the bit state,
-depends on the design of the DRAM chip. Writing the bits works in a similar way,
-where the bit lines of a row are either set to $V_{CC}$ or $0$, and then the
-word line is used to switch on the capacitors on the row, making the capacitors
-change their charge to the level of the connected bit line.
+Random-access memory is designed to store information as bits. A simplified view
+of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
+address decoder and buffers for input and output of the memory.
+Figure~\ref{fig:DRAMscheme} shows a simple schematic of a DRAM module. The
+storage matrix is a two-dimensional array of one-bit storage cells. Accesses to
+DRAM do not happen per bit but per row. The size of a row depends on the DRAM
+design, but it is usually a multiple of the word size. In modern systems, rows
+are larger than 64 kilobytes. The CPU sends requests for memory to the
+controller which then translates it to a sequence, where first the column
+entries to read are set via the bit lines and then the desired row via the word
+lines. DRAM chips contain many memory arrays and controllers which a data bus
+connects with the processor.
 
 \begin{figure}[!htb]
   \centering
@@ -1174,6 +1160,18 @@ applying charge on the connected lines. Depending on the voltage used it is a
 read or a write access.}
   \label{fig:1Tstorage}
 \end{figure}
+
+A one-transistor (1-T) memory cell, as seen in Figure~\ref{fig:1Tstorage}, is
+used to store a single bit. To access memory, first, the desired bit lines are
+charged with $\frac{V_{CC}}{2}$, then the word line is also charged to switch on
+the transistors. An amplifier is then used to detect changes of charge on the
+bit lines. A discharged capacitor would cause the voltage on the bit line to
+drop, whereas a charged capacitor would raise the voltage to its load. If a
+charged or discharged capacitor represents true or false for the bit state,
+depends on the design of the DRAM chip. Writing the bits works in a similar way,
+where the bit lines of a row are either set to $V_{CC}$ or $0$, and then the
+word line is used to switch on the capacitors on the row, making the capacitors
+change their charge to the level of the connected bit line.
 
 The capacitor used for the 1-T cell will either lose load over time or on
 reading access. Therefore, these capacitors need to be periodically refreshed.
