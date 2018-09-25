@@ -1207,7 +1207,8 @@ load of the capacitors on their minimum level.
 Kim~\etal~\cite{rowhammergeneral}. The repeating accesses to the aggressor
 locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
 required to make sure the DRAM rows are accessed directly. According to
-Seaborn~\etal~\cite{projectzerorow} the \texttt{mfence} is not needed and even
+Seaborn and Dullien~\cite{projectzerorow} the \texttt{mfence} is not needed and
+even
 lowered the number of flips.},]
 code1a:
   mov (X), %eax
@@ -1235,9 +1236,9 @@ tests.
 
 \subsubsection{Exploits using Rowhammer}
 
-Project Zero~\cite{projectzerorow} show how it is possible to use Rowhammer to
-gain privilege escalation on a standard \texttt{x86\_64} CPU and an escape from
-a sandbox. After vendors of operating systems started to introduce
+Seaborn and Dullien~\cite{projectzerorow} show how it is possible to use
+Rowhammer to gain privilege escalation on a standard \texttt{x86\_64} CPU and an
+escape from a sandbox. After vendors of operating systems started to introduce
 countermeasures, Gruss~\etal~\cite{flipinthewall}, came up with further,
 improved attacks making use of Rowhammer. They show more possible
 targets for flips and also show that Rowhammer can be mounted
