@@ -1112,25 +1112,25 @@ solution is to fix the hardware.
   \draw [arrow] (3.5,0) -- (3,0);
   \end{tikzpicture}
   \caption{Schematic of a single DRAM module. The memory controller is managing
-the data buffer to fill or read the buffer via a bus connection to the CPU. The
-decoders are used to make sure the correct bits are accessed. The amplifier is
-used because the bit voltage differences are usually too small to change the
-memory in the buffer directly.}
+the memory array and has a Bus connection to other memory controllers and the
+CPU. The decoders are used to access bits in the memory array according to the
+sent address. The amplifier is used because the bit voltage differences are
+usually too small to change the memory in the buffer directly.}
   \label{fig:DRAMscheme}
 \end{figure}
 
 Random-access memory is designed to store information as bits. A simplified view
 of RAM is a circuit containing amplifiers, one-bit storage cell matrix, an
 address decoder and buffers for input and output of the memory.
-Figure~\ref{fig:DRAMscheme} shows a simple schematic of a DRAM module. The
-storage matrix is a two-dimensional array of one-bit storage cells. Accesses to
-DRAM do not happen per bit but per row. The size of a row depends on the DRAM
-design, but it is usually a multiple of the word size. In modern systems, rows
-are larger than 64 kilobytes. The CPU sends requests for memory to the
-controller which then translates it to a sequence, where first the column
-entries to read are set via the bit lines and then the desired row via the word
-lines. DRAM chips contain many memory arrays and controllers which a data bus
-connects with the processor.
+Figure~\ref{fig:DRAMscheme} shows a simple schematic of a DRAM module. A DRAM
+chip contains multiples of such modules, stored in so-called banks. The storage
+matrix is a two-dimensional array of one-bit storage cells. Accesses to DRAM do
+not happen per bit but per row, which has a size of \SI{4096}{bit}. The memory
+controller of the CPU sends a request, which then is translated for the DRAM
+chip to access the corresponding bank, holding the memory array which then loads
+the columns needed from the memory row. A memory array usually holds
+\SI{2}{\mega\byte}. Therefore \SI{8}{\giga\byte} of DRAM memory are
+stored in \SI{4096} memory arrays.
 
 \begin{figure}[!htb]
   \centering
@@ -1173,40 +1173,41 @@ where the bit lines of a row are either set to $V_{CC}$ or $0$, and then the
 word line is used to switch on the capacitors on the row, making the capacitors
 change their charge to the level of the connected bit line.
 
-The capacitor used for the 1-T cell will either lose load over time or on
-reading access. Therefore, these capacitors need to be periodically refreshed.
-The JEDEC standard~\cite{jedec} sets the refresh cycle to a 64-millisecond
-interval. For a usual chip with $8192$ rows, this means a refresh happens all
-$7,8$ microseconds. The easiest way to do this is by reading a bit and writing
-the response back to it. In the DRAM design, it is possible to refresh each row
-at a time with a RAS without the following CAS. With this refresh cycle, the
-chip needs to hold the information which was the last refreshed row. Some DRAM
-designs, therefore, implement a so-called row refresh pointer holding this
-information.
+The capacitor used for the 1-T cell will lose load over time and on read
+accesses. Therefore, these capacitors need to be periodically refreshed. The
+JEDEC standard~\cite{jedec} sets the refresh cycle to a \SI{64}{\milli\second}
+interval. For a usual chip with \SI{8192} rows, this means a refresh happens all
+\SI{7.8}{\micro\second}. The easiest way to do this is by reading a bit and
+writing the response back to it. So-called Row Access Strobes (RAS) are sent to
+switch on the transistors in the addressed row. Column Access Strobes (CAS) are
+then used to read the values of the capacitors holding the load storing one bit.
+As refresh cycles need to be applied, DRAM chips usually cycle over all rows,
+read them into their data buffer and write them back into memory. This
+refreshing is done to keep the capacitors on a certain charge level.
 
 \subsubsection{Introducing Bitflips to DRAM}
 
 Kim~\etal~\cite{rowhammergeneral} show how it is possible to cause bits to flip
-inside memory by correct access patterns. They use two rows as so-called
-aggressors, and one as target row. As the code in
-Listing~\ref{lst:rowhammercode} shows, the two aggressor rows are repeatedly
-read, causing memory accesses in the DRAM. The changes in electrical charge
+inside memory by certain access patterns. Two memory rows are used as so-called
+aggressors, and one as a victim row. As the code in
+Listing~\ref{lst:rowhammercode} shows, the two aggressor rows are read
+repeatedly.  The \texttt{clflush} instructions are used to empty the memory in
+the used cache lines, causing the System to access the DRAM for each read
+instead of getting the value out of the cache. The changes in electrical charge
 caused by the read accesses will by chance interfere with the loads in the
-target row and change content there. The \texttt{clflush} instructions are used
-to empty the memory in the used cache lines, causing the System to access the
-DRAM for each read instead of getting the value out of the cache. These accesses
-happen fast enough so that the refresh cycle of the DRAM cannot ensure that the
-capacitors hold enough voltage.
+target row and change content there. These accesses happen so fast that even
+with correct refresh cycles applied, the DRAM controller is unable to keep the
+load of the capacitors on their minimum level.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[
   label={lst:rowhammercode},
   style=nasm,
   caption={Code to trigger the Rowhammer bug, as of
-Kim~\etal~\cite{rowhammergeneral}. The preating accesses to the aggressor
+Kim~\etal~\cite{rowhammergeneral}. The repeating accesses to the aggressor
 locations cause bitflips in a third victim row. The \texttt{CFLUSH} is
-neededed to make sure the DRAM rows are accessed directly. According to
-Project Zero~\cite{projectzerorow} the \texttt{mfence} is not needed and even
+required to make sure the DRAM rows are accessed directly. According to
+Seaborn~\etal~\cite{projectzerorow} the \texttt{mfence} is not needed and even
 lowered the number of flips.},]
 code1a:
   mov (X), %eax
@@ -1218,20 +1219,24 @@ code1a:
 \end{lstlisting}
 \end{minipage}
 
-The memory addresses to be accessed to gain the rows next to each other are hard
-to find. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where physical
-positioning is stored. Some systems allow huge pages, where two megabytes of
-memory are used contiguously. These two megabytes will use more than one row,
-other than normal pages with the size of four kilobytes. In the paper,
-Kim~\etal~\cite{rowhammergeneral} use addresses calculated based on their
-knowledge of physical address mapping used by common CPU vendors. Project
-Zero~\cite{projectzerorow} show how it is possible to use Rowhammer to
+The memory addresses to be accessed to gain the rows next to each other are not
+obvious to find, as operating systems use virtual addresses instead of direct
+physical addresses. Linux provides a file, \texttt{/proc/<PID>/pagemap}, where
+the mapping between virtual and physical addresses is stored. Some systems allow
+huge pages, where \SI{2}{\mega\byte} of memory are used continuously. These
+\SI{2}{\mega\byte} will use more than one row, other than normal pages with the
+size of \SI{4}{\kilo\byte}. In the paper, Kim~\etal~\cite{rowhammergeneral} use
+addresses calculated based on common virtual address paging structures.
+
+\subsubsection{Exploits using Rowhammer}
+
+Project Zero~\cite{projectzerorow} show how it is possible to use Rowhammer to
 gain privilege escalation on a standard \texttt{x86\_64} CPU and an escape from
 a sandbox. After vendors of operating systems started to introduce
-countermeasures, scientists like Gruss~\etal~\cite{rowhammerjs, flipinthewall},
-came up with further, improved attacks making use of the Rowhammer bug. They
-show more possible targets for flips and also show that Rowhammer is possible in
-JavaScript.
+countermeasures, Gruss~\etal~\cite{flipinthewall}, came up with further,
+improved attacks making use of Rowhammer. They show more possible
+targets for flips and also show that Rowhammer can be mounted
+JavaScript~\cite{rowhammerjs}.
 %}}}
 
 %% vim:foldmethod=expr
