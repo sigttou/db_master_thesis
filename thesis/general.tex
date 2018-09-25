@@ -1226,7 +1226,12 @@ the mapping between virtual and physical addresses is stored. Some systems allow
 huge pages, where \SI{2}{\mega\byte} of memory are used continuously. These
 \SI{2}{\mega\byte} will use more than one row, other than normal pages with the
 size of \SI{4}{\kilo\byte}. In the paper, Kim~\etal~\cite{rowhammergeneral} use
-addresses calculated based on common virtual address paging structures.
+addresses by the scheme of $Y = X+8M$, as previous work reverse engineered this
+address mapping for Intel CPUs~\cite{reversemap1, reversemap2}. By using these
+addresses, they get accesses resulting in the same bank of DRAM but different
+rows. Kim~\etal~\cite{rowhammergeneral} state in their paper that they use two
+memory locations as by using just a single one, no bitflips occurred in their
+tests.
 
 \subsubsection{Exploits using Rowhammer}
 
