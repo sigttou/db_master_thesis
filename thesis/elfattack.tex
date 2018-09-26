@@ -29,16 +29,41 @@ of this approach where the \texttt{sudo} program is analysed and report \SI{29}
 bitflips which give an attacker root permissions without knowing the
 user\textquotesingle s password.
 
+As this approach seems feasible, we claim that it is not practical.
+Gruss~\etal~\cite{flipinthewall} analysed the program\textquotesingle s binary,
+and the dynamically loaded libraries to identify targetable memory areas, by
+this choice, areas might be missed. Also, each bit in a defined area is tested,
+which could include bits of memory which is never executed during the
+program\textquotesingle s run. Manually analysing the results may take much time
+and might not be feasible for a larger number of bitflips. Besides flipping
+opcodes, also prefixes and parameters of instructions should be tested for
+bitflips. Also, not only specific memory areas holding executable code should be
+tested but all memory in binaries accessed during the runtime of the program. As
+Gruss~\etal~\cite{flipinthewall} only check a specific version of a program,
+the reported bitflips might not work in a newer version, and the same work has
+to be done again.
+
 \section{Automating the Finding of Feasible Bitflips}
 
-Testing all possible bitflips inside the binary and report each output would be
-a way to gain a list of all flips which would result in the printing of
-\texttt{success.}. The binary resulting from the compilation of the small
-branching code from Listing~\ref{lst:csimbranch} has a size of \SI{8288}{\byte},
-which means there are $66304$ flips to test. With an execution time of
-approximately $0,003$ seconds per run, this means that it would take close to
-$200$ seconds to test all bits inside the binary. For our automation, we want
-to require way less time than that as we target larger binaries.
+Flipping all bits inside a binary, reporting each output and check for a
+successful outcome might be a way to generate a list of all exploitable
+bitflips. Looking at the compiled binary from Listing~\ref{lst:csimbranch}, in
+Section~\ref{sec:motivation}, it would result in a \SI{8288}{\byte} file.
+Following the approach of testing all possible bits, would result in \SI{66304}
+bitflips to test. With an execution time of approximately \SI{0.003}{\second}, a
+complete test run would take close to \SI{200}{\second}.
+
+Looking at \texttt{sudo}, the ELF file of the program alone has
+\SI{149080}{\byte}, without dynamic libraries, and the execution time is around
+\SI{0.03}{\second}. The same approach applied to \texttt{sudo} would, therefore,
+take around \SI{35780}{\second}, which is approximately \SI{10}{\hour}. Such a
+long time is not feasible, as dynamic libraries used also need to be tested.
+Including those libraries, would result in \SI{3219208}{\byte}, which would
+require approximately \SI{215}{\hour} or \SI{9} days.
+
+Four our automation of the exploitable bitflip search, we want to require way
+less time than with the test all bit approach, as we want to target larger
+real-world applications.
 
 \subsection{Design of the Testing Framework}
 
