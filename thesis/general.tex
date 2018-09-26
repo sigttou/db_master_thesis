@@ -1049,7 +1049,7 @@ countermeasure against Meltdown, where memory is separated between the userland
 and the kernel. By applying this current Linux-based operating systems might be
 secured against Meltdown but remain attackable against some Spectre variants.
 
-\subsection{Rowhammer}
+\section{Rowhammer}
 
 Technology is steadily changing and improving, with vendors of computer parts
 being forced to produce cheaper and better hardware every year. For DRAM this
@@ -1072,7 +1072,7 @@ also show that flipping bits in memory has further risks than previously thought
 and that Rowhammer defences need a general overhaul. They state that the only
 solution is to fix the hardware.
 
-\subsubsection{Design of Dynamic Random-Access Memory (DRAM)}
+\subsection{Design of Dynamic Random-Access Memory (DRAM)}
 
 \begin{figure}[!htb]
   \centering
@@ -1185,7 +1185,7 @@ As refresh cycles need to be applied, DRAM chips usually cycle over all rows,
 read them into their data buffer and write them back into memory. This
 refreshing is done to keep the capacitors on a certain charge level.
 
-\subsubsection{Introducing Bitflips to DRAM}
+\subsection{Introducing Bitflips to DRAM}
 
 Kim~\etal~\cite{rowhammergeneral} show how it is possible to cause bits to flip
 inside memory by certain access patterns. Two memory rows are used as so-called
@@ -1237,7 +1237,7 @@ a technique where only one row is used as the aggressor, but multiple memory
 accesses are applied to this row. The advantage of the single-sided hammering is
 that no knowledge about the DRAM address mapping is needed.
 
-\subsubsection{Exploits using Rowhammer}
+\subsection{Exploits using Rowhammer}
 
 Seaborn and Dullien~\cite{projectzerorow} show how it is possible to use
 Rowhammer to escape the NaCl sandbox and how to gain privilege escalation on
