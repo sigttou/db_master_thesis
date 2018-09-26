@@ -379,7 +379,7 @@ is combined with an application in more detail. When instrumenting a program,
 three binaries are used. One is the application to instrument, one is the
 compiled pintool, and one is Pin itself. Pin can be seen as a userland virtual
 machine. When the instrumentation starts, Pin is loaded into the address space
-of the application. Then the \texttt{ptrace} system-call is used to capture the
+of the application. Then the \texttt{ptrace} system call is used to capture the
 program\textquotesingle s behaviour. When Pin has initialised itself the tool
 overtakes the entry point of the program, or the current program counter if it
 was attached to a running application. It then uses its just-in-time (JIT)
