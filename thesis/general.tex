@@ -1256,6 +1256,33 @@ introducing bitflips in a fully controlled way. In their work, it is shown how
 to target specific memory areas by using Rowhammer and memory deduplication.
 Razavi~\etal~\cite{flipfeng} present an attack which allows breaking of OpenSSH
 public-key authentication and forging of GPG signatures.
+
+\subsection{Flipping bits in Binaries}
+
+Targeting files with Rowhammer is an improved attack on previously shown usages
+of the vulnerability. Gruss~\etal~\cite{flipinthewall} showed, that besides
+targeting page table entries, it is also possible to target shared libraries or
+ELF files directly. With this work, the possible attack vector for Rowhammer
+grew. To flip the bit in the binary using Rowhammer an attacker needs to make
+sure the file is loaded to DRAM. For execution, the operating system loads the
+ELF file in a defined structure to the memory. Targeting this loaded memory
+might be hard for an attacker, as offsets inside the memory might be
+randomised by ASLR. As we tested ELF files directly and not loaded program
+images, the flips might be best directly applied to the ELF file.
+
+Most operating systems use a disk cache. Meaning the OS will keep file content
+in DRAM as long as the memory is not used elsewhere. When a file is opened the
+system loads the content to the memory, which in case of loading an ELF would
+put the entire file into the DRAM, making it possible to apply bitflips.
+Therefore, a later call to the program would load the flipped version already
+cached in DRAM.
+
+Another idea would be to use Rowhammer on storage devices. As
+Kurmus~\etal~\cite{rowssdhammer} showed it is possible to find a similar
+behaviour as Rowhammer for solid-state drives (SSD). They refer to a problem in
+MLC NAND chips, showing the possibility of a similar attack. They show that
+corrupting a block inside the SSD is enough to gain privilege escalation. Such
+an attack could also be used to flip bits inside the stored ELF files.
 %}}}
 
 %% vim:foldmethod=expr
