@@ -122,6 +122,102 @@ bitflips. Here we look at the current implementation of AES-GCM in the TLS
 library OpenSSL. We show that nonce misusage can be reintroduced by bitflips,
 and give a probability for them to happen during a Rowhammer attack.
 
+\section{Motivational Example}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Simple branching code to illustrate how a single
+bitflip can change the execution path.},
+                   label={lst:csimbranch}]
+#include <stdio.h>
+int main(void)
+{
+  int x = 0;
+  if(x == 1)
+    printf("success\n");
+  else
+    printf("fail\n");
+  return 0;
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=nasm,
+                   caption={Disassemby of the main function created by the
+code in Listing~\ref{lst:csimbranch}. Shows disassembly at the given address
+range inside the ELF file, starting at \texttt{0x063a}.},
+                   label={lst:disasmsimplebranch}]
+0x063a  push rbp
+0x063b  mov rbp, rsp
+0x063e  sub rsp, 0x10
+0x0642  mov dword [local_4h], 0
+0x0649  cmp dword [local_4h], 1  ; [0x1:4]=0x2464c45
+0x064d  jnz 0x65d
+0x064f  lea rdi, str.success.    ; 0x6f4 ; "success"
+0x0656  call sym.imp.puts        ; int puts(const char *s)
+0x065b  jmp 0x669
+0x065d  lea rdi, str.fail.       ; 0x6fd ; "fail"
+0x0664  call sym.imp.puts        ; int puts(const char *s)
+0x0669  mov eax, 0
+0x066e  leave
+0x066f  ret
+\end{lstlisting}
+\end{minipage}
+
+Gruss~\etal~\cite{flipinthewall} present a novel showing the impact of a single
+bitflip in binaries. This thesis is about automating this process. Therefore we
+look at how a single bitflip can influence the execution path of a program. As
+an example, see the code in Listing~\ref{lst:csimbranch}. We want to change the
+binary in a way that it will print \texttt{success} instead of \texttt{fail} by
+just toggling a single bit in the binary executing this code. Looking at the
+disassembly of the code in Listing~\ref{lst:disasmsimplebranch}, we find that we
+can start with changing the \texttt{1} to a \texttt{0} at the \texttt{mov}
+instruction on address \texttt{0x0642}. Besides that, also the opcode of
+\texttt{jnz} (namely \texttt{0x75}  or \texttt{1110101}), can be changed into a
+\texttt{jz} (\texttt{0x74} or \texttt{1110100}, at address \texttt{0x064d}.
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+Opcode & Hex Value & Describtion                                           &
+Output              \\ \hline
+JZ     & 0x74      & Jump short if zero/equal                              &
+success.            \\ \hline
+JNBE   & 0x77      & Jump short if not below or equal/above                &
+success.            \\ \hline
+JNO    & 0x71      & Jump short if not overflow                            &
+fail.               \\ \hline
+JNL    & 0x7D      & Jump short if less or equal/not greater               &
+success.            \\ \hline
+GS     & 0x65      & GS segment override prefix                            &
+Illegal instruction \\ \hline
+PUSH   & 0x55      & ($50+r$) Push onto the Stack &
+Illegal instruction \\ \hline
+XOR    & 0x35      & Logical Exclusive OR                                  &
+Segmentation fault  \\ \hline
+CMC    & 0xF5      & Complement Carry Flag                                 &
+Illegal instruction \\ \hline
+\end{tabular}
+\caption{Possible opcodes resulting from changing a single bit in
+\texttt{JNZ}~\texttt{0x75} and the output when applied in the assembly showed in
+Listing~\ref{lst:disasmsimplebranch}.}
+\label{tab:jnzflips}
+\end{table}
+
+We flip each bit of the instruction opcode \texttt{jnz} to illustrate the
+possible outcomes with just a single flip. We apply all possible eight flips and
+check the resulting output of the binary. Table~\ref{tab:jnzflips} shows the
+flips and results. We can see that in three cases the program would print
+\texttt{success}, in one case the output would not change and in four cases the
+program would crash for various reasons.
+
+From this, we gain the knowledge that at least three bitflips in the opcode give
+us our desired behaviour. Additionally, we can add the bitflip to the $1$, which
+makes it four. These flips we can find manually quite fast. Now, the question
+arises how do we automate this searching process?
+
 \section{Outline of this Work}
 
 This thesis is structured as follows:
