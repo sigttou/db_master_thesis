@@ -205,20 +205,11 @@ all test runs are finished.
 
 \subsubsection{Instrumenting the Program}
 
-We use Intel Pin~\cite{pintool} for instrumentation.  We log every memory access
-during execution of the program. We want to log all accesses which happen
-inside of ELF files, which means the program\textquotesingle s binary and all
-libraries it uses during runtime. We use the same pintool for all test runs. It
-simply adds instrumenter calls to all memory accesses. The tool stores all
-accesses per file and what base-offsets are used. This information is required
-to determine which accessed area is mapped to which file later on.
-
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Example C++ code for a pintool logging memory
-accesses. At first, the tool stores the instruction bytes, and after the
-operands are stored separately, depending on if they are writing or reading
-memory.},
+accesses. The tool stores the locations of instructions and parameters if they
+point to memory. The tool stores accesses for reading and writing seperately.},
                    label={lst:pinlogcode}]
 ADDRINT ins_addr = INS_Address(ins);
 IMG img = IMG_FindByAddress(ins_addr);
@@ -255,28 +246,38 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 \end{lstlisting}
 \end{minipage}
 
+We use Intel Pin~\cite{pintool} for instrumentation. We log every memory access
+during execution of the program. We want to log all accesses which happen inside
+of ELF files, which means the program\textquotesingle s binary and all libraries
+it uses during runtime. The pintool we use to achieve this, adds instrumenter
+calls to all memory accesses. The tool then logs all accesses per binary and the
+offsets of the address in the corresponding ELF file. This information is
+required to determine which accessed area is mapped to which file later on.
+
+Listing~\ref{lst:pinlogcode} shows a code snippet of the used pintool which
+logs all memory accesses as it instruments each instruction and logs the opcode
+position and its parameters if they address memory. For Pin, the
+image~\texttt{img} refers to an ELF file stored on the hard drive, the images
+represent the program\textquotesingle executable and the dynamic libraries
+loaded during execution. The \texttt{INS\_InsertPredicatedCall} function is used
+to insert a function call on the machine code layer. The function can have an
+arbitrary number of parameters, as the user has to define the function with each
+parameter and type. Pin then inserts a call to the given function pointer and
+manages the handling of the parameters and return values in a way that the
+instrumented program\textquotesingle s execution is not affected.
+
 We instrument the program with a run resulting in a failed state, after the run,
 we filter the accessed memory areas for each file and check if areas were
 written before reading. If so, we can also skip testing those bits, as the
-program would overwrite the flips again. Listing~\ref{lst:pinlogcode} shows a
-code snippet of the used pintool which logs all memory accesses as it
-instruments each instruction and logs the opcode position and its parameters if
-they address memory. The Listing~\ref{lst:pinlogcode} also shows some API-calls
-for Intel Pin. For Pin, the image~\texttt{img} refers to a file on the
-hard drive. In most cases, these refer to dynamically loaded libraries. The
-\texttt{INS\_InsertPredicatedCall} function is used to insert a function call on
-the machine code layer. The function can have an arbitrary number of parameters,
-as the user have to define the function with each parameter and the type. Pin
-then inserts a call to the given function pointer and manages the handling of
-the parameters and return values in a way that the instrumented
-program\textquotesingle s execution is not affected.
+program would overwrite the flips again.
 
-Instrumentation is done via the configured \texttt{instrumenter\_call}. That
-entry is executed and expected to generate a file named in the
-\texttt{instrumenter\_outfile} configuration parameter. This file needs to
-follow an output format for the accesses as in \texttt{<hex:position\_in\_file>
-- str:filename}. The framework then applies a filter to that before it tests the
-actual bitflips.
+Instrumentation is done via the configured \texttt{instrumenter\_call} in the
+config file shown in Listing~\ref{lst:expconfig}. The
+\texttt{instrumenter\_call} generates the configured
+\texttt{instrumenter\_outfile}. The output file contains the memory accesses
+formated in the following manner:
+
+\mbox{\texttt{<hex:position\_in\_file> - str:filename}}.
 
 \subsubsection{Filtering Memory Accesses reported by the Instrumentation}
 
