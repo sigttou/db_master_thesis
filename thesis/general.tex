@@ -371,7 +371,7 @@ framework allows to log and modify the runtime of a program, whereas it is no
 problem to log register values or change those before or after desired
 instruction calls or even inject code to be run before given calls. Intel Pin
 provides a C++ API to write so-called pintools to analyse programs. Besides the
-C++ bindings for PIN, also a wrapper for Python exists, namely
+C++ bindings for Pin, also a wrapper for Python exists, namely
 \texttt{python-pin}~\cite{pythonpin}.
 
 Luk~\etal~\cite{pintool} describe the system of Pin and how the written pintool
@@ -395,7 +395,7 @@ code-cache and then executed. Pin always tries to execute as many instructions
 as possible without interfering it for debugging. That is why they state,
 execution of the code happens one trace at a time. A trace runs either until a
 control change happens, such as a branch, a call, or a return instruction, or a
-PIN API-call is reached. With this approach, they gain better performance than
+Pin API-call is reached. With this approach, they gain better performance than
 other instrumentation techniques.
 
 Luk~\etal~\cite{pintool}, also state that the JIT is not the bottleneck but the
@@ -411,7 +411,7 @@ original stack is not allowed to be modified. Pin detects in the JIT if the
 are called. Another optimisation for their framework is the API call
 \texttt{IPOINT\_ANYWHERE}, which specifies that the analysis call can happen
 anywhere in the instrumentation context, which allows better optimisation of the
-instruction order. Luk~\etal~\cite{pintool} claim, that PIN performs better than
+instruction order. Luk~\etal~\cite{pintool} claim, that Pin performs better than
 tools like \texttt{valgrind}~\cite{valgrind} and DynamoRIO~\cite{dynrio}.
 
 \section{Permission Model in Linux-based Systems}
