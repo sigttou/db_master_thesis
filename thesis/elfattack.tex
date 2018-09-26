@@ -67,21 +67,6 @@ real-world applications.
 
 \subsection{Design of the Testing Framework}
 
-We have implemented a framework to search bits to flip in binaries.
-Figure~\ref{fig:frameworkdesign} shows a diagram describing the
-framework\textquotesingle s design. We split it into multiple parts:
-
-\begin{enumerate}
-\begin{samepage}
-  \item Accessed memory areas are logged from all the ELF files the program
-uses.
-  \item Pre-defined filters are applied to the reported memory areas.
-  \item ELF files for each of the bit flips are generated.
-  \item Each ELF file gets executed, and the behaviour is checked against a
-pre-defined success state
-\end{samepage}
-\end{enumerate}
-
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -125,6 +110,21 @@ pre-defined success state
   \label{fig:frameworkdesign}
 \end{figure}
 
+We have implemented a framework to search for exploitable bitflips in programs.
+Figure~\ref{fig:frameworkdesign} shows a diagram describing the
+framework\textquotesingle s design. We split it into multiple parts:
+
+\begin{enumerate}
+\begin{samepage}
+  \item Accessed memory areas are logged from all the ELF files the program
+uses.
+  \item Pre-defined filters are applied to the reported memory areas.
+  \item ELF files for each of the bit flips are generated.
+  \item Each ELF file gets executed, and the behaviour is checked against a
+pre-defined success state
+\end{samepage}
+\end{enumerate}
+
 \begin{figure}
 \centering
 \begin{tikzpicture}[%
@@ -152,8 +152,8 @@ pre-defined success state
     child [missing] {}
     child {node [fsnode, optional] {run\_tool\_chroot.sh}};
 \end{tikzpicture}
-\caption{File system structure of framework and the chroot loaded for the test
-runs, whereas the chroot is created from a templated loaded from the
+\caption{File system structure of the framework and the chroot loaded for the
+test runs, whereas the chroot is created from a templated loaded from the
 \texttt{proj.root} and the \texttt{run\_tool\_chroot.sh} is copied over to the
 created chroot.}
 \label{fig:framfilesys}
@@ -162,7 +162,7 @@ created chroot.}
 Each part of the framework is designed to work on its own and has a clearly
 defined in- and output-interface. The parts can be adopted or easily used for
 other testing purposes. The configuration file for the framework defines how
-each step is applied to the application as instrumentation and verification may
+each step is applied to the application, as instrumentation and verification may
 differ for each program. The file in Listing~\ref{lst:expconfig} shows an
 example configuration file for the framework. Figure~\ref{fig:framfilesys} shows
 the layout of the framework in the file system. The configuration file tells the
@@ -191,14 +191,17 @@ starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
 \end{minipage}
 
 The framework starts with executing \texttt{instr\_tool.sh} to generate a report
-showing all bitflips, additional it can also filter them. After the
-script\textquotesingle s execution, the \texttt{tool.out}-file should contain a
-list of all byte positions to flip and test. Afterwards, the defined number of
+showing all bitflips to test. Additionally, it can also filter them. After the
+script\textquotesingle s execution, the \texttt{tool.out}-file contains a list
+of all byte positions to flip and test. Afterwards, the defined number of
 chroots are created by copying the template from \texttt{chroot\_tmpl}. The
-configured flips are split and separately copied to each \texttt{/media/flips}
-folder in the testing chroot. The \texttt{run\_tool\_chroot.sh} file is copied
-to each testing environment and executed there. This script runs the tests with
-all flips and reports successful flips to the framework.
+flipped binaries are copied to each \texttt{/media/flips} folder in the testing
+chroot. The \texttt{run\_tool\_chroot.sh} file is copied to each testing
+environment and executed there. This script runs in each of the \texttt{chroot},
+replaces the original binary with a flipped version, runs the configured program
+and checks it\textquotesingle s outcome. If the outcome matches a pre-defined
+success state, the flipped binary is stored and reported by the framework after
+all test runs are finished.
 
 \subsubsection{Instrumenting the Program}
 
