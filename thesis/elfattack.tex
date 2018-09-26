@@ -1,20 +1,33 @@
 %%%%%% Static Data Flips %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on ELF Files}\label{sec:elfattack}
 
-In this chapter, we discuss our approach to automate the finding of bitflips in
-ELF files to gain useable execution path changes. This is an idea which
-Gruss~\etal~\cite{flipinthewall} already have realised by disassembling binaries
-and manually looking for suitable flips. We start by describing the impact of a
-single bitflip on the execution path. Then, we look at our work and the
-framework we created to find bitflips in binaries to change their behaviour to a
-pre-defined state. We go on with a general overview of the framework design and
-continue with discussing the details on how we find bits to check, how the
-definition for searching works, how we test the bitflips, and how results are
-captured and verified. In the end, we discuss how these flips can be triggered
-by using Rowhammer.
+In this chapter, we present a novel to automate finding bitflips in ELF which
+yield exploitable execution path changes. Gruss~\etal~\cite{flipinthewall}
+already have shown a similar approach by disassembling binaries and manually
+looking for exploitable bitflips. We start by discussing their approach and
+point out the downsides of the manual search.
 
-\section{Why looking for exploitable bitflips manually is not practical}
+Then we describe our task and the framework we created to find exploitable
+bitflips in binaries to change their behaviour to a pre-defined state. We start
+with a general overview of the framework design and go on with discussing the
+details on how we find bits to check, how the definition for searching works,
+how we test the bitflips and how results are captured and verified.
 
+\section{Analysing the Manual Search Approach}
+
+Gruss~\etal~\cite{flipinthewall} introduce so-called opcode flipping to bypass
+the Rowhammer countermeasure of physical kernel memory isolation, which was
+proposed as a countermeasure to prevent bitflips in page tables. With opcode
+flipping, it is possible to gain privilege escalation by flipping pages which
+hold executable code. Gruss~\etal~\cite{flipinthewall} describe their approach
+as follows. First, a memory area in the binary is defined, which holds bits to
+test with flipping. Secondly, all bits in the defined area are flipped,
+resulting binaries are executed, and grouped by the outcoming results. In the
+end, the results are analysed manually, and exploitable behaviours are noted and
+then attacked with Rowhammer. Gruss~\etal~\cite{flipinthewall} show a case study
+of this approach where the \texttt{sudo} program is analysed and report \SI{29}
+bitflips which give an attacker root permissions without knowing the
+user\textquotesingle s password.
 
 \section{Automating the Finding of Feasible Bitflips}
 
