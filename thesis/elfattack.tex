@@ -320,7 +320,64 @@ Additionally, we add addresses of ELF structure headers, as remapping sections
 or change other property bits inside the ELF structure can affect the way the
 binary runs. After applying the filters, we gain a list of bytes to test.
 
-\subsubsection{Instrumenting a \texttt{setuid} Binary}
+\subsubsection{Instrumenting Binaries running as superuser}
+
+Some binaries behave differently when being run by a superuser. For example
+\texttt{sudo} is a \texttt{setuid} binary owned by \texttt{root}, therefore the
+active user running the binary is \texttt{root}. If Pin is running as a regular
+user, it is not allowed to access the memory of a superuser\textquotesingle s
+process, it, therefore, cannot instrument \texttt{sudo}. Running Pin as
+superuser is possible, but starting \texttt{sudo} as \texttt{root} does not
+trigger any authentication checks, as the calling user already got superuser
+permissions, therefore a change of the current user is not required.
+
+We use the attach-to-process functionality of Pin to bypass this behaviour. In
+that way, we can start \texttt{sudo} as a regular user and run Pin as superuser.
+We would start \texttt{sudo} and then attach to the resulting process ID. The
+problem here is that getting the process ID takes time and during that time
+\texttt{sudo} could already perform accesses which then would be missed by
+instrumentation. Therefore, we preload a shared library which keeps the
+\texttt{sudo} program in a defined state for some time to give the framework
+enough time to look up the ID and instrument all relevant code parts.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=CStyle,
+                   caption={Code of the preloaded library to keep the process
+waiting for some milliseconds, which gives enough time for Pin to attach to the
+process.},
+label=lst:presleeplib]
+extern const char *__progname;
+
+__attribute__((constructor)) void init(void)
+{
+  if(!strcmp(__progname, "instrumented_program"))
+  {
+    size_t i = 0;
+    while(i++ < 600000000);
+  }
+}
+\end{lstlisting}
+\end{minipage}
+
+Listing~\ref{lst:presleeplib} shows the code used to generate such a preloaded
+library. We use the counting while-loop instead of a call to the sleep system
+call because attaching Pin to a process in sleeping state results in a state
+where the process cannot wake up again. We also experienced the same issue with
+debugging tools on our Linux-based environment, such as \texttt{gdb}. The number
+of increments was chosen to have enough time to search the process ID and attach
+to it. The compiler attribute \texttt{constructor} makes sure the program
+executes this code on loading the library before any other code. We add the path
+to our library to the \texttt{/etc/ld.so.preload} file, which makes sure the
+library is preloaded by any executed program. The name of the executable is
+checked in Line 5 of Listing~\ref{lst:presleeplib} to only call the while-loop
+when the binary is our instrumentation target. Otherwise, all executed programs
+would execute the time-consuming while-loop during startup.
+
+\subsection{Comparing our Approach to other Ideas}
+
+\subsubsection{Symbolic Execution}
+
+\subsubsection{Fuzzing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -376,44 +433,6 @@ running as regular user. Running \texttt{sudo} with Pin attached as
 trigger the password dialogue nor trigger any of the
 authentication-check-execution paths as there is no need to change the current
 user.
-
-To bypass this, we use the attach-to-process functionality of Pin, which
-would not change the context of the program and still run it as a regular user.
-The problem for this is, finding the program ID and attach to it takes time,
-which allows us only to attach at the point where the password dialogue has
-already popped-up. Pre-loading a wait library which keeps the process sleeping
-resolves this issue, and we can instrument the relevant code of the binary.
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[style=CStyle,
-                   caption={Code of the pre-loaded library to keep the process
-waiting for some milliseconds, which gives enough time for Pin to attach to the
-process.},
-label=lst:presleeplib]
-extern const char *__progname;
-
-__attribute__((constructor)) void init(void)
-{
-  if(!strcmp(__progname, "sudo_instr"))
-  {
-    size_t i = 0;
-    while(i++ < 600000000);
-  }
-}
-\end{lstlisting}
-\end{minipage}
-
-Listing~\ref{lst:presleeplib} shows the code used to generate such a pre-loaded
-library. We use the counting while-loop instead of a call to the sleep system
-call because attaching Pin to a process in sleeping state results in a state
-where the process cannot wake up again. This is a general problem with
-GNU/Linux environments and is also a problem for other debuggers, such as
-\texttt{gdb}. The number of increments was chosen to have enough time to
-search the process ID and attach to it. The compiler attribute
-\texttt{constructor} makes sure the program executes this code on loading the
-library before any other code. We use the \texttt{/etc/ld.so.preload} file to
-make our library load for any program. To not have all programs waiting on
-start-up, we check the name of the binary before entering the loop.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Testing}
