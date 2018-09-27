@@ -298,27 +298,31 @@ ELF files is structured as follows:
 
 \mbox{\texttt{<original\_filename>\_<address\_in\_file>\_<bit\_number>}}.
 
-
 \subsection{Tweaks added to the Framework}
+
+As our framework reports all accessed memory areas, we apply some tweaks to
+these reported memory areas generated with Pin. The additions help us to either
+filter unnecessary flips and also to add memory areas which would be missed by
+instrumentation as they are only accessed during the setup phase of the program.
 
 \subsubsection{Filtering Memory Accesses}
 
-We apply a filter to the memory accesses at two different points. At first, we
-already filter inside the pintool. As we log reading and writing accesses to
-memory separately, we can check on reading accesses if the program
-has written to the position before, if so, there is no need to flip this
-location in the binary.
+As seen in Listing~\ref{lst:pinlogcode} we log accesses separated by reading and
+writing. This separation is done to apply a simple filter on the reported memory
+areas. It is not practical to test a memory area which is written before being
+read, as the program will overwrite the memory area before a bitflip would
+influence the execution path. We, therefore, test memory areas which are either
+only read or read before write access.
 
-At second, after the program run, we translate all reported accessed addresses
-to positions in ELF files. At this point, every access which does not refer to
-the file content is thrown away. We can do this as we store the base address of
-each loaded library with the pintool.
+\subsubsection{Testing flips in the ELF structure}
 
-\subsubsection{Adding ELF Structure Headers}
-
-Additionally, we add addresses of ELF structure headers, as remapping sections
-or change other property bits inside the ELF structure can affect the way the
-binary runs. After applying the filters, we gain a list of bytes to test.
+As described in Section~\ref{sec:elf}, the ELF structure contains information
+for the linker on where to load different segments of the binary in the virtual
+address space. Applying flips in this section could lead to misplaced libraries
+or different offsets for segment mappings. A call of a function might result in
+executing different code as intended and lead to a different outcome of the
+program. Therefore, we also test each bit which is used for representing ELF
+structures.
 
 \subsubsection{Instrumenting Binaries running as superuser}
 
