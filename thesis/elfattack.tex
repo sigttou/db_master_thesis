@@ -377,9 +377,31 @@ checked in Line 5 of Listing~\ref{lst:presleeplib} to only call the while-loop
 when the binary is our instrumentation target. Otherwise, all executed programs
 would execute the time-consuming while-loop during startup.
 
-\subsection{Comparing our Approach to other Ideas}
+\subsection{Comparing our Approach to other Techniques}
+
+Our described approach for finding exploitable bitflips is built on a
+fuzzing-like approach. We want to look at other ideas we tried to adapt or use
+for the searching and argument on why we stuck with our described framework.
 
 \subsubsection{Symbolic Execution}
+
+\texttt{angr}~\cite{angrpaper} offers many tools and functions for binary
+analysis and symbolic execution. For this, it can load a binary, search all
+possible states and provides locations in the executable where a state has more
+than one possible successor. \texttt{angr} allows searching for inputs and
+arguments which would end up in a state defined as successful. This state could
+either be defined by an address reached during execution or on the output of the
+program. The approach \texttt{angr} seems useful for our task of searching
+bitflips to change to a success state. However, \texttt{angr} is very limited
+when changing the executed machine code to find new states. It works well for
+finding inputs for the program to result in a success state. Testing bitflips
+with \texttt{angr} results in a limited application of the tool\textquotesingle
+s possibilities, where the binary is loaded, a bitflip is applied, and a single
+run is made which is then checked if it ends up in the defined success state.
+Changing inputs or arguments will not be tested. \texttt{angr} could be used to
+test bitflips, but the time needed would be about \SI{10} to \SI{15} times
+larger than our approach, because of the time it takes \texttt{angr} to load and
+the program and its libraries.
 
 \subsubsection{Fuzzing}
 
