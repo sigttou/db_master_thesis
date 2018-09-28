@@ -325,6 +325,7 @@ program. Therefore, we also test each bit which is used for representing ELF
 structures.
 
 \subsubsection{Instrumenting Binaries running as superuser}
+~\label{sec:setuidfix}
 
 Some binaries behave differently when being run by a superuser. For example
 \texttt{sudo} is a \texttt{setuid} binary owned by \texttt{root}, therefore the
@@ -423,7 +424,35 @@ from control flow changes could be adapted but as we do not want to build on
 source-based instrumentation because of binary changes the additional execution
 time for their binary instrumentation made the AFL adaption not practical.
 
-\subsubsection{Using a Fuzzing like Apprach}
+\subsubsection{Using a Fuzzing-like Approach}
+
+The described instrumentation based fuzzing of AFL can be adapted for
+instrumentation based bitflip testing. We used Intel Pin~\cite{pintool} for this
+approach, as it is the best performing tool for binary instrumentation. The
+implementation would instrument every instruction of the program, fork multiple
+times. One time for each bit in the instruction and the addressed memory by the
+instruction. After the forks, individual bitflips are applied to the memory of
+the new processes, and the new processes continue execution without
+instrumentation. The outputs of the new processes are then checked for resulting
+in a successful state.
+
+This approach turned out to be practical and performed well enough for simple
+programs. However, we ran into problems with applications which had the
+\texttt{setuid} property and the solution we described in
+Section~\ref{setuidfix} did not work for this time. Looking at the execution
+times for simple programs they were just a little lower, about \SI{5}{\percent}
+as for running pre-generated binary files. However, the time needed for the
+generation would be saved, and the memory footprint would be lower as the
+processes memory would be copy-on-write. We decided to not go with this
+approach, as we wanted to test all kind of binaries, also \texttt{setuid} ones,
+such as \texttt{sudo}.
+
+For our framework, we generated the binaries containing the bitflip still in
+DRAM memory, to speed up the procedure of copying and applying a bitflip. This
+generation phase of the framework showed to take less than \SI{1}{\percent} of
+the whole testing process time. Therefore, running multiple generation phases,
+because of the increased memory usage, was accepted as a downside of our chosen
+testing approach.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
