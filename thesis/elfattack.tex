@@ -403,7 +403,27 @@ test bitflips, but the time needed would be about \SI{10} to \SI{15} times
 larger than our approach, because of the time it takes \texttt{angr} to load and
 the program and its libraries.
 
-\subsubsection{Fuzzing}
+\subsubsection{Using AFL}
+
+Fuzzers like AFL~\cite{aflweb} tests a program by applying different forms of
+input and generate those applying a form of edge coverage to learn from changes
+from the control flow. AFL uses instrumentation to document the
+program\textquotesingle s control flow and adapt its test cases based on changes
+of it. AFL offers source code based instrumentation, which might not be suitable
+for testing bitflips in binaries as with that approach, the tested executables
+would change. According to their documentation~\cite{aflreadme}, AFL also offers
+instrumentation of binary-only application. Here they use the QEMU processor
+emulator~\cite{qemuweb} as a userland virtual machine. They state in Section 4
+of the documentation~\cite{aflreadme} that in this mode execution is 2-5 times
+slower than for the compile-time instrumentation approach.
+
+For testing bitflips, the adaption of test cases can be ignored, as we always
+stick to the same environment and external inputs. The AFL techniques to learn
+from control flow changes could be adapted but as we do not want to build on
+source-based instrumentation because of binary changes the additional execution
+time for their binary instrumentation made the AFL adaption not practical.
+
+\subsubsection{Using a Fuzzing like Apprach}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
