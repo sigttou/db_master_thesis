@@ -538,7 +538,7 @@ parts.
 
 \begin{table}[!htb]
 \centering
-\begin{tabular}{c|cccc|c}
+\begin{tabular}{c|cc|c}
 ELF File & opcode & parameter & Sum of flips: \\ \hline
 \texttt{ld-linux-x86-64.so.2} & 0 & 1  & 1    \\
 \texttt{libpthread.so.0}      & 0 & 2  & 2    \\
@@ -562,9 +562,10 @@ opcodes and the other two in the parameters.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
-                   caption={Diff for a bitflip applied to \texttt{libnss} in
-order to bypass a user privilege check. The call to \texttt{strcmp} is
-replaced because of the offset in the lookuptable being one off.},
+                   caption={Diff for a bitflip applied to
+\texttt{libnss\_compat.so.2} in order to bypass a user privilege check. The call
+to \texttt{strcmp} is exchanged because the offset used for the lookuptable
+is flipped.},
 label=lst:sudoex]
      351b:      0f 84 90 00 00 00       je     35b1
      3521:      48 89 ee                mov    %rbp,%rsi
@@ -575,50 +576,34 @@ label=lst:sudoex]
 \end{lstlisting}
 \end{minipage}
 
-In Listing~\ref{lst:sudoex}, we show a diff for \texttt{libnss} where a call to
-\texttt{strcmp} is replaced with a call to \texttt{malloc} by a single bitflip,
-causing the later \texttt{jne} instruction to behave differently.
+Listing~\ref{lst:sudoex} shows a diff of the \texttt{libnss\_compat.so.2} ELF
+file, where a call to \texttt{strcmp} is replaced with a call to \texttt{malloc}
+by a single bitflip, causing the later \texttt{jne} instruction to behave
+differently.
 
-Testing the \texttt{sudo} ELF files took a total of about eight hours time.
-This is less than half of the time it would need to test all possible bytes. We
-have used twenty-four parallel test runs on our described testing environment.
+Testing the \texttt{sudo} program for exploitable bitflips took about \SI{8}
+hours of CPU time. The testing was parallelised and split into 24
+\texttt{chroot} environments. Testing all bits in the \texttt{sudo} binary
+itself took about two to three times as long in an equal configuration.
 
 \section{\texttt{nginx} - HTTP Basic Authentication Bypass}
 
-For \texttt{nginx} we want to achieve an HTTP basic authentication bypass by
-flipping a single bit. This means we have to set up a page which is only
-accessible given a correct user and password credential pair.
+\texttt{nginx} is a web server, available on for Linux-based operating
+systems.~\cite{nginxweb}. The tool can be used to serve websites, and it can
+also be configured to support basic authentication schemes.
 
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Instrumentation}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+We want to find all exploitable bitflips which would allow an attacker to access
+websites protected with HTTP basic authentication. Such an exploit would bypass
+the credential check of the configured web server, which uses \texttt{htpasswd}
+for the basic authentication, as described in Section~\ref{sec:httauth}.
 
-Instrumenting \texttt{nginx} is straightforward. We had to modify the default
-configuration of the web server a little to make sure the server runs as a
-single process. This was done by not allowing \texttt{nginx} to run as a system
-daemon or make use of a master process. We also only want to instrument the code
-run when an actual request to the protected site happens. Therefore, we again
-use the functionality to attach Pin to an already running process. For
-instrumentation, we start the web server, attach Pin, sent a request to the
-protected site with wrong credentials, wait for the denying answer from the
-server and then end instrumentation. This should give us only the memory
-accessed during a basic authentication request.
-
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Testing}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
-
-Verifying successful bitflips in \texttt{nginx} works the same as in the
-instrumentation. We copy the flipped ELF, start the server, verify it is running
-by requesting a standard page, then requesting the protected site with wrong
-credentials, a successful state is reached if the web server returns the
-protected site to a request with wrong credentials. For requesting the
-protected site, we use \texttt{netcat} instead of \texttt{curl} or
-\texttt{wget}, as we only want to make sure the content is delivered to us and
-not if the HTTP reply got malformed in any way by the bitflip. We use different
-HTTP ports per server, equal to the ID of the chroot, to avoid startup problems
-during testing as the same port would be used more often otherwise, which is
-not possible.
+For testing we start \texttt{nginx}, wait for about \SI{100}{\milli\seconds} for
+the server to go into an initialised state. Then we request a website protected
+with HTTP basic authentication, providing credentials containing the correct
+username but a wrong password. If the response contains the content of the
+requested website, we add the flipped bit to the list of exploitable bitflips.
+We do not care if the response is malformed. We rate the response as successful
+as long as the protected site is leaked by it.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
