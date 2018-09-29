@@ -493,7 +493,7 @@ tool\textquotesingle s configuration allows it, also as the superuser
 \texttt{root}. For the tool to run the given command as another user, the user
 has to provide their password.
 
-We want to find all exploitable flips which would allow a user to run
+We want to find all exploitable flips which would allow an attacker to run
 \texttt{sudo} without knowing the password. This exploit would result in a
 privilege escalation as the user can become superuser with a bypass of the
 credential check.
@@ -605,7 +605,7 @@ websites protected with HTTP basic authentication. Such an exploit would bypass
 the credential check of the configured web server, which uses \texttt{htpasswd}
 for the basic authentication, as described in Section~\ref{sec:httauth}.
 
-For testing we start \texttt{nginx}, wait for about \SI{100}{\milli\second} for
+For testing, we start \texttt{nginx}, wait for about \SI{100}{\milli\second} for
 the server to go into an initialised state. Then we request a website protected
 with HTTP basic authentication, providing credentials containing the correct
 username but a wrong password. If the response contains the content of the
@@ -679,7 +679,7 @@ execution.
 
 Testing the \texttt{nginx} ELF files took a total of about \SI{18}{\hour} CPU
 time. The timing is that high, because we had to make sure the server is up and
-ready to reply to our requests for each test. For testing, we have used eight
+ready to reply to our requests for each test. For testing, we used \SI{8}
 parallel testing-\texttt{chroot} instances.
 
 \section{\texttt{sshd} - Secure Shell Server Login Bypass}
@@ -709,27 +709,29 @@ returns the name of the logged in user. We tested version $7.4p1$ of the
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 For the used \texttt{ssh} server we can only report working bitflips in the
-loaded libraries. Additional, all of the reported flips were found in the
-\texttt{.text} section of the ELF files. Table~\ref{tab:sshdres} gives an
-overview of the number of flips found per file. We can see, that most bitflips
-can be found in the \texttt{libc} of the host system, also the cryptographic
-library and the linker are affected for Rowhammer targeting a \texttt{ssh}
-login.
+loaded libraries. Additional, all of the \SI{41} reported exploitable bitflips
+were found in the \texttt{.text} section of the ELF files. Most bitflips were
+found in the \texttt{libc} library. Also the cryptographic library
+\texttt{libcrypto.so.1.0.2} and the linker contain exploitable bits.
 
 \begin{table}[!htb]
 \centering
-\begin{tabular}{c|c}
-ELF File               & \texttt{.text} \\ \hline
-\texttt{libc.so.6}         & $34$ \\
-\texttt{libcrypto.so.1.0.2} & $6$ \\
-\texttt{ld-linux-x86-64.so.2} & $1$ \\ \hline
-Sum of flips:                 & $41$
+\begin{tabular}{c|cc|c}
+ELF File & opcode & parameter & Sum of flips:      \\ \hline
+\texttt{ld-linux-x86-64.so.2} & $0$ & $1$  & $1$   \\
+\texttt{libcrypto.so.1.0.2}   & $0$ & $6$  & $6$   \\
+\texttt{libc.so.6}            & $4$ & $30$ & $34$  \\ \hline
+Sum of flips:                 & $4$ & $37$ & $41$
 \end{tabular}
-\caption{List of flips inside the \texttt{sshd(7.4p1)} program
-causing a authentication bypass, whereas all of them were in the \texttt{.text}
-sections of dynamically loaded libraries.}
-\label{tab:sshdres}
+\caption{List of bitflips causing a bypass of the credential check in the
+\texttt{ssh} server and what part of the instruction they change.},
+\label{tab:sshflips}
 \end{table}
+
+Table~\ref{tab:sshflips} lists the bitflips exploiting the remote login and also
+lists what parts of the instructions are flipped to gain the credential check
+bypass. We can see that only about \SI{10}{\percent} of the bitflips are in the
+opcode of instructions, the rest is in the parameters.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -740,107 +742,102 @@ move from \texttt{rbx} to \texttt{rdi} is exchanged with a move to
 \texttt{r15}, this changes the parameter for \texttt{EVP\_MD\_CTX\_test\_flags},
 which is highly likely to result in a different outcome.},
 label=lst:sshdex]
-   1341c5:      74 ad                  je     134174 <EVP_MD_CTX_cleanup>
-   1341c7:      be 04 00 00 00         mov    $0x4,%esi
--  1341cc:      49 89 df               mov    %rbx,%rdi
-+  1341cc:      48 89 df               mov    %rbx,%r15
-   1341cf:      e8 dc e5 f3 ff         callq  727b0 <EVP_MD_CTX_test_flags@plt>
-   1341d4:      85 c0                  test   %eax,%eax
+   1341c5:  74 ad                  je     134174 <EVP_MD_CTX_cleanup>
+   1341c7:  be 04 00 00 00         mov    $0x4,%esi
+-  1341cc:  49 89 df               mov    %rbx,%rdi
++  1341cc:  48 89 df               mov    %rbx,%r15
+   1341cf:  e8 dc e5 f3 ff         callq  727b0 <EVP_MD_CTX_test_flags@plt>
+   1341d4:  85 c0                  test   %eax,%eax
 \end{lstlisting}
 \end{minipage}
 \end{figure}
 
 In Listing~\ref{lst:sshdex}, we show a diff for the \texttt{libcrypto} library
 used by \texttt{ssh}. We can see how changing the function parameters
-(\texttt{rdi}) for \texttt{EVP\_MD\_CTX\_test\_flags@plt} changes the outcome
-of the libary call in a way ssh will think it is working with correct
-credentials.
+(\texttt{rdi}) for \texttt{EVP\_MD\_CTX\_test\_flags@plt} changes the outcome of
+the libary call in a way ssh will think it is working with correct credentials.
 
-Testing the \texttt{ssh} server took about six hours. The timing here is lower
-than for \texttt{nginx} or \texttt{sudo}, as the shell server was faster ready
-than \texttt{nginx}, and there were not so many flips to test as in
-\texttt{sudo}.
+Testing the \texttt{ssh} server took about \SI{12}{\hour} CPU time. A large time
+of the testing was waiting for the startup of the server.  We ran the tests in
+\SI{12} parallel test environments.
 
 \section{Local Login Bypass on Linux-based Operating Systems}
 
-If attackers have local access to computers and the network, the nethammer
-attack~\cite{nethammer} could be used to introduce bitflips to the running
-system. An attacker could target the login procedure to gain full access to the
-system. On most Linux-based systems local logins are done via the
-\texttt{/bin/login} application. This program is called on the default terminal
-by the init process, after the bootup of the operating system. The goal is to
-find bitflips which would allow logging in without knowing the correct password.
+When a local login is attempted on a Linux-based operating system, it is done
+via the \texttt{login} program. The program asks provides different login
+methods via PAM modules, as described in Section~\ref{sec:pamgeneral}. The login
+binary is checking credentials via a PAM module and if the given credentials are
+correct the login shell for the given user is started with the logged in
+user\textquotesingle s access rights, as described in the
+documentation~\cite{loginman}.
 
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Instrumentation}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+We want to find all bitflips which allow a bypassing of the setting where login
+credentials consist of a username and a password. Also, we assume the attacker
+knows the username but not the password.
 
-As the \texttt{/bin/login} binary has to be run as root, we use a similar
-approach as for \texttt{sudo}. We again make use of the preloaded library from
-Listing~\ref{lst:presleeplib}. The instrumentation for \texttt{/bin/login} takes
-longer than for the other programs. A reason for this could either be the key
-derivation functions used or timeouts build in to prevent brute-forcing the
-local login. We start the program and attach to the created process shortly
-after, we then try to login with a wrong password and wait for the application
-to quit. All accesses during this are logged. To simplify the procedure, we
-configure the login to allow just one login try instead of the default five.
-
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Testing}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
-
-\texttt{/bin/login} expects input on a \texttt{TTY}, the Linux terminal
-interface, using pipes to redirect the input does not work for testing. To get
-around this issue, we use \texttt{passh}~\cite{passhweb}, which is usually used
-for automating \texttt{ssh} logins, but it also works for our problem. To find
-out if we result in a successful state, we run the login binary as root, send
-credentials with a correct username and a wrong password, and check if the
-system changed the current user from \texttt{root} to the other user. We tested
-the \texttt{/bin/login} binary included in the \texttt{shadow-utils 4.4}.
+For testing, we run the \texttt{login} binary and give credentials containing
+the correct username and a wrong password. If the login succeeds, a shell will
+be started by the program. We run \texttt{whoami} to check if the login as the
+provided worked. If so, the bitflip provides a successful state for our
+testing. We tested the version $4.4$ of \texttt{shadow-utils}, which provides
+\texttt{/bin/login}.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
-For \texttt{/bin/login}, we can report bitflips in loaded libraries and also the
-program\textquotesingle s binary itself. All the found bitflips were in the
-\texttt{.text} section of ELF files. As Table~\ref{tab:loginres} shows, there
-were $178$ flips ending in a successful bypass of the login service. Most flips
-were found in \texttt{pam} libraries, which are a major part of the user
-management in Linux-based operating systems.
+We show exploitable bitflips in the \texttt{login} binary and loaded libraries.
+All the \SI{178} exploitable bitflips were in the \texttt{.text} section of the
+ELF files. Most flips were found in libraries related to PAM, which is a major
+part of the user management in Linux-based operating systems.
 
 \begin{table}[!htb]
 \centering
-\begin{tabular}{c|c}
-ELF File               & \texttt{.text} \\ \hline
-\texttt{login}         & $57$ \\
-\texttt{pam\_unix.so} & $64$ \\
-\texttt{pam\_nologin.so} & $2$ \\
-\texttt{pam\_securetty.so} & $5$ \\
-\texttt{libpam.so.0} & $50$ \\ \hline
-Sum of flips:                 & $178$
+\begin{tabular}{c|cc|c}
+ELF File & opcode & parameter & Sum of flips:     \\ \hline
+\texttt{pam\_nologin.so}   & $0$ & $2$  & $2$     \\
+\texttt{pam\_securetty.so} & $0$ & $5$  & $5$     \\
+\texttt{libpam.so.0}       & $11$ & $39$ & $50$   \\
+\texttt{login}             & $14$ & $42$ & $57*$  \\
+\texttt{pam\_unix.so}      & $30$ & $34$ & $64$ \\ \hline
+Sum of flips:              & $53$ & $122$ & $178$
 \end{tabular}
-\caption{List of flips inside the \texttt{login(shadow-utils 4.4)} program
-causing a bypass of the local login check.}
+\caption{List of bitflips causing a bypass of the credential check in the local
+login service and what part of the instruction they change. $(*)$ One bitflip
+in the \texttt{login} binary changed the execution context.},
 \label{tab:loginres}
 \end{table}
 
 \begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
-                   caption={Diff for a bitflip applied to the
-\texttt{pam\_nologin.so} binary in order to bypass a credential check. The
-pop to register $15$ gets exchanged with a pop to register $14$, therefore the
-value of \texttt{r15} and \texttt{r14} are not as desired and hence the
-execution path of \texttt{/bin/login} changes in a way the login
-procedure succeeds.},
+                   caption={Diff for the disassembly after an exploitable
+bitflip was applied to the \texttt{login} binary in order to bypass the
+credential check. Changing the instruction for \texttt{mov} to an \texttt{add}
+with addressing modes sets changes the execution calls until the \texttt{test}
+instruction is called. These changes affect register values and the outcome of
+the program.},
 label=lst:loginex]
-  c37:  41 5d                   pop    %r13
-  c39:  41 5e                   pop    %r14
-- c3b:  41 5f                   pop    %r15
-+ c3b:  41 5e                   pop    %r14
-  c3d:  c3                      retq
-  c3e:  66 90                   xchg   %ax,%ax
+  4c09:  48 89 e2                mov    %rsp,%rdx
+  4c0c:  be 02 00 00 00          mov    $0x2,%esi
+  4c11:  e8 da e3 ff ff          callq  2ff0 <pam_get_item@plt>
+  4c16:  85 c0                   test   %eax,%eax
+- 4c18:  89 c5                   mov    %eax,%ebp
+- 4c1a:  75 45                   jne    4c61 <freeaddrinfo@plt+0x1b99>
+- 4c1c:  48 8b 3b                mov    (%rbx),%rdi
+- 4c1f:  48 85 ff                test   %rdi,%rdi
+- 4c22:  74 05                   je     4c29 <freeaddrinfo@plt+0x1b61>
+- 4c24:  e8 0f e1 ff ff          callq  2d38 <free@plt>
+- 4c29:  48 8b 3c 24             mov    (%rsp),%rdi
++ 4c18:  81 c5 75 45 48 8b       add    $0x8b484575,%ebp
++ 4c1e:  3b 48 85                cmp    -0x7b(%rax),%ecx
++ 4c21:  ff 74 05 e8             pushq  -0x18(%rbp,%rax,1)
++ 4c25:  0f e1 ff                psraw  %mm7,%mm7
++ 4c28:  ff 48 8b                decl   -0x75(%rax)
++ 4c2b:  3c 24                   cmp    $0x24,%al
+  4c2d:  48 85 ff                test   %rdi,%rdi
+  4c30:  74 26                   je     4c58 <freeaddrinfo@plt+0x1b90>
+  4c32:  e8 d9 28 00 00          callq  7510 <freeaddrinfo@plt+0x4448>
 \end{lstlisting}
 \end{minipage}
 \end{figure}
