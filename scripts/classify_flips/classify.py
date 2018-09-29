@@ -38,7 +38,7 @@ def get_disass(data, base_addr):
     return disass
 
 
-def print_diff(dis_a, dis_b, offset, section_name):
+def print_diff(dis_a, dis_b, offset, filename):
     index_a = offset
     while(not dis_a.get(index_a) and index_a >= list(dis_a.keys())[0]):
         index_a -= 1
@@ -52,14 +52,14 @@ def print_diff(dis_a, dis_b, offset, section_name):
 
     print_dis = False
     if(index_a != index_b):
-        print("CONTEXT " + str(hex(offset)) + " " + section_name)
+        print("CONTEXT " + str(hex(offset)) + " " + filename)
         print_dis = True
     elif(dis_a[index_a][0] != dis_b[index_b][0]):
-        print("OPCODE " + str(hex(offset)) + " " + section_name)
+        print("OPCODE " + str(hex(offset)) + " " + filename)
     elif(dis_a[index_a][1] != dis_b[index_b][1]):
-        print("PARAM " + str(hex(offset)) + " " + section_name)
+        print("PARAM " + str(hex(offset)) + " " + filename)
     else:
-        print("PREFIX " + str(hex(offset)) + " " + section_name)
+        print("PREFIX " + str(hex(offset)) + " " + filename)
 
     if(print_dis):
         print("ORIG: 0x%x:\t%s\t%s" % (index_a, dis_a[index_a][0], dis_a[index_a][1]))
@@ -91,14 +91,14 @@ def classify(filename, offset, bit):
     try:
         data[offset - base_addr] ^= 1 << bit
     except IndexError:
-        print("CONTEXT " + str(hex(offset)) + " " + section_name)
+        print("CONTEXT " + str(hex(offset)) + " " + filename)
         return
     dis_b = get_disass(data, base_addr)
 
     if(dis_a and dis_b):
-        print_diff(dis_a, dis_b, offset, section_name)
+        print_diff(dis_a, dis_b, offset, filename)
     else:
-        print("FAIL " + str(hex(offset)) + " " + section_name)
+        print("FAIL " + str(hex(offset)) + " " + filename)
 
     f.close()
     return
