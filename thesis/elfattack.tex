@@ -459,81 +459,48 @@ testing approach.
 \chapter{Case Study: Rowhammer-targets in real-world Applications}
 \label{sec:results}
 
-In our thesis, we want to apply our tool to more extensive programs, programs
-used in the real world and with bitflips in mind which an attacker also would
-use. As Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
-\texttt{sudoers} library which when toggled, allow using \texttt{sudo} without
-or with a wrong password to still gain super-user privilege. We show that our
-framework can find a more significant number of possible bitflips to achieve
-this. We present the results of our testing framework applied to real-world
-programs, which are commonly used in Linux-based operating systems. This
-subsection will present all our applications tested, if there were adaptions
-made for instrumenting or testing, and the results for the bitflips are
-presented. For each application, we present an example bitflip and discuss why
-it caused switching to a successful state.
+In this thesis, we want to apply the framework to larger, real-world
+applications, with realistic bitflip targets. As
+Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
+\texttt{sudoers} library which, when toggled, allow using \texttt{sudo} without
+or with a wrong password to still gain the privileges of a superuser. We show
+that our framework can find a larger number of exploitable bitflips. We present
+the results of the framework applied to real-world applications, which are
+commonly used in Linux-based operating systems. In this section, we present all
+the applications we tested, the pre-defined successful outcomes, and the
+bitflips leading to the desired behaviour. For the results, we discuss how many
+exploitable bitflips were found, in what memory section they were and if in an
+instruction, in which part. In the end, we want to give some statistic about the
+exploitable bitflips and also point out the ones which were exploitable in
+multiple applications.
 
-For the results, looking at the introduced bitflips in the code in
-Listing~\ref{lst:disasmsimplebranch}, we can see that permission checks can be
-bypassed similarly for the programs we looked at. As at some point jump
-instructions will point to code executed only in a positive state. We can also
-see flips causing a success which change bits in other sections than the code
-one. We want to show which ELF files have bits where flips would cause the
-program to run into a state of success and what areas in ELF files are most
-promising for flips to be found.
-
-We used a \texttt{Debian GNU/Linux 9.5} operating system to run our tests. For
-the testing-\texttt{chroot} we have chosen the same system. The CPU used was a
-\texttt{Intel(R) Core(TM) i7 CPU 960} and the system provided a total of
-\SI{16}{\giga\byte} DRAM memory.
+For testing, we used a \texttt{Debian GNU/Linux 9.5} operating system. The
+testing environment inside the \texttt{chroot} had the same system. The CPU used
+was a \mbox{\texttt{Intel(R) Core(TM) i7-960}} and a total of
+\SI{16}{\giga\byte} DRAM memory was installed.
 
 \section{\texttt{sudo} - Privilege Escalation}
 
-For \texttt{sudo}, the task was to find all possible bitflips which allow
-switching to \texttt{root}, without knowing the correct password of the base
-user. \texttt{sudo} is a \texttt{setuid} binary, which changes its process
-owner to \texttt{root} when being executed. We ran into problems with our
-framework because of this property.
+\texttt{sudo} is a tool used for privilege management on Linux-based operating
+systems. Users can use it to execute commands as another user, if the
+tool\textquotesingle s configuration allows it, also as the superuser
+\texttt{root}. For the tool to run the given command as another user, the user
+has to provide their password.
 
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Instrumentation}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+We want to find all exploitable flips which would allow a user to run
+\texttt{sudo} without knowing the password. This exploit would result in a
+privilege escalation as the user can become superuser with a bypass of the
+credential check.
 
-For \texttt{sudo}, instrumentation became more advanced than for simple
-programs, because of the way Pin works. Usually, when starting a program with a
-pintool, Pin would modify the program\textquotesingle s memory to add its
-internal instrumenter calls and then execute the program. As \texttt{sudo} is
-owned by \texttt{root}, Pin is not allowed to modify the memory when
-running as regular user. Running \texttt{sudo} with Pin attached as
-\texttt{root} is possible, but starting \texttt{sudo} as super-user would not
-trigger the password dialogue nor trigger any of the
-authentication-check-execution paths as there is no need to change the current
-user.
-
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Testing}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
-
-Checking successful behaviour for the \texttt{sudo} program is easy, we call it
-and provide it a wrong password. There are multiple ways to verify a successful
-privilege change. For once, it is possible to use the \texttt{whoami} program
-to check if the system changed the current user to \texttt{root}. On the other
-side, it is also possible to verify by reading a file owned by the super-user.
+For testing we call \texttt{sudo} and provide a wrong password for the
+credential check. As command we provide reading a file which is owned by
+\texttt{root} and can not be read by the calling user. We define the success
+state as the call of \texttt{sudo} must print the content of the file owned by
+the superuser.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
-
-Table~\ref{tab:sudores} shows the number of found flips per file. We see that
-the possible flips are spread over multiple files. The \texttt{sudoers} library
-contains most of them, whereas we also can find flips affecting a privilege
-change in the linker (\texttt{ld-linux}) and the threading library
-(\texttt{libpthread}). As expected, most flips are in the \texttt{.text}
-section. Additionally, other main sections such as \texttt{.rodata} contain
-flips. The \texttt{.plt} section refers to the Procedure Linkage Table, which is
-used to resolve mappings between position-independent functions and their
-absolute addresses. Close to the same is the \texttt{.got.plt} section, which
-represents the global offset table, which resolves mappings for position
-independent code parts.
 
 \begin{table}[!htb]
 \centering
@@ -553,6 +520,45 @@ Sum of flips:                 & 383 & 35 & 6  & 1  & 425
 number of flips causing privilege escalation listed per section.}
 \label{tab:sudores}
 \end{table}
+
+We present \SI{425} exploitable bitflips in total. Table~\ref{tab:sudores} shows
+the ELF files where the flips were found and also shows how many bitflips were
+exploitable in different ELF sections.  Most bitflips were found in the
+\texttt{sudoers} library but also bits in the linker
+(\texttt{ld-linux-x86-64.so.2}) and the threading library
+(\texttt{libpthread.so.0}) were exploitable.
+
+We can see that most exploitable bitflips are in the \texttt{.text} sections of
+binaries, which is the section holding the executed machine code. The
+\texttt{.plt} section refers to the Procedure Linkage Table, which is used to
+resolve mappings between position-independent functions and their absolute
+addresses. Close to the same is the \texttt{.got.plt} section, which represents
+the global offset table, which resolves mappings for position-independent code
+parts.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{c|cccc|c}
+ELF File & opcode & parameter & Sum of flips: \\ \hline
+\texttt{ld-linux-x86-64.so.2} & 0 & 1  & 1    \\
+\texttt{libpthread.so.0}      & 0 & 2  & 2    \\
+\texttt{sudo}                 & 2 & 4  & 6    \\
+\texttt{libnns\_compat.so.2}  & 2 & 5  & 7    \\
+\texttt{libpam.so.0}          & 17 & 47   & 64   \\
+\texttt{pam\_unix.so}         & 36 & 50   & 86   \\
+\texttt{sudoers.so}           & 87 & 172  & 259  \\ \hline
+Sum of flips:                 & 144 & 281 & 425
+\end{tabular}
+\caption{List of bitflips causing privilege escalation in
+\texttt{sudo(1.8.19p1)} and what they change in instructions.}
+\label{tab:sudoflip}
+\end{table}
+
+From the \SI{425} exploitable flips \SI{144} were placed in the opcodes of
+instructions and \SI{281} were in parameters. Table~\ref{tab:sudoflip} shows how
+the flips are divided in that two section for the different ELF files. It is
+shown for all files. That about one-third of the flips are applied in the
+opcodes and the other two in the parameters.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
