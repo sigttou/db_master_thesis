@@ -496,7 +496,7 @@ For testing we call \texttt{sudo} and provide a wrong password for the
 credential check. As command we provide reading a file which is owned by
 \texttt{root} and can not be read by the calling user. We define the success
 state as the call of \texttt{sudo} must print the content of the file owned by
-the superuser.
+the superuser. We tested version $1.8.19p1$ of \texttt{sudo}.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
@@ -567,12 +567,12 @@ opcodes and the other two in the parameters.
 to \texttt{strcmp} is exchanged because the offset used for the lookuptable
 is flipped.},
 label=lst:sudoex]
-     351b:      0f 84 90 00 00 00       je     35b1
-     3521:      48 89 ee                mov    %rbp,%rsi
--    3524:      e8 47 dc ff ff          callq  1170 <strcmp@plt>
-+    3524:      e8 c7 dc ff ff          callq  11f0 <malloc@plt>
-     3529:      85 c0                   test   %eax,%eax
-     352b:      0f 85 3e ff ff ff       jne    346f
+  351b:  0f 84 90 00 00 00  je     35b1
+  3521:  48 89 ee           mov    %rbp,%rsi
+- 3524:  e8 47 dc ff ff     callq  1170 <strcmp@plt>
++ 3524:  e8 c7 dc ff ff     callq  11f0 <malloc@plt>
+  3529:  85 c0              test   %eax,%eax
+  352b:  0f 85 3e ff ff ff  jne    346f
 \end{lstlisting}
 \end{minipage}
 
@@ -597,62 +597,80 @@ websites protected with HTTP basic authentication. Such an exploit would bypass
 the credential check of the configured web server, which uses \texttt{htpasswd}
 for the basic authentication, as described in Section~\ref{sec:httauth}.
 
-For testing we start \texttt{nginx}, wait for about \SI{100}{\milli\seconds} for
+For testing we start \texttt{nginx}, wait for about \SI{100}{\milli\second} for
 the server to go into an initialised state. Then we request a website protected
 with HTTP basic authentication, providing credentials containing the correct
 username but a wrong password. If the response contains the content of the
 requested website, we add the flipped bit to the list of exploitable bitflips.
 We do not care if the response is malformed. We rate the response as successful
-as long as the protected site is leaked by it.
+as long as the protected site is leaked by it. We tested version $1.10.4$ of
+\texttt{nginx}.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
-For the basic authentication bypass in \texttt{nginx} we can report that only
-flips inside the program\textquotesingle s binary itself were useable.
-Table~\ref{tab:nginxres} shows the number of flips found and that all flips are
-inside the \texttt{.text} section of the \texttt{nginx} binary.
-
-\begin{table}[!htb]
-\centering
-\begin{tabular}{c|c}
-ELF File               & \texttt{.text} \\ \hline
-\texttt{nginx}         & $298$
-\end{tabular}
-\caption{List of flips inside the \texttt{nginx(1.10.3)} program causing a
-basic authentication bypass, whereas all of them were in the \texttt{.text}
-section.}
-\label{tab:nginxres}
-\end{table}
+For the authentication bypass in \texttt{nginx} we can report that only bitflips
+in the program\textquotesingle s binary itself were exploitable. We can show
+\SI{298} exploitable bitflips in the executable, where all of them were found in
+the \texttt{.text} section of the ELF file.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
-                   caption={Diff for a bitflip applied to the \texttt{nginx}
-binary in order to bypass a credential check. The call to \texttt{test} is
-replaced by \texttt{add} which doesn't chage a register the \texttt{setne}
-instruction would check.},
+                   caption={Diff of the disassembly for a bitflip applied to
+the \texttt{nginx} binary in order to bypass the credential check. The
+\texttt{add} instruction is prefixed with a \texttt{0x40}, which is the Intel
+REX prefix used to change addressing modes. This prefix changes the computation
+before the jump to \texttt{ngx\_http\_headers\_out} at address
+\texttt{0x2f1399}.},
 label=lst:nginxex]
-    3c935:      48 83 c0 01             add    $0x1,%rax
-    3c939:      0f b6 10                movzbl (%rax),%edx
--   3c93c:      84 d2                   test   %dl,%dl
-+   3c93c:      04 d2                   add    $0xd2,%al
-    3c93e:      0f 95 c1                setne  %cl
-    3c941:      80 fa 24                cmp    $0x24,%dl
+  2f1365:  00 00                 add    %al,(%rax)
+  2f1367:  00 91 7a 0c 00 00     add    %dl,0xc7a(%rcx)
+  2f136d:  00 00                 add    %al,(%rax)
+  2f136f:  00 10                 add    %dl,(%rax)
+- 2f1371:  00 00                 add    %al,(%rax)
+- 2f1373:  00 00                 add    %al,(%rax)
+- 2f1375:  00 00                 add    %al,(%rax)
+- 2f1377:  00 a1 7a 0c 00 00     add    %ah,0xc7a(%rcx)
+- 2f137d:  00 00                 add    %al,(%rax)
+- 2f137f:  00 14 00              add    %dl,(%rax,%rax,1)
+- 2f1382:  00 00                 add    %al,(%rax)
+- 2f1384:  00 00                 add    %al,(%rax)
+- 2f1386:  00 00                 add    %al,(%rax)
+- 2f1388:  b2 7a                 mov    $0x7a,%dl
+- 2f138a:  0c 00                 or     $0x0,%al
+- 2f138c:  00 00                 add    %al,(%rax)
+- 2f138e:  00 00                 add    %al,(%rax)
+- 2f1390:  0d 00 00 00 00        or     $0x0,%eax
++ 2f1371:  40 00 00              add    %al,(%rax)
++ 2f1374:  00 00                 add    %al,(%rax)
++ 2f1376:  00 00                 add    %al,(%rax)
++ 2f1378:  a1 7a 0c 00 00 00 00  movabs 0x1400000000000c7a,%eax
++ 2f137f:  00 14
++ 2f1381:  00 00                 add    %al,(%rax)
++ 2f1383:  00 00                 add    %al,(%rax)
++ 2f1385:  00 00                 add    %al,(%rax)
++ 2f1387:  00 b2 7a 0c 00 00     add    %dh,0xc7a(%rdx)
++ 2f138d:  00 00                 add    %al,(%rax)
++ 2f138f:  00 0d 00 00 00 00     add    %cl,0x0(%rip)  <ngx_http_headers_out>
+  2f1395:  00 00                 add    %al,(%rax)
+  2f1397:  00 c7                 add    %al,%bh
+  2f1399:  7a 0c                 jp     2f13a7  <ngx_http_headers_out>
+  2f139b:  00 00                 add    %al,(%rax)
 \end{lstlisting}
 \end{minipage}
 
-In Listing~\ref{lst:nginxex}, we show a diff for the \texttt{nginx} binary, the
-flip in this example changes a call to \texttt{test} to \texttt{add}. The
-instruction afterwards is \texttt{setn}, used to set a byte if the condition,
-in this case ``not equal'', is met. As \texttt{add}
-does not affect the \texttt{ZF} register, which the \texttt{setn} checks, the
-code is likely to behave differently.
+\SI{65} bitflips changed the opcode of an instruction \SI{231} changed
+parameters. \SI{2} bitflips changed the context of the executable memory area
+because the instruction length was changed by the flip and therefore the context
+was changed. In Listing~\ref{lst:nginxex} we can see how changing the lenght of
+the \texttt{add} instruction can result in a different outcome for the
+execution.
 
-Testing the \texttt{nginx} ELF files took a total of about eighteen hours time.
-The timing is that high cause we had to make sure the server is up and ready to
-reply to our requests for each test. For testing, we have used eight parallel
-testing instances.
+Testing the \texttt{nginx} ELF files took a total of about \SI{18}{\hour} CPU
+time. The timing is that high, because we had to make sure the server is up and
+ready to reply to our requests for each test. For testing, we have used eight
+parallel testing-\texttt{chroot} instances.
 
 \section{\texttt{sshd} - Secure Shell Server Login Bypass}
 
