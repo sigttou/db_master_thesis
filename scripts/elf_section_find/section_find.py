@@ -35,7 +35,8 @@ def main(log_file):
     for l in lines:
         entry = parse("SUCCESS: {file}_0x{offset}_{} - {}", l)
         if(entry):
-            print(entry["file"] + " " + get_section(entry["file"], int(entry["offset"], 16)))
+            print(entry["file"] + " " + get_section(entry["file"], int(entry["offset"], 16)) +
+                  " 0x" + entry["offset"])
 
 
 if __name__ == '__main__':
