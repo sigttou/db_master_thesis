@@ -563,7 +563,7 @@ Sum of flips:                 & 144 & 281 & 425
 From the \SI{425} exploitable flips \SI{144} were placed in the opcodes of
 instructions and \SI{281} were in parameters. Table~\ref{tab:sudoflip} shows how
 the flips are divided in that two section for the different ELF files. It is
-shown for all files. That about one-third of the flips are applied in the
+shown for all files. That about one third of the flips are applied in the
 opcodes and the other two in the parameters.
 
 \begin{figure}
@@ -804,9 +804,14 @@ Sum of flips:              & $53$ & $122$ & $178$
 \end{tabular}
 \caption{List of bitflips causing a bypass of the credential check in the local
 login service and what part of the instruction they change. $(*)$ One bitflip
-in the \texttt{login} binary changed the execution context.},
+in the \texttt{login} binary changed the execution context.}
 \label{tab:loginres}
 \end{table}
+
+Table~\ref{tab:loginres} shows the bitflips which result in a successful bypass
+of the \texttt{login} credential check, allowing the login of a user without
+providing the correct password. We can see that about one third of the bitflips
+are in the opcodes of instructions and the others are in the parameters.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -842,16 +847,16 @@ label=lst:loginex]
 \end{minipage}
 \end{figure}
 
-In Listing~\ref{lst:loginex}, we show a diff for the \texttt{pam\_nologin.so}
-file after a bitflip was applied at the address \texttt{0x0c3b}. With
-the applied flip, register values get changed as the value which should be
-written to register $15$ is placed in register $14$ instead, overwriting the
-value placed there before.
+In Listing~\ref{lst:loginex}, we show a diff for the disassembly of the
+\texttt{login} binary, where the execution context has been changed by flipping
+a bit in the \texttt{mov} instruction opcode, resulting in a longer
+\texttt{add} instruction and some other pointless instruction calls before the
+call of \texttt{test}. These changes provide other values which cause a
+successful login.
 
-Testing \texttt{/bin/login} tool about 35 hours. This is mainly due to the long
-response time by the program itself, which is probably a countermeasure against
-local brute-forcing. Also, there were by far the most memory accesses reported
-by the instrumentation pintool.
+The testing of the local login service took about \SI{35}{\hour} of CPU time.
+This long time is due to the long response time by the program itself, which is
+used as a countermeasure against local brute-forcing.
 
 \section{Summery of the Results}
 
