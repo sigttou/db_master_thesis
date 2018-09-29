@@ -124,6 +124,7 @@ and give a probability for them to happen during a Rowhammer attack.
 
 \section{Motivational Example}\label{sec:motivation}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Simple branching code to illustrate how a single
@@ -141,7 +142,9 @@ int main(void)
 }
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=nasm,
                    caption={Disassemby of the main function created by the
@@ -164,6 +167,7 @@ range inside the ELF file, starting at \texttt{0x063a}.},
 0x066f  ret
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 Gruss~\etal~\cite{flipinthewall} present a novel showing the impact of a single
 bitflip in binaries. This thesis is about automating this process. Therefore we

@@ -18,6 +18,7 @@ interesting connection between those two is the initialisation vector
 \texttt{GCM128\_CONTEXT} provides the hashing and multiplying function in the
 Galois field.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Struct used by OpenSSL to describe the AES-GCM
@@ -41,7 +42,9 @@ typedef struct {
 } EVP_AES_GCM_CTX;
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Context struct describing the Cipher used in TLS.
@@ -71,6 +74,7 @@ struct evp_cipher_ctx_st {
 } /* EVP_CIPHER_CTX */ ;
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 For the attack to work, we would need the IV to be reused, just as described by
 Böck~\etal~\cite{gcmnonceattack}. As OpenSSL uses a counter IV for AES-GCM
@@ -110,6 +114,7 @@ any client open and sent some string every second. Listing~\ref{lst:ssltestcode}
 shows the code parts used in both cases. The code makes sure the connection will
 send the reply every second, as long as the client accepts the write.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={},
@@ -130,6 +135,7 @@ SSL_free(ssl);
 close(client);
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 We force the server to use AES-GCM by using the \texttt{netcat} tool with the
 parameter \texttt{--ssl-ciphers ECDHE-RSA-AES256-GCM-SHA384} as client.

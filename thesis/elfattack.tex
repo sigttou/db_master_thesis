@@ -169,6 +169,7 @@ the layout of the framework in the file system. The configuration file tells the
 framework where to find each of the required files. The template chroot
 describes the system used for testing.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=nasm,
                    caption={JSON style config file for the framework, showing
@@ -189,6 +190,7 @@ starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
 }
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 The framework starts with executing \texttt{instr\_tool.sh} to generate a report
 showing all bitflips to test. Additionally, it can also filter them. After the
@@ -205,6 +207,7 @@ all test runs are finished.
 
 \subsubsection{Instrumenting the Program}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Example C++ code for a pintool logging memory
@@ -245,6 +248,7 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 }
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 We use Intel Pin~\cite{pintool} for instrumentation. We log every memory access
 during execution of the program. We want to log all accesses which happen inside
@@ -345,6 +349,7 @@ instrumentation. Therefore, we preload a shared library which keeps the
 \texttt{sudo} program in a defined state for some time to give the framework
 enough time to look up the ID and instrument all relevant code parts.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=CStyle,
                    caption={Code of the preloaded library to keep the process
@@ -363,6 +368,7 @@ __attribute__((constructor)) void init(void)
 }
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 Listing~\ref{lst:presleeplib} shows the code used to generate such a preloaded
 library. We use the counting while-loop instead of a call to the sleep system
@@ -560,6 +566,7 @@ the flips are divided in that two section for the different ELF files. It is
 shown for all files. That about one-third of the flips are applied in the
 opcodes and the other two in the parameters.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
                    caption={Diff for a bitflip applied to
@@ -575,6 +582,7 @@ label=lst:sudoex]
   352b:  0f 85 3e ff ff ff  jne    346f
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 Listing~\ref{lst:sudoex} shows a diff of the \texttt{libnss\_compat.so.2} ELF
 file, where a call to \texttt{strcmp} is replaced with a call to \texttt{malloc}
@@ -615,6 +623,7 @@ in the program\textquotesingle s binary itself were exploitable. We can show
 \SI{298} exploitable bitflips in the executable, where all of them were found in
 the \texttt{.text} section of the ELF file.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
                    caption={Diff of the disassembly for a bitflip applied to
@@ -659,6 +668,7 @@ label=lst:nginxex]
   2f139b:  00 00                 add    %al,(%rax)
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 \SI{65} bitflips changed the opcode of an instruction \SI{231} changed
 parameters. \SI{2} bitflips changed the context of the executable memory area
@@ -735,6 +745,7 @@ sections of dynamically loaded libraries.}
 \label{tab:sshdres}
 \end{table}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
                    caption={Diff for a bitflip applied to the
@@ -751,6 +762,7 @@ label=lst:sshdex]
    1341d4:      85 c0                  test   %eax,%eax
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 In Listing~\ref{lst:sshdex}, we show a diff for the \texttt{libcrypto} library
 used by \texttt{ssh}. We can see how changing the function parameters
@@ -827,6 +839,7 @@ causing a bypass of the local login check.}
 \label{tab:loginres}
 \end{table}
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[style=diff,
                    caption={Diff for a bitflip applied to the
@@ -844,6 +857,7 @@ label=lst:loginex]
   c3e:  66 90                   xchg   %ax,%ax
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 In Listing~\ref{lst:loginex}, we show a diff for the \texttt{pam\_nologin.so}
 file after a bitflip was applied at the address \texttt{0x0c3b}. With

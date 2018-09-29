@@ -1201,6 +1201,7 @@ target row and change content there. These accesses happen so fast that even
 with correct refresh cycles applied, the DRAM controller is unable to keep the
 load of the capacitors on their minimum level.
 
+\begin{figure}
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[
   label={lst:rowhammercode},
@@ -1221,6 +1222,7 @@ code1a:
   jmp code1a
 \end{lstlisting}
 \end{minipage}
+\end{figure}
 
 The memory addresses to be accessed to gain the rows next to each other are not
 obvious to find, as operating systems use virtual addresses instead of direct
