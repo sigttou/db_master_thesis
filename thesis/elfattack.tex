@@ -684,39 +684,25 @@ parallel testing-\texttt{chroot} instances.
 
 \section{\texttt{sshd} - Secure Shell Server Login Bypass}
 
-For the \texttt{ssh}-server, our goal is to achieve a login without knowing the
-correct password. We configure our test environment with an additional user,
-which allows remote logins via password. On a successful connection, the secure
-shell \texttt{ssh} should be able to execute commands inside the test
-environment.
+\texttt{sshd} is a secure shell server implementation which runs on Linux-based
+operating systems. It is used together with the \texttt{ssh} client, which
+allows to log in on remote hosts via the \texttt{ssh} protocol. According to the
+documentation~\cite{sshman}, not only log in via username and password
+credentials is supported, but also public key cryptography can be used for
+authentication.
 
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Instrumentation}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+We want to find all exploitable bitflips which would allow an attacker to log
+into a remote machine without knowing the correct password of the user. The
+\texttt{ssh} server is configured to allow accesses from users using password
+authentication.
 
-Instrumenting \texttt{sshd} is very similar to \texttt{nginx}, it is possible to
-run the \texttt{ssh}-server without super-user privileges. We instrument only
-the code ran during a request, because usually the \texttt{ssh}-daemon is
-started during the boot procedure and never exited. We attach Pin to the running
-server, try to connect with a correct username but a wrong password, wait for
-the denying answer from the server and stop instrumentation.  With this, we
-should get exactly the memory accesses necessary used to verify user
-credentials.
-
-\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
-\subsection{Testing}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
-
-Verifying the success state is straightforward. We copy the flipped binary,
-start the server and wait for some seconds for the startup to complete. To
-verify the success state, we try to connect to the remote server with a wrong
-password and attempt to execute \texttt{whoami}. As the ssh client does not
-allow using pipes to provide a password, we had to use
-\texttt{passh}~\cite{passhweb} to send the credentials to the
-client\textquotesingle s input. The call of \texttt{whoami} should return the
-username from the credentials used to connect. We tested the
-\texttt{OpenSSH\_7.4p1 Debian-10+deb9u4} version of the server and client, both
-used the OpenSSL version \texttt{1.0.2l}.
+For testing, we start \texttt{sshd}, wait for \SI{100}{\milli\second} for the
+server to start and be ready to accept connections. We then use a \texttt{ssh}
+client to execute commands in the testing environment via the secure shell
+connection. We defined a success state when the output of the client showed a
+successful login. We verified the login by executing \texttt{whoami}, which
+returns the name of the logged in user. We tested version $7.4p1$ of the
+\texttt{ssh} server.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
