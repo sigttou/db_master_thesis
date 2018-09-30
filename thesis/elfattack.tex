@@ -597,7 +597,7 @@ itself took about two to three times as long in an equal configuration.
 \section{\texttt{nginx} - HTTP Basic Authentication Bypass}
 
 \texttt{nginx} is a web server, available on for Linux-based operating
-systems.~\cite{nginxweb}. The tool can be used to serve websites, and it can
+systems~\cite{nginxweb}. The tool can be used to serve websites, and it can
 also be configured to support basic authentication schemes.
 
 We want to find all exploitable bitflips which would allow an attacker to access
@@ -889,28 +889,58 @@ be concluded from our research is, that very little bitflips exploit the program
 by changing more of the executable code than a single instruction. From our
 tests only \SI{3} happen to exploit programs in this way.
 
-\begin{table}[!htb]
+For \texttt{sudo}, we show the same exploitable \SI{29} bitflips as
+Gruss~\etal~\cite{flipinthewall} in the \texttt{sudoers} library. Besides the
+\SI{29} bitflips, we show \SI{230} additional exploitable bitflips in the
+library and also can report multiple other bitflips to achieve the same exploit
+as Gruss~\etal~\cite{flipinthewall} with the automated bitflip search.
+
+\begin{table}
 \centering
 \begin{tabular}{c|c}
-ELF File               & Shared flips \\ \hline
+ELF File & shared flips      \\ \hline
 \texttt{pam\_unix.so} & $52$ \\
-\texttt{libpam.so.0} & $18$ \\ \hline
-Sum of flips:                 & $70$
+\texttt{libpam.so.0}  & $18$ \\ \hline
+Sum of flips:         & $70$
 \end{tabular}
 \caption{Number of flips which work for a login bypass and a \text{sudo}
 privilege escalation.}
 \label{tab:loginsudo}
 \end{table}
 
-Besides that, we can report that some bitflips cause a bypass in multiple
-application. For example most \texttt{pam} related flips can be abused in the
-\texttt{login} program and \texttt{sudo} as both check against the same user
-management. An attacker, therefore, could introduce a flip in the
-\texttt{libpam.so.0} file, log in as the user and gain super-user access if the
-user is allowed to use \texttt{sudo}. Table~\ref{tab:loginsudo} show the exact
-number of shared bitflips between the two applications. Also, for \texttt{sudo}
-and \texttt{sshd}, there was one shared bitflip found, namely one in the
-\texttt{ld-linux-x86-64.so.2} file at address \texttt{0xfc6c}.
+Besides that, we can report that some bitflips can exploit multiple
+applications. For example, many flips in PAM can exploit \texttt{login} and
+\texttt{sudo} as both check against the user management. An attacker, therefore,
+could introduce a flip in the \texttt{libpam.so.0} file, log in as the user and
+gain superuser access if the user is allowed to use \texttt{sudo}.
+Table~\ref{tab:loginsudo} show the shared bitflips between the two applications.
+
+\begin{figure}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[style=diff,
+                   caption={Diff for the disassembly of the linker binary with
+a bitflip exploiting the \texttt{sudo} and \texttt{ssh} program. The bitflip
+changes the register pushed on the stack.},
+label=lst:sudosshld]
+  fc64:  41 57                 push   %r15
+  fc66:  41 56                 push   %r14
+  fc68:  41 55                 push   %r13
+  fc6a:  41 54                 push   %r12
+- fc6c:  53                    push   %rbx
++ fc6c:  57                    push   %rdi
+  fc6d:  48 83 ec 38           sub    $0x38,%rsp
+  fc71:  48 8b 05 c8 4c 21 00  mov    0x214cc8(%rip),%rax  <_rtld_global@GLIBC>
+  fc78:  48 83 e8 01           sub    $0x1,%rax
+  fc7c:  48 89 45 c8           mov    %rax,-0x38(%rbp)
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
+Also, for \texttt{sudo} and \texttt{sshd}, there was one shared bitflip found,
+one in the \texttt{ld-linux-x86-64.so.2} file. The change introduced by bitlfip
+is shown in Listing~\ref{lst:sudosshld}. The bitflip changes the behaviour of
+the linker library and because of this change the outcome of the two programs
+lead to a successful state.
 %}}}
 
 %% vim:foldmethod=expr
