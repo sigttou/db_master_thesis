@@ -800,7 +800,7 @@ ELF File & opcode & parameter & Sum of flips:     \\ \hline
 \texttt{libpam.so.0}       & $11$ & $39$ & $50$   \\
 \texttt{login}             & $14$ & $42$ & $57*$  \\
 \texttt{pam\_unix.so}      & $30$ & $34$ & $64$ \\ \hline
-Sum of flips:              & $53$ & $122$ & $178$
+Sum of flips:              & $55$ & $122$ & $178*$
 \end{tabular}
 \caption{List of bitflips causing a bypass of the credential check in the local
 login service and what part of the instruction they change. $(*)$ One bitflip
@@ -858,17 +858,36 @@ The testing of the local login service took about \SI{35}{\hour} of CPU time.
 This long time is due to the long response time by the program itself, which is
 used as a countermeasure against local brute-forcing.
 
-\section{Summery of the Results}
+\section{Summary of the Results}
 
-In summary, we can show, that all our tested programs can be exploited by
-bitflips. We show that Rowhammer can be used for privilege escalation and
-security bypasses in common applications used in most Linux-based operating
-systems. We can report that most bitflips can be found in the \texttt{.text}
-section of ELF files, which contains the executed machine code. Also, we show
-that not only binaries on its own are suffering such flaws, but also loaded
-libraries introduce exploitable bitflips to programs. The diffs of the
-disassembly show, that when flipping code, not only the opcode can be abused but
-also parameters in instructions.
+We report that all tested programs can be exploited by bitflips. We show that
+Rowhammer can be used for privilege escalation and bypasses of security measures
+in applications provided by Linux-based operating systems. Most exploitable
+bitflips were in the \texttt{.text} section of ELF files. Also, we show that not
+only the program\textquotesingle s main binary contains exploitable bitflips,
+but also dynamically loaded libraries are exploitable via bitflips.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{c|ccc|c}
+Program name & opcode & parameter & context & Sum of flips: \\ \hline
+\texttt{sudo}  & $144$ & $281$ & $0$ & $425$ \\
+\texttt{nginx} & $65$  & $231$ & $2$ & $298$ \\
+\texttt{sshd}  & $4$   & $37$  & $0$ & $41$  \\
+\texttt{login} & $55$  & $122$ & $1$ & $178$ \\ \hline
+Sum of flips:  & $268$ & $671$ & $3$ & $942$
+\end{tabular}
+\caption{Summary of all exploitable bitflips and what part of instructions is
+changed by them.}
+\label{tab:summaryflips}
+\end{table}
+
+As Table~\ref{tab:summaryflips} shows, most of the exploitable bitflips were
+found in the parameters of instructions. From our results, only
+\SI{28.45}{\percent} of the exploitable bitflips were in opcodes. What also can
+be concluded from our research is, that very little bitflips exploit the program
+by changing more of the executable code than a single instruction. From our
+tests only \SI{3} happen to exploit programs in this way.
 
 \begin{table}[!htb]
 \centering
