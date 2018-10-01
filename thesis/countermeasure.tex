@@ -68,7 +68,16 @@ Gruss~\etal~\cite{flipinthewall} state that this defeats performance counter
 monitoring countermeasures as executions inside the enclaves are not monitored
 by the CPU\textquotesingle s performance counters.
 
-\section{Reducing the Impact of Bit-Flip Testing}
+To prevent exploiting ELF files with bitflips introduces to the storage devices
+operating systems can store a hash of the executables and check the checksums
+before execution. Bitflips attacks on storage devices are described by
+Kurmus~\etal~\cite{rowssdhammer}. Cai~\etal~\cite{rownandhammer} show how MLC
+NAND flash memory devices can be targeted to introduce exploitable memory
+corruptions to solid-state drives. Checking the hash of the executable before
+execution would detect such a change of the ELF file and can prevent the
+execution of an exploiting binary.
+
+\section{Making Bitflip Testing Less Practical}
 
 From looking at our binary analysis and the impact we get from knowing that
 operating system ship the same ELF files to all their users, we can conclude
