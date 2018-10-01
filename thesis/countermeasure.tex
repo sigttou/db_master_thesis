@@ -2,10 +2,10 @@
 \chapter{Countermeasures}\label{sec:countermeasure}
 
 In this chapter, we discuss countermeasures. First, we look at countermeasures
-against Rowhammer and microarchitectural attacks in general. Then we look at
-measures that make our testing less practical, and make our results less useful
-for an attacker. Finally, we discuss measures which, when applied to computer
-systems, make them more secure.
+against microarchitectural attacks in general. Secondly, we look at
+countermeasures against Rowhammer. In the end we discuss measures that
+make our testing less practical, and our results less useful for an
+attacker.
 
 \section{Microarchitectural Attacks}
 
@@ -79,65 +79,42 @@ execution of an exploiting binary.
 
 \section{Making Bitflip Testing Less Practical}
 
-From looking at our binary analysis and the impact we get from knowing that
-operating system ship the same ELF files to all their users, we can conclude
-that having different ELF files per instance would drastically lower our impact.
-Doing so would mean, an attacker would need to analyse bitflips per target.
-Whereas this would be a valid countermeasure, it is not practical. Also, having
-different ELF files per system breaks other security improvements. Compiler
-developers and developers of wide-spread software currently push the technique
-of reproducible builds. Whereas the Debian-close organisation
-reproducible-builds~\cite{reprobuilds} is one of the most significant
-contributors in this field. The advantage of reproducible builds is that all
-binaries compiled with the same compiler, same configuration and same
-source code will not differ, this makes detection of changes very easy. The
-technology allows a bit-by-bit compared verification of the full build chain
-used for the program. By this, also changes or backdoors introduced by a
-malformed compiler or linker could be detected.
+With our testing framework, we can search for exploitable bitflips in ELF files
+which are identical for every user of the software distribution. For example,
+the same exploitable bitflips have the same position in all installations of the
+current Debian operating system. Distributing randomised ELF files would make
+the search for exploitable bitflips harder as an attacker would need to run the
+search framework for each target.
 
-Reproducible builds could also help to define other countermeasures to bit flips
-in the binary memory. Whereas the operating system can verify ELF files by using
-stored checksums, it would also be possible to use similar techniques to do this
-with in-memory code or data at runtime. As Suh~\etal~\cite{memintegrity} have
-shown in their work about memory integrity verification and encryption for
-secure processors. Other work that could be looked at as countermeasure is
-DRIVE~\cite{drive} by Rein~\etal or SPEE~\cite{spee} by Gelbart~\etal. Those apply
-code verification to binaries before execution and during runtime.
+However, randomised binaries would not comply with the current trend of research
+in the field of reproducible builds show. The Debian-close organisation
+reproducible-builds~\cite{reporbuilds} works on making building packages for
+Debian reproducible. With their techniques, it is possible to produce the same
+binary using the same compiler, build configuration and same source code.
+Reproducible builds make binary changes detectable and allow a bit-by-bit
+verification of the full build chain. Consequently, changes or backdoors
+introduced by a malformed compiler or linker are detected.
 
-The encryption of binaries could in general seen as a countermeasure to
-bitflips. If decryption happens on each access to the file stored in memory. If
-the entire file is stored decrypted it would not improve security. If a bit is
-flipped inside an encrypted ELF file, decryption is likely to fail, meaning the
-binary could not continue execution and the program would crash in case of an
-applied bitflip.
+Reproducible builds can also help to introduce other countermeasures. The
+operating system can verify ELF files by using stored checksums.
+Suh~\etal~\cite{memintegrity} show how memory integrity verification can bring a
+similar check to programs at runtime. Gelbart~\etal~\cite{spee} present a secure
+program execution environment (SPEE) providing static verification before
+execution and code block verification at runtime. During compilation, SPEE adds
+a signature and hashes to each ELF section of the executable. The operating
+system checks these additions before performing the execution. To allow checking
+during runtime, SPEE adds a security module to the Linux kernel which performs
+additional checks during execution. Andre Rein~\cite{drive} present a software
+component for dynamic runtime integrity verification and evaluation (DRIVE).
+DRIVE adds monitoring for memory changes during the runtime of a program. It
+uses data gained from the ELF file to check the memory of the process during the
+runtime.
 
-\section{Improving General System Security}
-
-There is no unbreakable, unhackable, totally secure system. Users and vendors
-need to be aware of this. If vulnerabilities are found vendors should react to
-provide possibilities for their users to be secure. Like provide patches for
-either their microcode, operating system kernels or programs itself. Users
-should be informed about security updates and apply them to their environment
-as soon as possible. For updates to be in place on time, it is vital for
-vendors to work closely with operating system developers, to push patches very
-soon after or even before public disclosure.
-
-As systems should generally be seen as unsafe and programs running cannot be
-trusted, a defensive approach for operating system development might be a right
-approach. Defensive coding is usually based on a multiple wall approach. This
-allows having defensive structures in place even if some defences are broken.
-Whereas developers should find motivation in writing secure code, mistakes
-happen, and old software is sometimes run. Bugs like buffer-overflow often lead
-to code execution. Operating systems introduced techniques like address space
-layout randomisation (ASLR), to make attacks abusing buffer-overflow harder as
-an attacker would not know positions of injected code anymore. From this other
-attack were designed, using return-oriented programming (ROP) and using known
-positions inside shared libraries to craft code from code-pieces inside those.
-In their work Ruan~\etal~\cite{ropsur}, show a survey of ROP defence mechanisms.
-They point out the effectiveness of randomisation in memory, which would also
-increase the defence for Rowhammer. Additional there are approaches described
-using instrumentation to detect ROP attacks, which could again also be used to
-detect the usage of Rowhammer.
+If decryption happens on each access to the file content based in DRAM,
+encryption of binaries can be seen as a countermeasure to exploitable bitflips.
+If a bit is flipped inside an encrypted ELF file, decryption is likely to
+produce garbage machine code for the CPU to execute, meaning the program would
+crash in case of an applied bitflip.
 %}}}
 
 %% vim:foldmethod=expr
