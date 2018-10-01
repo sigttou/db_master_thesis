@@ -1,46 +1,22 @@
 %%%%%% Countermeasures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Countermeasures}\label{sec:countermeasure}
 
-In this chapter, we want to look at countermeasures. At first, we look at
-measures against Rowhammer and microarchitectural attacks in general. Then we
-want to look at measures which would reduce the impact of our work. In the end,
-we want to close with measures which could be applied to computer systems in
-general to make them more secure.
+In this chapter, we discuss countermeasures. First, we look at countermeasures
+against Rowhammer and microarchitectural attacks in general. Then we look at
+measures that make our testing less practical, and make our results less useful
+for an attacker. Finally, we discuss measures which, when applied to computer
+systems, make them more secure.
 
 \section{Microarchitectural Attacks}
 
-For this kind of bugs, it is vital to check who is to blame for it, to know who
-needs to define the countermeasure. For attacks like
-Foreshadow~\cite{foreshadow}, Meltdown~\cite{meltdown} and
-Spectre~\cite{spectre} it is clear that that bug is caused by the CPUs
-manufactured by Intel or AMD. Even if there are countermeasures like
-Kaiser~\cite{kaiserpaper}, which would prevent leakage of kernel memory by
-Meltdown, the bug remains in the microcode, and other processes\textquotesingle
-memory can still be leaked. Vendors need to address such problems directly, by
-either deprecating CPUs or patch the bugs with microcode updates.
-Countermeasures applied to other layers might not be as effective and bring a
-larger performance drop with them.
-
-\subsection{Cache Attacks}
-
-Cache attacks are mostly timing-attacks, where based on the content of the
-cache, accesses to memory take less time. CPU vendors cannot, and should not,
-fix this, as the attack is based on the principle of how caches work.
-Cache-timing attacks often try to gain information on other processes, by
-loading the same library and check what parts are accessed.
-Gruss~\etal~\cite{gruss2015cache} showed how such an attack could be used to
-build a keylogger, as memory accesses differ for different keys. They also show
-how to generate cache-attacks automatically without an in-depth knowledge of
-the targeted program and system. They also state that a possible removing of
-the \texttt{clflush} instruction is not a sufficient countermeasure, as there
-are ways to build cache-attacks with Evict+Reload. They propose disabling
-shared-memory as a countermeasure, but operating-systems use this technology a
-lot to have lower memory-footprints. They propose a solution where security
-relevant functions can be marked as not shared, to remain the low
-memory-footprint but protect functions which could leak sensitive information.
-It would be down to developers of libraries and programs to mark these
-functions. Overall there might be no perfect countermeasure to cache-attacks,
-but there are ways to lower their impact on security.
+Fixes for microarchitectural attacks can be applied to different layers of a
+system. The KAISER patch for kernel page-table isolation by
+Gruss~\etal~\cite{kaiserpaper} is applied to the kernel to prevent leakage of
+kernel memory by Meltdown~\cite{meltdown}. For other attacks, such as Spectre,
+Kocher~\etal~\cite{spectre} state that lower layers, like the
+CPU\textquotesingle s microcode, have to be fixed. Kocher~\etal~\cite{spectre}
+also state that a long-term solution to prevent microarchitectural attacks is a
+fundamental change of instruction set architectures.
 
 \subsection{Rowhammer}
 
