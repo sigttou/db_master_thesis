@@ -4,45 +4,35 @@
 In conclusion, we have shown that the Rowhammer bug is still relevant to system
 engineers and that users and vendors need to be aware of this issue.
 
-We have shown a framework to test any binary to find bitflips which change the
-execution path to a given, pre-defined outcome. We apply this framework to the
-\texttt{sudo} program, which is used to switch privileges at runtime on most
-Linux-based operating systems. We show how many possible bitflips sit inside the
-binary and libraries used by it, which allow bypassing privilege checks such as
-the password prompt for the calling user.
+We present a framework to test any binary to find bitflips which change the
+execution path to a given, pre-defined outcome. We apply this framework to
+programs available for Linux-based operating systems. We gain privilege
+escalation by exploiting \texttt{sudo}, bypass the credential check for local
+login and remote login, and bypass HTTP basic authentication implemented by the
+\texttt{nginx} web server.
 
-In addition to that, we also apply our testing framework to the popular web
-server \texttt{nginx}. In the server, we want to find all flips allowing to
-bypass HTTP authentication checks. Such a bypass would allow an attacker to
-access pages or files which he could not do before as he was not granted the
-access rights in the original configuration.
+For \texttt{sudo}, Gruss~\etal~\cite{flipinthewall} show \num{29} bitflips which
+yield privilege escalation, which they find by manual analysis of the ELF files
+used by the program. We show that our framework finds over \num{10} times more
+bitflips gaining the same outcome in a few hours of testing time.
 
-Besides analysing the impact of bitflips in binary files, we also look at the
-consequences of flips applied to memory generated and used at runtime by
-programs. As an example of such an attack, we show how bitflips can introduce
-misusage of nonces inside the OpenSSL implementation of AES-GCM. We create nonce
-re-use using Rowhammer and with it break the cryptographic security offered by
-the cypher.
+Besides searching for exploitable bitflips in ELF files, we also look at the
+consequences of bitflips applied to memory generated and used at the runtime  of
+programs. As an example, we show how bitflips can introduce nonce reuse in the
+AES-GCM implementation of OpenSSL.
 
-With our work, we want to motivate further research in the field of Rowhammer
-attacks and microarchitectural attacks in general. This thesis is a basis for
-further improvements in the testing of software being influenced by
-side-channels and hardware faults. We name examples for future topics in this
-field and how other research fields could also play a role in the development of
-microarchitectural software testing.
-
-We present a summary of countermeasures already applied to systems against such
-attacks and how developers need to extend them. We line out that open
-architectures such as RISC-V could play a vital role in the future of research
-in this field and how researchers can benefit from them.
+We present a summary of countermeasures already applied to systems against
+Rowhammer and how developers need to extend them. Also, we discuss measures
+which make executables or more secure by checking the ELF files before
+execution, or check the process\textquotesingle memory during the runtime.
 
 We want to close with a recommendation for vendors of hardware parts, such as
 CPUs or DRAM chips, that besides looking at increasing performance and space
 reductions, they should not neglect the quality of their hardware. Not only to
 have reliable components in a manner of stability, but also to provide
-reliability in the sense of security, so that exploits like Meltdown and Spectre
-are not possible anymore and that Rowhammer-like attacks do not happen in any
-case because of a higher quality in the chips.
+reliability in the sense of security. So that exploits like Meltdown and Spectre
+are not possible anymore and that issues like Rowhammer do not occur anymore
+because of the higher quality of chips.
 %}}}
 
 %% vim:foldmethod=expr
