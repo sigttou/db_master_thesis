@@ -20,35 +20,53 @@ fundamental change of instruction set architectures.
 
 \subsection{Rowhammer}
 
-Rowhammer is an issue which occurs because of missing high-quality checks by
-vendors, the leakage of bit-charges to change bits in other memory areas is a
-hardware fault and needs fixing on this layer. Also, users of current DRAM
-chips need to be protected, and their risk of using their hardware should be
-minimalised. In their work about Rowhammer, Gruss~\etal~\cite{flipinthewall}
-analyse various countermeasures. Tools like the Micro-Architectural Side
-Channel Attack Trapper (MASCAT) by Irazoqui~\etal~\cite{mascat} could be used by
-anti-virus software to prevent users from executing software making use of
-cache-attacks. With a physical memory separation of kernel memory and user
-memory, privilege escalation by applying bitflips to page-tables can be
-prevented.
+Besides fixing systems to prevent microarchitectural attacks, it is also
+possible to prevent the exploitation of microarchitectural flaws by checking
+programs for malicious behaviour. Irazoqui~\etal~\cite{mascat} present a
+Micro-Architectural Side Channel Attack Trapper (MASCAT), which uses static
+analysis of binaries to detect microarchitectural attacks.
+Irazoqui~\etal~\cite{mascat} state characteristics of attacks and what code
+parts indicate a microarchitectural attack. To detect a possible use of
+Rowhammer, MASCAT checks for cache evictions in binaries.
+Irazoqui~\etal~\cite{mascat} show that using \texttt{clflush} in a loop is
+likely part of a Rowhammer attack. Also, \texttt{monvnti} and \texttt{movntdq}
+are listed as suspicious, as these instructions allow direct access to the DRAM
+and bypassing the cache. Besides looking for these instructions,
+Irazoqui~\etal~\cite{mascat} also state, that a program using self-map
+translation to resolve the mapping between physical and virtual memory is likely
+to be a threat to the system as knowledge about this mapping is part of
+Rowhammer attacks.
 
-Brasser~\etal~\cite{canttouch} showed how such a separation could be built
-inside an OS by changing the code of the physical memory allocator. Another
-way to prevent Rowhammer would be to detect an ongoing attack during the runtime
-of a program. With their work about ANVIL, Aweke~\etal~\cite{anvil} showed such
-a detection technique. They track DRAM accesses using hardware performance
-measures and check for frequently accessed memory rows to detect the so-called
-aggressors. As prevention, they refresh nearby rows more often to make them
-secure against possible flipping. Their benchmarking shows that they have less
-than one per cent false-positives and an average performance drop of about one
-per cent.
+Besides statically checking binaries, checking the behaviour of a program also
+can detect an ongoing attack. Aweke~\etal~\cite{anvil} present a software-based
+solution to detect ongoing Rowhammer attacks, namely ANVIL. ANVIL uses hardware
+performance monitoring to monitor DRAM row accesses. If a row is accessed
+repeatedly, ANVIL forces refreshing of neighbouring rows.
+Aweke~\etal~\cite{anvil} implemented ANVIL as a kernel module for Linux and
+state that their detection and prevention system leads to an average slowdown of
+\SI{1}{\percent} and a worst-case slowdown of \SI{3.2}{\percent} of the system.
 
-Operating system vendors could implement another countermeasure for the file
-cache. Our work relies on the file cache to be used when we execute the ELF
-file. The systems could either recheck file contents before execution, as
-in check some checksum, or force loading binaries from the disk instead of
-using the cache. In such cases, the performance drop would be rather small, but
-it would not prevent attacks using Rowhammer on SSDs.
+Brasser~\etal~\cite{canttouch} show another software mitigation against
+Rowhammer attacks. Their countermeasure prevents an attacker to corrupt kernel
+memory from user mode. Brasser~\etal~\cite{canttouch} extend the physical memory
+allocator of the Linux kernel to isolate the memory of the kernel and the
+userspace on DRAM storage. The mitigation by Brasser~\etal~\cite{canttouch},
+CATT, does not prevent bitflips from happening but removes the possibility to
+exploit bitflips in kernel memory. CATT splits the memory layout into security
+domains and makes sure that memory from different domains is not placed in
+neighbouring rows on the DRAM chip. This placing prevents an attacker from using
+kernel memory as a target for Rowhammer.
+
+Gruss~\etal~\cite{flipinthewall} show that it is still possible to mount
+privilege-escalation attacks with such countermeasures present. For the approach
+by Brasser~\etal~\cite{canttouch}, they show that the isolation from kernel
+memory does not prevent privilege escalation as they introduce bitflips to ELF
+files, which then allow an attacker to gain superuser privileges. For defeating
+static analysis and performance counter based mitigations,
+Gruss~\etal~\cite{flipinthewall} present attacks based on the SGX enclave.
+Gruss~\etal~\cite{flipinthewall} state that this defeats performance counter
+monitoring countermeasures as executions inside the enclaves are not monitored
+by the CPU\textquotesingle s performance counters.
 
 \section{Reducing the Impact of Bit-Flip Testing}
 
