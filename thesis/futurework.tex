@@ -1,52 +1,28 @@
 %%%%%% Future Work %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Future Work}\label{sec:futurework}
 
+In this chapter, we present an outlook for attacks in the field of Rowhammer. We
+derive possible future attack vectors from current trends. We also look at
+combinations of attacks, where Rowhammer could reintroduce exploits, especially
+regarding attacks in cryptography. Finally, we find possibilities to extend our
+testing framework in future works.
+
 \section{Future Work regarding Rowhammer}
 
-We see Rowhammer as a still open field of research, while vendors could fix the
-exploitation in DRAM chips, by increasing refresh rates or built
-non-load-leaking chips, there is other hardware which already faces similar
-issues, as Kurmus~\etal~\cite{rowssdhammer} showed for SSDs. We can see more
-devices and techniques targeted with such attacks.
+Kim~\etal~\cite{rowhammergeneral} state that it is not possible to make
+definitive claims on how word lines interact in DRAM chips and how the bitflips
+happen in detail. Kim~\etal~\cite{rowhammergeneral} also state that there are
+possible ways of interaction based on their studies and findings but research of
+DRAM chips at the device-level, regarding Rowhammer, is still missing.
 
-Also, an in-depth analysis of the Rowhammer is still an open issue in the
-research of microarchitectural attacks. Analysing this issue might bring better
-knowledge of the hardware and why it has its faults. With this kind of
-knowledge is might be possible to target bits better in the DRAM, allowing the
-Rowhammer attack to gain more attention and increase their attack vector even
-more.
+While vendors could fix the exploitation in DRAM chips, by increasing refresh
+rates or built non-load-leaking chips, there is other hardware which already
+faces similar issues, as Cai~\etal~\cite{rownandhammer} show for MLC NAND flash
+memory used by solid-state drives.
 
-\subsection{Possible Attacks against Cryptography using Rowhammer}
-
-We showed how nonce-misusage could be introduced by single bitflips to target
-AES-GCM implementations. Attackers could use this idea to target other
-cryptographic implementations too. Especially those using a counter nonce. Also,
-from our work and research inside the OpenSSL source code, we can see other
-memory areas to be attacked, such as session reuse by flipping bits, or changing
-used cyphers if identifiers are enumerated. Such attacks could not only break
-encryption or allow key-recovery but also allow to break authenticity and
-confidentiality when an attacker flips bits in tags inside message
-authentication codes.
-
-Dobraunig~\etal~\cite{noncestat} showed statistical attacks against nonce-based
-authenticated encryption schemes. They show fault attacks on various modes of
-AES, such as GCM, CCM, EAX or OCB. They show how faults would affect the
-algorithm when they are introduced before the MixColumn step of AES. Work on
-faults in memory, like Rowhammer, could be used as a fault source here and work
-like this could be used to show future attacks using single bitflips. We can see
-more upcoming work in that regard in the future of fault attack research.
-
-Another possible field of research would be to check if it is possible to bring
-linear or differential properties to S-box calls via bitflips, or if targeting
-the functionality of shifting and replacing could break cryptographic
-assumptions made by AES.
-
-We already saw a combination between microarchitectural attacks and
-cryptographic attacks. Such as Yarom~\etal~\cite{noncerec} showed, that it is
-possible to use FLUSH+RELOAD cache attacks to recover ECDSA nonces in OpenSSL.
-They show an attack which allows a partial key-recovery in they Elliptic Curve
-Algorithm implementation with only observing a single signing process. With a
-key recovery on this level, it allows forgery for future data transmissions.
+We show how nonce misusage can be introduced by single bitflips to target an
+AES-GCM implementation. Attackers could use this idea to target other
+cryptographic implementations as well, especially those using a counter nonce.
 
 \section{Improving and Reusing our Framework}
 
@@ -54,12 +30,12 @@ For attacks based on memory accesses, we can take away that tools such as
 Pin~\cite{pintool} or \texttt{angr}~\cite{angrpaper} will be a significant
 factor for analysis. The work of Chabbi~\etal~\cite{pincallpaths} could also be
 taken to improve our testing framework as they provide an even more in-depth
-view of execution paths in binaries. Using such detailed graphs, more
+view of execution paths in binaries. By using such detailed graphs, more
 bytes-to-test could be filtered, speeding up the framework.
 
-On the other side, we can see our framework working as a base-implementation for
-other test environments for parallel testing use cases. The environment is very
-adaptable and developers can exchange single components without much effort.
+On the other side, we can view our framework as a base implementation for other
+test environments for parallel testing use cases. The environment is easy to
+adapt, and developers can exchange single components without much effort.
 Testing inside \texttt{chroot} could be changed to container environments like
 Docker~\cite{docker}, to provide more safety or better abstraction of the host
 operating system. Also, virtual machines could be used, if the software has to
@@ -71,17 +47,12 @@ could be combined with \texttt{afl}~\cite{aflweb} to provide a parallel fuzzing
 framework, which would either allow fuzzing in multiple environments or as a
 general way to parallelise \texttt{afl}.
 
-For the part where binaries are instrumented with Intel Pin at the moment,
-replacements or other sources for analysis could be used. Like the
-QBDI~\cite{qbdi} tool for dynamic instrumentation could be used instead, which
-provides a wider range for software architectures, such as ARM or AArch64.
-Additional, a complete open source solution for instrumentation is available in
-DynamoRIO~\cite{dynrio}, which could also replace Pin.
-
-As other use cases for our framework, we could see it being used as a basis for
-malware research, to track the behaviour of malware in different environments,
-as it allows setting up many different systems in a short time and tracks
-events inside those systems.
+Instead of instrumenting binaries with Intel Pin, replacements or other sources
+for analysis could be used. For instance, the QBDI~\cite{qbdi} tool for dynamic
+instrumentation could be used instead, which supports a wider range of software
+architectures, such as $x86$, ARM and AArch64. Additionally, a complete open
+source solution for instrumentation is available in DynamoRIO~\cite{dynrio},
+which could also replace Pin.
 %}}}
 
 %% vim:foldmethod=expr
