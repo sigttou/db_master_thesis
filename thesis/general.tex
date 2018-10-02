@@ -160,7 +160,6 @@ of some pages.
 \begin{figure}
 \centering
 \begin{tikzpicture}
-
 \draw  (-23,15.5) rectangle (-21,16) node (v1) {} node[pos=.5] {CR3};
 \node at (-22,15) {CPU register};
 
@@ -204,13 +203,15 @@ of some pages.
 \draw (-15,27) -- (-15,25) -- (-16.5,25) -- (-16.5,21);
 \path [->,>=stealth] (-16.5,21) edge (-16,21);
 \path [->,>=stealth] (-22,16) edge (-22,17.5);
-\draw (-13,27) -- (-13,26) -- (-13.5,26) -- (-13.5,22);
+\draw (-13.5,27) -- (-13.5,26) -- (-13.5,26) -- (-13.5,22);
 \path [->,>=stealth] (-13.5,22) edge (-13,22);
 \draw (-10.5,27) -- (-10.5,24);
 \path [->,>=stealth] (-10.5,24) edge (-10,24);
-
 \end{tikzpicture}
-\caption{Address Translation}
+\caption{Address translation for \SI{4}{\kilo\byte} pages for \texttt{x86\_64}
+CPUs. The 48-bit address is split into multiple offset parts which are added
+for different tables. The lookup starts with the PML4, which location is stored
+in the CR3 CPU register and ends with the byte entry in the addressed page.}
 \label{fig:paging}
 \end{figure}
 
