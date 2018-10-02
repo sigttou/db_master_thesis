@@ -158,12 +158,60 @@ with so-called tables is provided, which keeps the memory overhead in the area
 of some pages.
 
 \begin{figure}
-  \centering
-  \begin{tikzpicture}
-  \node (eh) [block] {ELF Header};
-  \end{tikzpicture}
-  \caption{Address Translation}
-  \label{fig:paging}
+\centering
+\begin{tikzpicture}
+
+\draw  (-23,15.5) rectangle (-21,16) node (v1) {} node[pos=.5] {CR3};
+\node at (-22,15) {CPU register};
+
+\draw  (-20,27.5)    rectangle (-18,27) node[pos=.5] {PML4(9b)};
+\draw  (-16,27)  rectangle (-18,27.5)   node[pos=.5] {PDPT(9b)};
+\draw  (-14,27)  rectangle (-16,27.5)   node[pos=.5] {PD(9b)};
+\draw  (-12,27)  rectangle (-14,27.5)   node[pos=.5] {PT(9b)};
+\draw  (-9.5,27) rectangle (-12,27.5)   node[pos=.5] {Page(12b)};
+\node at (-14.5,28) {Offsets stored in a 48-bit address};
+
+\draw  (-10,25.5) rectangle (-8,22.5);
+\draw  (-10,24) node (v11) {} rectangle (-8,24.5) node[pos=.5] {entry};
+\draw  (-19,22) rectangle (-17,19);
+\draw  (-19,19.5) node (v5) {} rectangle (-17,20) node[pos=.5] {entry};
+\draw  (-16,23) rectangle (-14,20);
+\draw  (-16,21) node (v7) {} rectangle (-14,21.5) node[pos=.5] {entry};
+
+\draw  (-13,24.5) rectangle (-11,21.5);
+\draw  (-13,22) node (v9) {} rectangle (-11,22.5) node[pos=.5] {entry};
+
+\draw  (-22,20.5) rectangle (-20,17.5);
+\draw  (-22,18.5) node (v3) {} rectangle (-20,19) node[pos=.5] {entry};
+
+\node at (-21,21) {PML4};
+\node at (-18,22.5) {PDPT};
+\node at (-15,23.5) {Page Directory};
+\node at (-12,25) {Page Table};
+\node at (-9,26) {4kB Page};
+
+\path [->,>=stealth] (-20,19) edge (-19,19);
+\path [->,>=stealth] (-17,20) edge (-16,20);
+\path [->,>=stealth] (-14,21.5) edge (-13,21.5);
+\path [->,>=stealth] (-11,22.5) edge (-10,22.5);
+
+\path (-19,27) edge (-19,26);
+\path (-19,26) edge (-23,26);
+\path (-23,26) edge (-23,18.5);
+\path [->,>=stealth] (-23,18.5) edge (-22,18.5);
+\draw (-17,27) -- (-17,25.5) -- (-19.5,25.5) -- (-19.5,19.5);
+\path [->,>=stealth] (-19.5,19.5) edge (-19,19.5);
+\draw (-15,27) -- (-15,25) -- (-16.5,25) -- (-16.5,21);
+\path [->,>=stealth] (-16.5,21) edge (-16,21);
+\path [->,>=stealth] (-22,16) edge (-22,17.5);
+\draw (-13,27) -- (-13,26) -- (-13.5,26) -- (-13.5,22);
+\path [->,>=stealth] (-13.5,22) edge (-13,22);
+\draw (-10.5,27) -- (-10.5,24);
+\path [->,>=stealth] (-10.5,24) edge (-10,24);
+
+\end{tikzpicture}
+\caption{Address Translation}
+\label{fig:paging}
 \end{figure}
 
 Figure~\ref{fig:paging} shows the \num{4} levels of tables for translating a
