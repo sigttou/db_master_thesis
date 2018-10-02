@@ -135,6 +135,59 @@ of an instruction. Most arithmetic instructions allow immediate data to be
 passed, but also instructions like \texttt{mov} allow such parameters. The usage
 of immediate data is declared by the ModR/M byte.
 
+\subsection{Virtual Memory}
+
+To prevent direct memory accesses between processes, CPUs provide the
+possibility of memory translation. Every process holds its virtual memory, and
+the CPU translates the virtual address to an address in physical memory on
+memory accesses. As described in the Intel Manuel~\cite{intelsys} Section 3.3.2,
+the address space is divided into pages which are mapped to virtual memory. As
+this paging is transparent to programs running, processes still work on a linear
+virtual address space. Pages are usually \SI{4}{\kilo\byte}, but larger sizes
+are also supported. In both address spaces, addresses of pages are aligned to
+their size.
+
+The translation between page address is required to be as fast as possible.
+Storing a direct lookup table per process might be possible but slower than for
+example memory array accesses. The usual address size on 64-bit processors is
+\SI{48}{\bit}. To address single bytes on a \SI{4}{\kilo\byte} page
+\SI{12}{\bit} are required. This leaves \SI{36}{\bit} to address the pages.
+Storing an array for a direct lookup of page numbers would require multiple
+gigabytes of data, which is not practical. Therefore, a multi-level translation
+with so-called tables is provided, which keeps the memory overhead in the area
+of some pages.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+  \node (eh) [block] {ELF Header};
+  \end{tikzpicture}
+  \caption{Address Translation}
+  \label{fig:paging}
+\end{figure}
+
+Figure~\ref{fig:paging} shows the \num{4} levels of tables for translating a
+virtual address to the position in physical memory used by Intel~\cite{intelsys}
+on \texttt{x86\_64} systems. The highest level is the page map level 4 (PML4),
+the position of the PML4 is stored in the \texttt{CR3} CPU register for the
+running process. The PML4 holds \num{512} entries of \SI{8}{\byte} each, which
+point to so-called page directory pointer tables (PDPT). The PDPT again has
+\num{512} entries, such as all tables, where every entry either points to a page
+directory (PD) or a memory page of the size of \SI{1}{\giga\byte}. The PD entry
+either maps to a \SI{2}{\mega\byte} page or a page table (PT), which then holds
+entries to the \SI{4}{\kilo\byte} pages. For every level of paging, \SI{9}{\bit}
+of the address are used to the define the offset used in the tables.
+
+An entry in tables is \SI{8}{\byte} large, but not all of them are required to
+address pages. Therefore, the entries also hold properties of the memory
+addressed memory. For example, the entries hold bits giving information about
+access rights, cache behaviour, or tell if the addressed memory is present.
+These properties are checked by the system on memory access, if accesses fail,
+such as writing read-only memory or accessing memory which is not present, the
+CPU throws a so-called page fault interrupt, and the running operating system
+kernel has to deal with it. By either killing the running process or resolve the
+issue by for example mapping a missing memory page.
+
 \subsection{Executable and Linkable Format (ELF)}
 \label{sec:elf}
 
@@ -248,10 +301,10 @@ paths, an error is shown, and the program is not executed.
 Testing is a significant part of software development. There are many different
 approaches and styles for testing. One approach to test a program is to provide
 input to it and check if the code operates as expected by validating the output.
-With increasing amount of code and an increasing number of bugs found, the style
-of testing changed over the years. On the one hand, developers nowadays ideally
-provide unit tests inside their code to test single functions and make sure they
-work as intended.
+With an increasing amount of code and an increasing number of bugs found, the
+style of testing changed over the years. On the one hand, developers nowadays
+ideally provide unit tests inside their code to test single functions and make
+sure they work as intended.
 
 On the other hand, sometimes the source code is not available to a tester, or it
 is way too much work to read the entire source code to create such tests.
@@ -267,7 +320,7 @@ trying random inputs on programs provides a way to rate its robustness. Tools
 applying automatically-generated, pseudo-randomised, inputs to programs are
 called fuzzers. Fuzzers attempt to reach corner cases in programs without
 knowing which exist and detect undefined behaviour or crashes. Generally,
-fuzzers give an overall view on the robustness of a program. They are relatively
+fuzzers give an overall view of the robustness of a program. They are relatively
 easy to apply to programs and can even find bugs usual white-box tests would
 miss.
 
