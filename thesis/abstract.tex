@@ -5,15 +5,14 @@
 \chapter*{Abstract}
 \label{cha:abstract}
 
-Microarchitectural attacks exploit design choices and mistakes made by hardware
-producers. Cache attacks or attacks like Meltdown and Spectre target the CPU.
-They either target a design which works as designed or exploit bugs introduced
-by mistakes in the hardware or microcode design. Rowhammer exploits a design
-flaw by DRAM vendors, who lowered their quality in favour of smaller cell sizes
-and lower refresh rates of those. With specially crafted memory access routines
-it is possible to access DRAM cells fast enough to create leakage loads between
-cells, which will cause them to change their load, hence, changing their logic
-state.
+Microarchitectural attacks exploit design choices made by hardware producers.
+Cache attacks or attacks like Meltdown and Spectre target the CPU. They either
+target a design which works as designed or exploit bugs introduced by mistakes
+in the hardware or microcode design. Rowhammer attacks exploit a design flaw in
+DRAM chips, which steadily decreased cell sizes and lowered refresh rates. With
+specially crafted memory access routines it is possible to access DRAM cells
+fast enough to create interference between cells, which will cause them to
+change the load, hence, changing the logical state.
 
 Rowhammer attacks use this phenomenon to target memory areas where flips would
 benefit the attacker. Researchers have shown in the past that flips in page
@@ -21,19 +20,19 @@ tables can cause privilege escalation and bypass security mechanisms implemented
 in modern operating systems. It has been shown that similar attacks also work
 with memory chips used inside solid-state disks. Besides flipping bits in page
 tables, researchers showed that when flipping bits in executables, the program's
-behaviour changes. With such changes, it is possible for an attacker to abuse
+behaviour can change. With such changes, it is possible for an attacker to abuse
 programs for privilege escalation or authentication-check bypasses.
 
-We present a way of testing binaries for possible execution path changes by
+We present a way of testing binaries for possible execution-path changes by
 bitflips. In our work, we pre-define an outcome for a binary and then search for
 all single bitflips which would cause the program to behave in the desired way.
-While previous work mostly looked at just op-codes in machine code, we scan
+Whereas previous work mostly looked at just op-codes in machine code, we scan
 the entire address space of the program, including all dynamically loaded
 libraries. We show results for searched bitflips in the \texttt{sudo} program,
 for bypassing user privilege checks, allowing super-user permissions without
 knowing the password and in the \texttt{nginx} web server, for bypassing HTTP
 authentication, allowing an attacker to load files which unauthenticated users
-are not allowed to access. In addition to searching for bitflips executable
+are not allowed to access. In addition to searching for bitflips in executable
 files, we also looked at possible other attack vectors for Rowhammer. We show
 that when bitflips are applied to the runtime of cryptographic calculations,
 these could break assumptions made by the communicating parties and could even
