@@ -1290,6 +1290,10 @@ As refresh cycles need to be applied, DRAM chips usually cycle over all rows,
 read them into their data buffer and write them back into memory. This
 refreshing is done to keep the capacitors on a certain charge level.
 
+Jung~\etal~\cite{dramreverse} present a study about the exact neighboorhood
+relation of single DRAM cells. In the presented work, the location of memory
+bits in the DRAM banks is found by analysing temperature changes of the device.
+
 \subsection{Introducing Bitflips to DRAM}
 
 Kim~\etal~\cite{rowhammergeneral} show how it is possible to cause bits to flip
@@ -1344,25 +1348,43 @@ a technique where only one row is used as the aggressor, but multiple memory
 accesses are applied to this row. The advantage of the single-sided hammering is
 that no knowledge about the DRAM address mapping is needed.
 
+Yim~\cite{rowhammerinject} presents a framework to identify, validate and
+evaluate Rowhammer attacks. The framework can be used to find defective DRAM
+chips being attackable with Rowhammer. Also, the framework provides automatic
+exploit generation to be applied via Rowhammer attacks.
+
 \subsection{Exploits using Rowhammer}
 
 Seaborn and Dullien~\cite{projectzerorow} show how it is possible to use
 Rowhammer to escape the NaCl sandbox and how to gain privilege escalation on
-\texttt{x86\_64} based systems by flipping bits in page table entries.
-Bhattacharya~\etal~\cite{rowhammerrsa} show how Rowhammer can be combined with
-timing analysis to break implementations of RSA. As
+\texttt{x86\_64} based systems by flipping bits in page table entries. As
 Kim~\etal~\cite{rowhammergeneral} state, bitflips might be very likely to
-reoccur in the same position, but it is still a problem to target an exact
+reoccur in the same position, but it is still a challenge to target an exact
 memory location when just a virtual address is known. To provide higher reliable
 attacks memory spraying~\cite{projectzerorow, rowhammerjs, rowhammercloud} is
 used. Memory spraying is used to fill the memory of a system with as much
 targetable memory as possible. For example, Seaborn and
 Dullien~\cite{projectzerorow} would spray the memory with page tables.
+
+Bhattacharya~\etal~\cite{rowhammerrsa} show how Rowhammer can be combined with
+timing analysis to break implementations of RSA. In the described attack, the
+last-level cache is monitored by a spy process to determine the position of the
+targeted memory and then use timing measurements to determine the DRAM bank
+which holds this memory to apply a Rowhammer attack to this bank.
 Razavi~\etal~\cite{flipfeng} present their work ``Flip Feng Shui'', which allows
 introducing bitflips in a fully controlled way. In their work, it is shown how
 to target specific memory areas by using Rowhammer and memory deduplication.
 Razavi~\etal~\cite{flipfeng} present an attack which allows breaking of OpenSSH
-public-key authentication and forging of GPG signatures.
+public-key authentication and thereby successfully login to a co-hosted VM on
+the same hypervisor.
+
+Qiao~\etal~\cite{newrowhammer} present new approaches of Rowhammer attacks,
+where they use non-temporal instruction of Intel CPUs to trigger Rowhammer
+instead of using a \texttt{clflush} approach.  Also,
+Qiao~\etal~\cite{newrowhammer} show how it is possible to trigger Rowhammer by
+using malicious inputs on programs instead of running malicious code. The input
+on running programs causes calls to \texttt{memset} or \texttt{memcpy} which can
+be abused to trigger Rowhammer.
 
 \subsection{Flipping bits in Binaries}
 
