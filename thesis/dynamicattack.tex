@@ -1,12 +1,13 @@
 %%%%%% Dynamic Data Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Bitflip Attacks on Dynamic Data}\label{sec:dynattack}
 
-In this chapter, we want to take a look at data created at the runtime of the
-program and how flips to that could benefit an attacker. We will go into details
-about OpenSSL and how bitflips can enable for instance nonce-misuse attacks. We
-want to apply a similar attack as Böck~\etal describe in their work about
-``practical nonce misusage attacks''~\cite{gcmnonceattack}. By this, we want to
-show how Rowhammer can introduce new attack vectors to applications.
+In this chapter, we take a look at data created at the runtime of a program
+and how bitflips applied to that memory could benefit an attacker. We will go
+into details about OpenSSL and how bitflips can enable for instance
+nonce-misuse attacks. We want to apply a similar attack as Böck~\etal~describe
+in their work about ``practical nonce misusage attacks''~\cite{gcmnonceattack}.
+By this, we want to show how Rowhammer can introduce new attack vectors to
+applications.
 
 \section{Analysis of OpenSSL for possible Nonce Misuse Flips}
 
@@ -72,7 +73,7 @@ We look at the implementation of AES-GCM inside OpenSSL. We see the general
 AES-GCM context struct in Listing~\ref{lst:aesstruct}. Additional to that, we
 take a look at the cypher-context struct in Listing~\ref{lst:ciphctx}. The
 connection between those two is the initialisation vector \texttt{iv} which is
-updated on each call to the GCM function.
+updated on each call of the GCM function.
 
 To apply the described attack by Böck~\etal~\cite{gcmnonceattack}, we require
 the \texttt{iv} to be reused by multiple GCM calls. OpenSSL uses a counter for
@@ -96,13 +97,13 @@ could overtake TLS sessions with only remote access.
 Looking at the OpenSSL source code, we can see that for each TLS connection at
 least these two context structs are generated. There is one general SSL struct
 needed, one AES-GCM context struct and two cypher contexts, as one is used for
-sending and one for receiving. The working IVs make \SI{32}{\byte} of this
-memory. The sum of the structs for one TLS connection is \SI{1960}{\byte}. If we
-fill the DRAM with just these structs, a Rowhammer flip hitting an IV happens
-with a probability of about \SI{1.5}{\percent}. Therefore, the attack is already
-quite unlikely, as also, only lower bits are allowed to be hit, to make a nonce
-counter reuse likely. Also, we cannot just hold these structs in memory, and the
-operating system usually limits the number of parallel TLS connections.
+sending and one for receiving. The working IVs make \num{32} byte of this
+memory. The sum of the structs for one TLS connection is \num{1960} byte. If we
+fill the DRAM with just these structs, Only \SI{1.5}{\percent} of the memory
+would hold IVs. Therefore, the attack is already quite unlikely to succeed. As
+also, only lower bits should be flipped, to make a nonce counter reuse
+likely. We cannot just hold these structs in memory, and operating
+systems usually limit the number of parallel TLS connections.
 
 \subsection{Analysis of Practical Nonce-Reuse caused by Rowhammer}
 
@@ -133,27 +134,27 @@ close(client);
 We set up two versions for the practical analysis of the nonce reuse, where one
 uses multiple processes, and one uses multithreading. In both cases, we
 implemented a simple endless sending loop which will keep the TLS connection to
-any client open and sent a string every second. Listing~\ref{lst:ssltestcode}
+clients open and sent a string every second. Listing~\ref{lst:ssltestcode}
 shows the code parts used in both cases. The code makes sure the connection will
 send the reply every second, as long as the client accepts the write.
 
-For our tests, we set the used cypher suite to
-\mbox{\texttt{ECDHE-RSA-AES256-GCM-SHA384}}, which makes sure the described GCM
-structs are used by OpenSSL.
+For our tests, we set the cypher suite
+to \mbox{\texttt{ECDHE-RSA-AES256-GCM-SHA384}} during the TLS handshake, by
+this, we make sure the described GCM structs are used by OpenSSL.
 
-For our experiments, we had a memory increase of about \SI{5440}{\byte} for each
-forked process. With threading, the increase was slightly less. We never
+For our experiments, we had a memory increase of about \num{5440} byte for
+each forked process. With threading, the increase was slightly less. We never
 achieved filling a larger of the memory with TLS structs so that we came near
 the \SI{1.5}{\percent}. Thus, the probability in practical implementations is
-therefore even lower. If it is possible to get \SI{1000} parallel connections,
-with \SI{5440}{\byte} each, with \SI{32}{\byte} in initialisation vectors, it
+therefore even lower. If it is possible to get \num{1000} parallel connections,
+with \num{5440} bytes each, with \num{32} bytes in initialisation vectors, it
 will result in \SI{5.19}{\mega\byte} of memory representing TLS connections,
 with \SI{0.59}{\percent} of this being IVs. In a server setup with
-\SI{4}{\giga\byte} of DRAM, the IVs would only make \SI{74.5e-6}{\percent}. Even
-if an attacker could gain knowledge about the \SI{4}{\kilo\byte} pages used to
-store TLS structs, it would be difficult to hit IVs with Rowhammer. Given this
-knowledge, we can conclude that a remote attack on TLS nonces with Nethammer is
-very unlikely to succeed.
+\SI{4}{\giga\byte} of DRAM, the IVs would only occupy \SI{74.5e-6}{\percent}
+of memory. Even if an attacker could gain knowledge about the
+\SI{4}{\kilo\byte} pages used to store TLS structs, it would be difficult to hit
+IVs with Rowhammer. Given this knowledge, we can conclude that a remote attack
+on TLS nonces with Nethammer is very unlikely to succeed.
 %}}}
 
 %% vim:foldmethod=expr

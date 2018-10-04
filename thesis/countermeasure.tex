@@ -23,7 +23,7 @@ fundamental change of instruction set architectures.
 Besides fixing systems to prevent microarchitectural attacks, it is also
 possible to prevent the exploitation of microarchitectural flaws by checking
 programs for malicious behaviour. Irazoqui~\etal~\cite{mascat} present a
-Micro-Architectural Side Channel Attack Trapper (MASCAT), which uses static
+microarchitectural-side-channel-attack trapper (MASCAT), which uses static
 analysis of binaries to detect microarchitectural attacks.
 Irazoqui~\etal~\cite{mascat} state characteristics of attacks and what code
 parts indicate a microarchitectural attack. To detect a possible use of
@@ -31,7 +31,7 @@ Rowhammer, MASCAT checks for cache evictions in binaries.
 Irazoqui~\etal~\cite{mascat} show that using \texttt{clflush} in a loop is
 likely part of a Rowhammer attack. Also, \texttt{monvnti} and \texttt{movntdq}
 are listed as suspicious, as these instructions allow direct access to the DRAM
-and bypassing the cache. Besides looking for these instructions,
+and bypass caching mechanisms. Besides looking for these instructions,
 Irazoqui~\etal~\cite{mascat} also state, that a program using self-map
 translation to resolve the mapping between physical and virtual memory is likely
 to be a threat to the system as knowledge about this mapping is part of
@@ -75,28 +75,28 @@ Kurmus~\etal~\cite{rowssdhammer}. Cai~\etal~\cite{rownandhammer} show how MLC
 NAND flash memory devices can be targeted to introduce exploitable memory
 corruptions to solid-state drives. Checking the hash of the executable before
 execution would detect such a change of the ELF file and can prevent the
-execution of an exploiting binary.
+execution of a binary containing an exploitable bitflip.
 
 \section{Making Bitflip Testing Less Practical}
 
 With our testing framework, we can search for exploitable bitflips in ELF files
 which are identical for every user of the software distribution. For example,
 the same exploitable bitflips have the same position in all installations of the
-current Debian operating system. Distributing randomised ELF files would make
-the search for exploitable bitflips harder as an attacker would need to run the
-search framework for each target.
+current version of the Debian operating system. Distributing randomised ELF
+files would make the search for exploitable bitflips harder as an attacker would
+need to run the search framework for each target.
 
 However, randomised binaries would not comply with the current trend of research
-in the field of reproducible builds show. The Debian-close organisation
-reproducible-builds~\cite{reporbuilds} works on making building packages for
+in the field of reproducible builds. The Debian-close organisation
+reproducible-builds~\cite{reprobuilds} works on making building packages for
 Debian reproducible. With their techniques, it is possible to produce the same
 binary using the same compiler, build configuration and same source code.
 Reproducible builds make binary changes detectable and allow a bit-by-bit
 verification of the full build chain. Consequently, changes or backdoors
 introduced by a malformed compiler or linker are detected.
 
-Reproducible builds can also help to introduce other countermeasures. The
-operating system can verify ELF files by using stored checksums.
+Reproducible builds can also help to introduce other countermeasures against
+Rowhammer. The operating system can verify ELF files by using stored checksums.
 Suh~\etal~\cite{memintegrity} show how memory integrity verification can bring a
 similar check to programs at runtime. Gelbart~\etal~\cite{spee} present a secure
 program execution environment (SPEE) providing static verification before
@@ -110,11 +110,11 @@ DRIVE adds monitoring for memory changes during the runtime of a program. It
 uses data gained from the ELF file to check the memory of the process during the
 runtime.
 
-If decryption happens on each access to the file content based in DRAM,
-encryption of binaries can be seen as a countermeasure to exploitable bitflips.
-If a bit is flipped inside an encrypted ELF file, decryption is likely to
-produce garbage machine code for the CPU to execute, meaning the program would
-crash in case of an applied bitflip.
+Encryption of binaries can be seen as a countermeasure against exploitable
+bitflips, if decryption happens on each access to the file content based in
+DRAM. If a bit is flipped inside an encrypted ELF file, decryption is
+likely to produce garbage machine code for the CPU to execute, meaning the
+program would crash in case of an applied bitflip.
 %}}}
 
 %% vim:foldmethod=expr

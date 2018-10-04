@@ -22,12 +22,12 @@ memory used by solid-state drives.
 
 We show how nonce misusage can be introduced by single bitflips to target an
 AES-GCM implementation. Attackers could use this idea to target other
-cryptographic implementations as well, especially those using a counter nonce.
+cryptographic implementations as well, especially those using counter nonces.
 
 We show all exploitable bitflips in binaries to achieve a defined outcome of a
 program. We aim to find all exploitable bitflips in a time way slower than
 testing all bits in a binary. Searching for a single bitflip to achieve the same
-outcome in low time is another research task for the future.
+outcome in a short time is another research task for the future.
 
 \section{Improving and Reusing our Framework}
 
@@ -55,9 +55,10 @@ general way to parallelise \texttt{afl}.
 Instead of instrumenting binaries with Intel Pin, replacements or other sources
 for analysis could be used. For instance, the QBDI~\cite{qbdi} tool for dynamic
 instrumentation could be used instead, which supports a wider range of software
-architectures, such as $x86$, ARM and AArch64. Additionally, a complete open
-source solution for instrumentation is available in DynamoRIO~\cite{dynrio},
-which could also replace Pin.
+architectures, such as \texttt{x86\_32}, and AArch64. Also, QBDI supports
+instrumentation on the Android platform used by mobile phones. Additionally, a
+complete open source solution for instrumentation is available in
+DynamoRIO~\cite{dynrio}, which could also replace Pin.
 %}}}
 
 %% vim:foldmethod=expr
