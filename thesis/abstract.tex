@@ -5,42 +5,43 @@
 \chapter*{Abstract}
 \label{cha:abstract}
 
-Microarchitectural attacks exploit design choices made by hardware producers.
-Cache attacks or attacks like Meltdown and Spectre target the CPU. They either
-target a design which works as designed or exploit bugs introduced by mistakes
-in the hardware or microcode design. Rowhammer attacks exploit a design flaw in
-DRAM chips, which steadily decreased cell sizes and lowered refresh rates. With
-specially crafted memory access routines it is possible to access DRAM cells
-fast enough to create interference between cells, which will cause them to
-change the load, hence, changing the logical state.
+Microarchitectural attacks exploit design choices made by hardware vendors.
+Cache attacks, or attacks like Meltdown and Spectre, target the CPU.
+Microarchitectural attacks either target design choices or exploit bugs
+introduced by mistakes in the hardware or the microcode. Rowhammer attacks
+exploit a design flaw in DRAM chips. Hardware vendors steadily decreased sizes
+and lowered refresh rates of the cells. With specially crafted memory access
+routines it is possible to access DRAM cells fast enough to create interference
+between cells, which will cause them to change their load, hence, changing their
+logical state.
 
-Rowhammer attacks use this phenomenon to target memory areas where flips would
-benefit the attacker. Researchers have shown in the past that flips in page
-tables can cause privilege escalation and bypass security mechanisms implemented
-in modern operating systems. It has been shown that similar attacks also work
-with memory chips used inside solid-state disks. Besides flipping bits in page
-tables, researchers showed that when flipping bits in executables, the program's
+Rowhammer attacks use this phenomenon to target memory areas where bitflips
+would benefit the attacker. Researchers have shown that bitflips in page tables
+can cause privilege escalation and bypass security mechanisms implemented in
+modern operating systems. It has also been shown that similar attacks work for
+memory chips used by solid-state disks. Besides flipping bits in page tables,
+researchers showed that when flipping bits in executables, the program's
 behaviour can change. With such changes, it is possible for an attacker to abuse
-programs for privilege escalation or authentication-check bypasses.
+programs for privilege escalation, or to bypass authentication-checks.
 
-We present a way of testing binaries for possible execution-path changes by
-bitflips. In our work, we pre-define an outcome for a binary and then search for
-all single bitflips which would cause the program to behave in the desired way.
-Whereas previous work mostly looked at just op-codes in machine code, we scan
-the entire address space of the program, including all dynamically loaded
-libraries. We show results for searched bitflips in the \texttt{sudo} program,
-for bypassing user privilege checks, allowing super-user permissions without
-knowing the password and in the \texttt{nginx} web server, for bypassing HTTP
-authentication, allowing an attacker to load files which unauthenticated users
-are not allowed to access. In addition to searching for bitflips in executable
-files, we also looked at possible other attack vectors for Rowhammer. We show
-that when bitflips are applied to the runtime of cryptographic calculations,
-these could break assumptions made by the communicating parties and could even
-allow key leakage. We apply bitflips to the implementation of AES-GCM inside
-OpenSSL and show how Rowhammer can be used to cause nonce-reuse.
+In this thesis, we present a way of testing binaries for possible execution-path
+changes by bitflips. In our work, we pre-define an outcome for a program and
+then search for all single bitflips which cause the program to behave in the
+desired way. We scan the entire address space of the program, including all
+dynamically loaded libraries. We show results for searched bitflips in programs
+used for authentication on Linux-based systems. We bypass user privilege checks,
+which lead to privilege escalation, or make login possible without knowing the
+user\textquotesingle s password. We also show a bypass of HTTP basic
+authentication, allowing an attacker to download files which unauthenticated
+users are not allowed to access. In addition to searching for bitflips in
+executable files, we also look at possible other attack vectors for Rowhammer.
+We show that bitflips applied to the runtime of cryptographic calculations can
+break assumptions made by the communicating parties and can even allow key
+leakage. We apply bitflips to the implementation of AES-GCM in OpenSSL and show
+how Rowhammer can be used to cause reusing of nonces.
 
 With our work, we want to increase the awareness of Rowhammer and show how
-software security is affected by bitflip. We call on to all vendors of hardware
+software security is affected by bitflips. We call on to all vendors of hardware
 to not forget to keep their systems secure and do not put lower prices and
 higher performance ahead of security, which would harm their users.
 \cleardoublepage
@@ -52,26 +53,25 @@ higher performance ahead of security, which would harm their users.
 
 Angriffe auf die Mikroarchitektur zielen meistens auf Fehler von
 Hardwareherstellern ab. Attacken auf Caches nutzen hierbei ein gewolltes
-Verhalten des Systems aus. Populäre CPU Lücken wie Meltdown und Spectre machen
-sich jedoch Fehler im Design der Hardware zu Nutzen, welche vom Hersteller
+Verhalten des Systems aus. CPU Lücken wie Meltdown und Spectre machen
+sich Fehler im Design der Hardware zu Nutzen, welche vom Hersteller
 entweder durch Mikrocode Updates oder einem Tausch der CPU berichtigt werden
 müssen. Rowhammer macht sich einen Designfehler in DRAM Chips zu Nutze.
-Hersteller dieser Speicherchips wurden im Laufe der Zeit zu immer besserer
-Performance und kleineren Chips gezwungen, hierbei wurde aber die
-Qualitätskontrolle vernachlässigt. Mit speziellen Reihenfolgen von
-Speicherzugriffen ist es möglich Interferenzen zu erzeugen welche eine
-Ladungsänderung in benachbarten Speicherzellen verursacht, diese wechseln
-dadurch ihren logischen Zustand.
+Hersteller dieser Speicherchips produzieren immer kleinere Chips mit
+geringeren Refresh-Zyklen. Spezielle Reihenfolgen von Speicherzugriffen
+ermöglichen es Interferenzen zu erzeugen welche Ladungsänderungen in
+benachbarten Speicherzellen verursachen, diese können dadurch ihren logischen
+Zustand wechseln.
 
 Rowhammer Angriffe machen sich dieses Verhalten zu Nutze und zielen damit auf
 Speicherbereiche ab, welche durch eine Änderung dem Angreifer einen Vorteil
-verschaffen. Forscher haben in der Vergangenheit gezeigt, dass es möglich ist
-mit Bitflips in Page Tables Privilegien einen Super-Users zu bekommen. Ebenso
-wurde gezeigt, dass ähnliche Angriffe auch auf Speicherchips in
-Solid-State-Disks möglich sind. Neben Flips in Page Tables wurde auch gezeigt,
-dass Änderungen in ausführbaren Files Folgen auf das Verhalten des Programms
-haben, sie ändern dieses durch das Wechseln eines einzigen Bits. Dies kann zum
-Beispiel dazu führen dass Berechtigungsüberprüfungen umgangen werden.
+verschaffen. Forscher haben gezeigt, dass es möglich ist mit Bitflips in Page
+Tables Privilegien einen Superusers zu bekommen. Ebenso wurde gezeigt, dass
+ähnliche Angriffe auch auf Speicherchips in Solid-State-Disks möglich sind.
+Neben Flips in Page Tables wurde auch gezeigt, dass Änderungen in ausführbaren
+Files Folgen auf das Verhalten des Programms haben, sie ändern dieses durch das
+Wechseln eines einzigen Bits. Dies kann zum Beispiel dazu führen dass
+Berechtigungsüberprüfungen umgangen werden.
 
 Wir zeigen eine Möglichkeit Programme auf solche Verhaltensänderungen durch
 Bitflips zu testen. Wir geben hier ein gewünschtes Verhalten vor und suchen
@@ -79,18 +79,19 @@ danach nach allen möglichen Bitflips welche das Verhalten in den gewünschten
 Zustand ändern. Im Gegensatz zu früheren Arbeiten haben wir diesen Vorgang
 automatisiert um eine größere Anzahl von Programmen abzudecken, zusätzlich
 betrachten wir den gesamten Speicher in ausführbaren Files und dynamisch
-geladenen Software-Bibliotheken. Wir zeigen die gefundenen Bitflips für das
-\texttt{sudo} Programm, welche die Passwortabfrage umgehen und den
-\texttt{nginx} Web-Server, wobei wir hier die HTTP-Authentication Checks
-umgehen. Zusätzlich zur Untersuchung von statischen Files betrachten wir auch
-die Auswirkung von Bitflips auf kryptographische Algorithmen. Hier untersuchen
-wir, wie Rowhammer dazu genutzt werden kann um in der AES-GCM Implementation von
-OpenSSL eine falsche Verwendung von Noncen zu verursachen.
+geladenen Software-Bibliotheken. Wir zeigen die gefundenen Bitflips welche
+Sicherheitsüberprüfungen umgehen, wie zum Beispiel Passwortabfragen. Auch
+zeigen wir Bitflips, welche es erlauben HTTP-Authentication Checks in einem
+Webserver zu umgehen. Zusätzlich zur Untersuchung von statischen Files
+betrachten wir auch die Auswirkung von Bitflips auf kryptographische
+Algorithmen. Hier untersuchen wir, wie Rowhammer dazu genutzt werden kann um in
+der AES-GCM Implementation von OpenSSL eine falsche Verwendung von Noncen zu
+verursachen.
 
 Unsere Arbeit soll auf die Sicherheitsrisiken die durch Fehler wie Rowhammer
 entstehen hinweisen und als Aufruf an die Hersteller von Hardware dienen, damit
-diese nicht Wettbewerb und Performance über die Sicherheit ihrer Anwender
-stellen.
+diese nicht billigere Hardware und bessere Performance über die Sicherheit
+ihrer Anwender stellen.
 
 \end{otherlanguage}
 
