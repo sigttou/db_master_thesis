@@ -3,30 +3,29 @@
 
 With the latest releases of Microarchitectural attacks like
 Meltdown~\cite{meltdown} and Spectre~\cite{spectre}, the topic of flaws in
-hardware implementations became known by the general public. Many media outlets,
+hardware implementations was presented to the general public. Media outlets,
 like BBC~\cite{bbcmeltdown} and NBC~\cite{nbcmeltdown}, reported on these issues
 of modern CPUs. Vendors of x86-architectures, like Intel or AMD, are affected,
-but also ARM, and with it, most mobile devices have similar flaws.
-
-Such issues show that these vendors have set performance above security. The
-demand for faster hardware is rising all the time, and not only vendors of CPUs
-are influenced by this demand. Another field of silicon chip design ran into a
+but also ARM, and with it, most mobile devices have similar flaws. Such issues
+show that these vendors have set performance above security. The demand for
+faster hardware is rising all the time, and not only vendors of CPUs are
+influenced by this demand. Another field of silicon chip design ran into a
 similar problem in the past, namely DRAM chip vendors.
 
-In 2014, Kim~\etal~\cite{rowhammergeneral} released their paper ``RowHammer'',
-showing how specially crafted memory-access routines can cause bits in DRAM
-chips to flip, without accessing them directly. This work showed how higher
-memory densities caused faults where interfering voltages and leaking currents
-influence other storage cells. While at first, this was just seen as a stability
-issue, Seaborn and Dullien showed how Rowhammer can be used for privilege
-escalation and sandbox escapes~\cite{projectzerorow}. With reports like this,
-the interest in researching the field of Rowhammer increased.
+In 2014, Kim~\etal~\cite{rowhammergeneral} showed how specially crafted
+memory-access routines can cause bits in DRAM chips to flip, without accessing
+them directly. This work showed how higher memory densities caused faults where
+interfering voltages and leaking currents influence storage cells. While at
+first, this was just seen as a stability issue, Seaborn and
+Dullien~\cite{projectzerorow} showed how this effect, called Rowhammer, can be
+used for privilege escalation and sandbox escapes. With reports like this, the
+interest in researching the field of Rowhammer increased.
 Gruss~\etal~\cite{rowhammerjs} showed that it is not only possible to target
 systems by executing native code, but also that Rowhammer can be triggered by
-using JavaScript. Van der Veen~\etal\cite{drammer} published work named
-``Drammer'', where they show how not only desktop computers are affected by the
-Rowhammer bug, but also mobile devices. Earlier this year,
-Gruss~\etal~\cite{nethammer}, released a way to trigger bitflips by sending
+using JavaScript. Van der Veen~\etal~\cite{drammer} published work named
+``Drammer'', where it is shown that not only desktop computers are affected by
+the Rowhammer flaw, but also mobile devices. In 2019,
+Gruss~\etal~\cite{nethammer} released a way to trigger bitflips by sending
 specially-crafted network requests. Publications like these show that Rowhammer
 is an active research topic, where still new findings come up.
 
@@ -66,59 +65,61 @@ Understanding what programs do, and how they are executed by the CPU, gets
 harder with every improvement and change in hardware design. Instrumentation is
 a technique to inject code into programs, providing the possibility to collect
 runtime information. With tools like Intel Pin~\cite{pintool} it is possible to
-check changes to processor registers, log accessed memory and performance
+check changes to processor registers, log accessed memory, and performance
 measuring at machine code level.
 
 \section{Goals and Motivation for the Thesis}
 
 As we know from previous work done by Gruss~\etal~\cite{flipinthewall}, there
 are bitflips in the ELF files loaded by the \texttt{sudo} program which allow
-privilege escalation by providing a password check bypass. However, they only
-looked at the code section providing the permission check. They could not claim
-to find all flips, and their approach is very time-consuming. We want to
-simplify the search by automatic testing of flips. Also, we want to make it
-easier for future applications to be tested for possible bitflip outcomes by
-providing a test framework.
+privilege escalation by providing a bypass of the password check. However,
+Gruss~\etal~\cite{flipinthewall} only look at the code section providing the
+permission check. They could not claim to find all bitflips, and their approach
+is very time-consuming. We want to simplify the search by automatic testing of
+bitflips. Also, we want to make it easier for future applications to be tested
+for possible bitflip outcomes by providing a framework for such tests.
 
-Common Unix-based operating systems use package management to roll-out
-applications to users. Every instance of the operating system then uses the same
-binary to execute. With this in mind, a bitflip found in the \texttt{sudo}
-application distributed with a major Linux distribution, can be used to attack
-all instances of such a system. An attacker, therefore, can use the test
-framework to find bitflips in widely distributed binaries.
+Common Linux-based operating systems use package management to roll out
+applications to users. Every instance of the operating system uses the
+identical binaries for execution of programs. With this in mind, a bitflip
+found in the \texttt{sudo} application distributed by a GNU/Linux
+distribution, can be used to attack all instances of this operating system. An
+attacker, therefore, could use our framework to find bitflips in widely
+distributed binaries.
 
 With our work, we want to present an easy-to-apply framework to search for
 bitflips providing a pre-defined outcome. To show how this framework works, we
 apply it to real-world applications and compare our results to the ones reported
-by Gruss~\etal~\cite{flipinthewall}. Also, we want to show in general how likely
-such bitflips are in applications.
+by Gruss~\etal~\cite{flipinthewall}. Also, we want to show how likely it is to
+introduce exploits in applications by Rowhammer.
 
-\section{Contributions of this Work}
+\section{Contributions of our Work}
 
 Our contribution to the field of microarchitectural attacks and Rowhammer is
 providing a practical analysis of real-world applications and how bitflips can
-affect them. We present a framework which can be used to find bitflips changing
-a program\textquotesingle s behaviour to a pre-defined outcome. The structure of
-the framework is designed to be extensible and adaptable for multiple purposes.
+affect them. We present a framework which can be used to find bitflips, which
+change a program\textquotesingle s behaviour to a pre-defined outcome. The
+structure of the framework is designed to be extensible and adaptable for
+multiple testing purposes.
 
-We apply our tool to real-world applications to show the impact bitflips could
-have on users of personal computers. On one hand, we show how privilege
-escalation bitflips can be found in the \texttt{sudo} program. We show bits,
-which when flipped, allow us to skip the password check. On the other hand, we
-also analyse the popular \texttt{nginx} web server. For this application, we
-show bitflips which permit an attacker to bypass HTTP authentication measures.
-We present results for these applications and if there exist bits, which when
-flipped, allow us to achieve our set outcome. Besides analysing the bits inside
-the program\textquotesingle s executable, we also examine any dynamically loaded
-library it uses. By that, we also cover possibilities where external functions
-could change the application\textquotesingle s outcome.
+We apply our tool to real-world applications to show the impact of bitflips
+on users of personal computers. On the one hand, we show how privilege
+escalation is made possible by bitflips. We show bits, which when flipped, allow
+us to skip the password check. On the other hand, we also analyse attacks
+benefiting remote attackers. We show bitflips, which allow an attacker to bypass
+HTTP basic authentication. We present results for four applications and if there
+exist bits, which when flipped, allow us to achieve our set outcome. Besides
+analysing the bits in the main program\textquotesingle s executable, we also
+examine any dynamically loaded library programs use. By that, we cover
+possibilities where external functions change the application\textquotesingle
+s outcome.
 
 In addition to that, we look at possible cryptographic vulnerabilities
 introduced by bitflips. As a basis, we take the work by
 Böck~\etal~\cite{gcmnonceattack}, who showed how it is possible for web servers
 to misuse nonces when using AES-GCM. We build on their approach to bypass the
 fixes applied by server software to re-introduce this nonce misusage via
-bitflips. Here we look at the current implementation of AES-GCM in the TLS
+bitflips. We look at the current implementation of AES-GCM in the TLS
 library OpenSSL. We show that nonce misusage can be reintroduced by bitflips,
 and give a probability for them to happen during a Rowhammer attack.
 
@@ -177,7 +178,7 @@ binary in a way that it will print \texttt{success} instead of \texttt{fail} by
 just toggling a single bit in the binary executing this code. Looking at the
 disassembly of the code in Listing~\ref{lst:disasmsimplebranch}, we find that we
 can start with changing the \texttt{1} to a \texttt{0} at the \texttt{mov}
-instruction on address \texttt{0x0642}. Besides that, also the opcode of
+instruction on address \texttt{0x0642}. Besides that, the opcode of
 \texttt{jnz} (namely \texttt{0x75}  or \texttt{1110101}), can be changed into a
 \texttt{jz} (\texttt{0x74} or \texttt{1110100}, at address \texttt{0x064d}.
 
@@ -239,10 +240,11 @@ targeting dynamic memory. We thereby show how the OpenSSL implementation of
 AES-GCM can be attacked by flipping bits.
 In Section~\ref{sec:countermeasure}, we discuss countermeasures which could be
 applied to improve system security. We discuss countermeasures against
-microarchitectural attacks in general, and discuss on what could be done to
-reduce the impact of our tests. In Section~\ref{sec:futurework}, we show
-possible future works, and an overview of directions the research in the field
-of microarchitectural attacks could take.
+microarchitectural attacks in general, and discuss what could be done to
+reduce the impact of our tests.
+In Section~\ref{sec:futurework}, we show possible future works, and an overview
+of directions the research in the field of microarchitectural attacks could
+take.
 In Section~\ref{sec:conclusion}, we close our thesis with a summary and give a
 conclusion of our work.
 %}}}
