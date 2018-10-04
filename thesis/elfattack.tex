@@ -4,66 +4,69 @@
 In this chapter, we present a novel to automate finding bitflips in ELF which
 yield exploitable execution path changes. Gruss~\etal~\cite{flipinthewall}
 already have shown a similar approach by disassembling binaries and manually
-looking for exploitable bitflips. We start by discussing their approach and
-point out the downsides of the manual search.
+looking for exploitable bitflips. We start by discussing this approach and
+point out the downsides of this mainly manual searching.
 
-Then we describe our task and the framework we created to find exploitable
-bitflips in binaries to change their behaviour to a pre-defined state. We start
-with a general overview of the framework design and go on with discussing the
-details on how we find bits to check, how the definition for searching works,
-how we test the bitflips and how results are captured and verified.
+We go on with describing our used approach and the framework we created to
+find exploitable bitflips in binaries to change the behaviour to result in
+a pre-defined outcome. We start with a general overview of the framework design
+and go on with discussing the details on how we find bits to check, how the
+definition for searching works, how we test the bitflips and how results are
+captured and verified.
 
 \section{Analysing the Manual Search Approach}
 
 Gruss~\etal~\cite{flipinthewall} introduce so-called opcode flipping to bypass
 the Rowhammer countermeasure of physical kernel memory isolation, which was
-proposed as a countermeasure to prevent bitflips in page tables. With opcode
-flipping, it is possible to gain privilege escalation by flipping pages which
-hold executable code. Gruss~\etal~\cite{flipinthewall} describe their approach
-as follows. First, a memory area in the binary is defined, which holds bits to
+proposed to prevent bitflips in page tables. With opcode flipping, it is
+possible to gain privilege escalation by flipping bits in pages storing
+executable memory. Gruss~\etal~\cite{flipinthewall} describe their approach as
+follows. First, a memory area in the binary is defined, which holds bits to
 test with flipping. Secondly, all bits in the defined area are flipped,
 resulting binaries are executed, and grouped by the outcoming results. In the
 end, the results are analysed manually, and exploitable behaviours are noted and
 then attacked with Rowhammer. Gruss~\etal~\cite{flipinthewall} show a case study
 of this approach where the \texttt{sudo} program is analysed and report \SI{29}
-bitflips which give an attacker root permissions without knowing the
-user\textquotesingle s password.
+bitflips which give an attacker superuser permissions without knowing the
+calling user\textquotesingle s password.
 
 As this approach seems feasible, we claim that it is not practical.
 Gruss~\etal~\cite{flipinthewall} analysed the program\textquotesingle s binary,
 and the dynamically loaded libraries to identify targetable memory areas, by
 this choice, areas might be missed. Also, each bit in a defined area is tested,
-which could include bits of memory which is never executed during the
-program\textquotesingle s run. Manually analysing the results may take much time
-and might not be feasible for a larger number of bitflips. Besides flipping
-opcodes, also prefixes and parameters of instructions should be tested for
-bitflips. Also, not only specific memory areas holding executable code should be
-tested but all memory in binaries accessed during the runtime of the program. As
-Gruss~\etal~\cite{flipinthewall} only check a specific version of a program,
-the reported bitflips might not work in a newer version, and the same work has
-to be done again.
+which could include memory which is never accessed during the execution.
+Manually analysing the results may take much time and might not be feasible for
+a larger number of bitflips. Besides flipping opcodes, also prefixes and
+parameters of instructions should be tested for bitflips. Also, not only
+specific memory areas holding executable code should be tested but all memory in
+binaries accessed during the runtime of the program. As
+Gruss~\etal~\cite{flipinthewall} only check a specific version of a program, the
+reported bitflips might not work in a newer version, and the same work has to be
+done again.
 
 \section{Automating the Finding of Feasible Bitflips}
 
 Flipping all bits inside a binary, reporting each output and check for a
 successful outcome might be a way to generate a list of all exploitable
 bitflips. Looking at the compiled binary from Listing~\ref{lst:csimbranch}, in
-Section~\ref{sec:motivation}, it would result in a \SI{8288}{\byte} file.
-Following the approach of testing all possible bits, would result in \SI{66304}
-bitflips to test. With an execution time of approximately \SI{0.003}{\second}, a
-complete test run would take close to \SI{200}{\second}.
+Section~\ref{sec:motivation}, it would result in a binary size
+of \num{8288} byte. Following the approach of testing all possible bits, would
+result in \num{66304} bitflips to test. With an execution time of approximately
+\SI{0.003}{\second} per run, a complete test would take close to
+\SI{200}{\second}.
 
-Looking at \texttt{sudo}, the ELF file of the program alone has
-\SI{149080}{\byte}, without dynamic libraries, and the execution time is around
-\SI{0.03}{\second}. The same approach applied to \texttt{sudo} would, therefore,
-take around \SI{35780}{\second}, which is approximately \SI{10}{\hour}. Such a
-long time is not feasible, as dynamic libraries used also need to be tested.
-Including those libraries, would result in \SI{3219208}{\byte}, which would
-require approximately \SI{215}{\hour} or \SI{9} days.
+Looking at \texttt{sudo}, the program\textquotesingle s main binary
+alone has \num{149080} byte, without dynamic libraries. The execution
+time is around \SI{0.03}{\second}. The same approach applied to \texttt{sudo}
+would, therefore, take around \SI{35780}{\second}, which is approximately
+\SI{10}{\hour}. Such a long time is not feasible, as dynamic libraries used
+also need to be tested. Including those libraries, would result in
+\num{3219208} byte. Testing all these bitflips would require
+approximately \SI{215}{\hour} or \SI{9} days.
 
-Four our automation of the exploitable bitflip search, we want to require way
-less time than with the test all bit approach, as we want to target larger
-real-world applications.
+For our automation of the exploitable bitflip search, we want to require way
+less time than with testing all bits, as we target larger real-world
+applications.
 
 \subsection{Design of the Testing Framework}
 
@@ -119,7 +122,7 @@ framework\textquotesingle s design. We split it into multiple parts:
   \item Accessed memory areas are logged from all the ELF files the program
 uses.
   \item Pre-defined filters are applied to the reported memory areas.
-  \item ELF files for each of the bit flips are generated.
+  \item ELF files for each of the bitflips are generated.
   \item Each ELF file gets executed, and the behaviour is checked against a
 pre-defined success state
 \end{samepage}
@@ -160,14 +163,14 @@ created chroot.}
 \end{figure}
 
 Each part of the framework is designed to work on its own and has a clearly
-defined in- and output-interface. The parts can be adopted or easily used for
+defined in- and output-interface. Each part can be adopted or easily used for
 other testing purposes. The configuration file for the framework defines how
 each step is applied to the application, as instrumentation and verification may
 differ for each program. The file in Listing~\ref{lst:expconfig} shows an
 example configuration file for the framework. Figure~\ref{fig:framfilesys} shows
-the layout of the framework in the file system. The configuration file tells the
-framework where to find each of the required files. The template chroot
-describes the system used for testing.
+the layout of the framework in the file system. The configuration file defines
+where to find each of the required files. The template chroot describes the
+system which is used for testing.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -195,17 +198,16 @@ starting with \texttt{CR\_} are used inside the testing \texttt{chroot}.},
 The framework starts with executing \texttt{instr\_tool.sh} to generate a report
 showing all bitflips to test. Additionally, it can also filter them. After the
 script\textquotesingle s execution, the \texttt{tool.out}-file contains a list
-of all byte positions to flip and test. Afterwards, the defined number of
-chroots are created by copying the template from \texttt{chroot\_tmpl}. The
-flipped binaries are copied to each \texttt{/media/flips} folder in the testing
-chroot. The \texttt{run\_tool\_chroot.sh} file is copied to each testing
-environment and executed there. This script runs in each of the \texttt{chroot},
-replaces the original binary with a flipped version, runs the configured program
-and checks it\textquotesingle s outcome. If the outcome matches a pre-defined
-success state, the flipped binary is stored and reported by the framework after
-all test runs are finished.
+of all byte positions to test. Afterwards, the defined number of chroots are
+created by copying the template from \texttt{chroot\_tmpl}. The flipped
+binaries are copied to each \texttt{/media/flips} folder in the testing chroot.
+The \texttt{run\_tool\_chroot.sh} file is copied to each testing environment
+and executed there. This script runs in each of the \texttt{chroot}, replaces
+the original binary with a flipped version, runs the configured program and
+checks it\textquotesingle s outcome. If the outcome matches a pre-defined
+success state, the flipped binary is stored and reported by the framework.
 
-\subsubsection{Instrumenting the Program}
+\subsubsection{Instrumenting Programs}
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -250,22 +252,23 @@ for (UINT32 memOp = 0; memOp < memOperands; memOp++)
 \end{minipage}
 \end{figure}
 
-We use Intel Pin~\cite{pintool} for instrumentation. We log every memory access
-during execution of the program. We want to log all accesses which happen inside
-of ELF files, which means the program\textquotesingle s binary and all libraries
-it uses during runtime. The pintool we use to achieve this, adds instrumenter
-calls to all memory accesses. The tool then logs all accesses per binary and the
-offsets of the address in the corresponding ELF file. This information is
-required to determine which accessed area is mapped to which file later on.
+We use Intel Pin~\cite{pintool} for instrumentation. Every memory access
+during execution of the program is logged. We want to log all accesses which
+happen inside of ELF files, which means the program\textquotesingle s binary
+and all libraries it uses during runtime. The pintool we use to achieve this,
+adds instrumenter calls to all memory accesses. The tool logs all accesses
+per binary and the offsets of the address in the corresponding ELF file. This
+information is required to determine which accessed area is mapped to which
+file later on.
 
 Listing~\ref{lst:pinlogcode} shows a code snippet of the used pintool which
 logs all memory accesses as it instruments each instruction and logs the opcode
 position and its parameters if they address memory. For Pin, the
-image~\texttt{img} refers to an ELF file stored on the hard drive, the images
-represent the program\textquotesingle executable and the dynamic libraries
-loaded during execution. The \texttt{INS\_InsertPredicatedCall} function is used
-to insert a function call on the machine code layer. The function can have an
-arbitrary number of parameters, as the user has to define the function with each
+image~\texttt{img} refers to an ELF file, the images represent the
+program\textquotesingle s executable and the dynamic libraries loaded during
+execution. The \texttt{INS\_InsertPredicatedCall} function is used to insert a
+function call on the machine code layer. The function can have an arbitrary
+number of parameters, as the user has to define the function with each
 parameter and type. Pin then inserts a call to the given function pointer and
 manages the handling of the parameters and return values in a way that the
 instrumented program\textquotesingle s execution is not affected.
@@ -285,12 +288,12 @@ formated in the following manner:
 
 \subsubsection{Generating and Testing the Flips}
 
-Next, we create a new ELF file for each bit for each of the reported bytes.
-Depending on the configured number of parallel checks, chroots are created. The
-framework makes sure the number of created ELF files does not require more than
-the memory available. If there are more files to test than the available memory
-allows, the framework takes multiple runs, as shown in
-Figure~\ref{fig:frameworkdesign}. A test run starts configured
+Next, we create a new ELF file for each bit, for each of the reported bytes.
+Depending on the configured number of parallel checks, chroots are created.
+Afterwards, the framework makes sure the number of created ELF files does not
+require more than the memory available. If there are more files to test than
+the available memory allows, the framework takes multiple runs, as shown in
+Figure~\ref{fig:frameworkdesign}. A test run starts by running the configured
 \texttt{CR\_exec\_file} which will copy a flipped file from the
 \texttt{CR\_flip\_folder} to the original position, then run it and check if the
 output matches a defined success state. If the flipped file reaches the success
@@ -328,8 +331,8 @@ executing different code as intended and lead to a different outcome of the
 program. Therefore, we also test each bit which is used for representing ELF
 structures.
 
-\subsubsection{Instrumenting Binaries running as superuser}
-~\label{sec:setuidfix}
+\subsubsection{Instrumenting Binaries Running as Superuser}
+\label{sec:setuidfix}
 
 Some binaries behave differently when being run by a superuser. For example
 \texttt{sudo} is a \texttt{setuid} binary owned by \texttt{root}, therefore the
@@ -340,14 +343,15 @@ superuser is possible, but starting \texttt{sudo} as \texttt{root} does not
 trigger any authentication checks, as the calling user already got superuser
 permissions, therefore a change of the current user is not required.
 
-We use the attach-to-process functionality of Pin to bypass this behaviour. In
-that way, we can start \texttt{sudo} as a regular user and run Pin as superuser.
-We would start \texttt{sudo} and then attach to the resulting process ID. The
-problem here is that getting the process ID takes time and during that time
-\texttt{sudo} could already perform accesses which then would be missed by
-instrumentation. Therefore, we preload a shared library which keeps the
-\texttt{sudo} program in a defined state for some time to give the framework
-enough time to look up the ID and instrument all relevant code parts.
+Therefore, we use the attach-to-process functionality of Pin to bypass this
+behaviour. In that way, we can start \texttt{sudo} as a regular user and run
+Pin as superuser. We would start \texttt{sudo} and then attach to the resulting
+process ID. The problem here is that getting the process ID takes time and
+during that time \texttt{sudo} could already perform accesses which then would
+be missed by instrumentation. Therefore, we preload a shared library which
+keeps the \texttt{sudo} program in a defined state for some time to give the
+framework enough time to look up the process ID and instrument all relevant
+code parts.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -375,18 +379,19 @@ library. We use the counting while-loop instead of a call to the sleep system
 call because attaching Pin to a process in sleeping state results in a state
 where the process cannot wake up again. We also experienced the same issue with
 debugging tools on our Linux-based environment, such as \texttt{gdb}. The number
-of increments was chosen to have enough time to search the process ID and attach
-to it. The compiler attribute \texttt{constructor} makes sure the program
-executes this code on loading the library before any other code. We add the path
-to our library to the \texttt{/etc/ld.so.preload} file, which makes sure the
-library is preloaded by any executed program. The name of the executable is
-checked in Line 5 of Listing~\ref{lst:presleeplib} to only call the while-loop
-when the binary is our instrumentation target. Otherwise, all executed programs
-would execute the time-consuming while-loop during startup.
+of increments in the loop was chosen to have enough time to search the process
+ID and attach to it. The compiler attribute \texttt{constructor} makes sure the
+program executes this code on loading the library before any other code. We add
+the path to our library to the \texttt{/etc/ld.so.preload} file, which makes
+sure the library is preloaded by any executed program. The name of the
+executable is checked in Line 5 of Listing~\ref{lst:presleeplib} to only
+execute the while-loop when the binary is our instrumentation target. Otherwise,
+all executed programs would execute the time-consuming while-loop during
+startup.
 
 \subsection{Comparing our Approach to other Techniques}
 
-Our described approach for finding exploitable bitflips is built on a
+Our described approach for finding exploitable bitflips is built on a simplified
 fuzzing-like approach. We want to look at other ideas we tried to adapt or use
 for the searching and argument on why we stuck with our described framework.
 
@@ -406,13 +411,13 @@ with \texttt{angr} results in a limited application of the tool\textquotesingle
 s possibilities, where the binary is loaded, a bitflip is applied, and a single
 run is made which is then checked if it ends up in the defined success state.
 Changing inputs or arguments will not be tested. \texttt{angr} could be used to
-test bitflips, but the time needed would be about \SI{10} to \SI{15} times
-larger than our approach, because of the time it takes \texttt{angr} to load and
+test bitflips, but the time needed would be about \num{10} to \num{15} times
+longer than our approach, because of the time it takes \texttt{angr} to load and
 the program and its libraries.
 
 \subsubsection{Using AFL}
 
-Fuzzers like AFL~\cite{aflweb} tests a program by applying different forms of
+Fuzzers like AFL~\cite{aflweb} test programs by applying different forms of
 input and generate those applying a form of edge coverage to learn from changes
 from the control flow. AFL uses instrumentation to document the
 program\textquotesingle s control flow and adapt its test cases based on changes
@@ -430,7 +435,7 @@ from control flow changes could be adapted but as we do not want to build on
 source-based instrumentation because of binary changes the additional execution
 time for their binary instrumentation made the AFL adaption not practical.
 
-\subsubsection{Using a Fuzzing-like Approach}
+\subsubsection{Using an AFL-like Approach}
 
 The described instrumentation based fuzzing of AFL can be adapted for
 instrumentation based bitflip testing. We used Intel Pin~\cite{pintool} for this
@@ -445,13 +450,13 @@ in a successful state.
 This approach turned out to be practical and performed well enough for simple
 programs. However, we ran into problems with applications which had the
 \texttt{setuid} property and the solution we described in
-Section~\ref{setuidfix} did not work for this time. Looking at the execution
-times for simple programs they were just a little lower, about \SI{5}{\percent}
-as for running pre-generated binary files. However, the time needed for the
-generation would be saved, and the memory footprint would be lower as the
-processes memory would be copy-on-write. We decided to not go with this
-approach, as we wanted to test all kind of binaries, also \texttt{setuid} ones,
-such as \texttt{sudo}.
+Section~\ref{sec:setuidfix} did not work for this implementation. Looking at
+the execution times for simple programs they were just a little lower, about
+\SI{5}{\percent} as for running pre-generated binary files. However, the time
+needed for the generation would be saved, and the memory footprint would be
+lower as the processes memory would be copy-on-write. We decided to not go with
+this approach, as we wanted to test all kind of binaries, also \texttt{setuid}
+ones, such as \texttt{sudo}.
 
 For our framework, we generated the binaries containing the bitflip still in
 DRAM memory, to speed up the procedure of copying and applying a bitflip. This
@@ -472,16 +477,16 @@ Gruss~\etal~\cite{flipinthewall} already showed, there are bits in the
 or with a wrong password to still gain the privileges of a superuser. We show
 that our framework can find a larger number of exploitable bitflips. We present
 the results of the framework applied to real-world applications, which are
-commonly used in Linux-based operating systems. In this section, we present all
-the applications we tested, the pre-defined successful outcomes, and the
-bitflips leading to the desired behaviour. For the results, we discuss how many
+commonly used in GNU/Linux operating systems. In this section, we present
+all the applications we tested, the pre-defined outcomes, and the bitflips
+leading to the desired behaviour. For the results, we discuss how many
 exploitable bitflips were found, in what memory section they were and if in an
 instruction, in which part. In the end, we want to give some statistic about the
 exploitable bitflips and also point out the ones which were exploitable in
 multiple applications.
 
 For testing, we used a \texttt{Debian GNU/Linux 9.5} operating system. The
-testing environment inside the \texttt{chroot} had the same system. The CPU used
+testing environment inside the \texttt{chroot} used the same. The CPU used
 was a \mbox{\texttt{Intel(R) Core(TM) i7-960}} and a total of
 \SI{16}{\giga\byte} DRAM memory was installed.
 
@@ -493,8 +498,8 @@ tool\textquotesingle s configuration allows it, also as the superuser
 \texttt{root}. For the tool to run the given command as another user, the user
 has to provide their password.
 
-We want to find all exploitable flips which would allow an attacker to run
-\texttt{sudo} without knowing the password. This exploit would result in a
+We want to find all exploitable flips which allow an attacker to run
+\texttt{sudo} without knowing the password. This exploit results in a
 privilege escalation as the user can become superuser with a bypass of the
 credential check.
 
@@ -527,10 +532,10 @@ number of flips causing privilege escalation listed per section.}
 \label{tab:sudores}
 \end{table}
 
-We present \SI{425} exploitable bitflips in total. Table~\ref{tab:sudores} shows
-the ELF files where the flips were found and also shows how many bitflips were
-exploitable in different ELF sections.  Most bitflips were found in the
-\texttt{sudoers} library but also bits in the linker
+We present \num{425} exploitable bitflips in total. Table~\ref{tab:sudores}
+shows the ELF files where the flips were found and also shows how many bitflips
+were exploitable in different ELF sections.  Most bitflips were found in the
+\texttt{sudoers} library, but also bitflips in the linker
 (\texttt{ld-linux-x86-64.so.2}) and the threading library
 (\texttt{libpthread.so.0}) were exploitable.
 
@@ -560,10 +565,10 @@ Sum of flips:                 & 144 & 281 & 425
 \label{tab:sudoflip}
 \end{table}
 
-From the \SI{425} exploitable flips \SI{144} were placed in the opcodes of
-instructions and \SI{281} were in parameters. Table~\ref{tab:sudoflip} shows how
-the flips are divided in that two section for the different ELF files. It is
-shown for all files. That about one third of the flips are applied in the
+From the \num{425} exploitable flips \num{144} were placed in the opcodes of
+instructions and \num{281} were in parameters. Table~\ref{tab:sudoflip} shows
+how the flips are divided in that two sections for the different ELF files. It
+is shown for all files, that about one third of the flips are applied in the
 opcodes and the other two in the parameters.
 
 \begin{figure}
@@ -589,25 +594,25 @@ file, where a call to \texttt{strcmp} is replaced with a call to \texttt{malloc}
 by a single bitflip, causing the later \texttt{jne} instruction to behave
 differently.
 
-Testing the \texttt{sudo} program for exploitable bitflips took about \SI{8}
-hours of CPU time. The testing was parallelised and split into 24
+Testing the \texttt{sudo} program for exploitable bitflips took about \num{8}
+hours of CPU time. The testing was parallelised and split into \num{24}
 \texttt{chroot} environments. Testing all bits in the \texttt{sudo} binary
-itself took about two to three times as long in an equal configuration.
+itself took about two to three times longer with an equal configuration.
 
 \section{\texttt{nginx} - HTTP Basic Authentication Bypass}
 
-\texttt{nginx} is a web server, available on for Linux-based operating
+\texttt{nginx} is a web server, available on for GNU/Linux operating
 systems~\cite{nginxweb}. The tool can be used to serve websites, and it can
 also be configured to support basic authentication schemes.
 
-We want to find all exploitable bitflips which would allow an attacker to access
-websites protected with HTTP basic authentication. Such an exploit would bypass
+We want to find all exploitable bitflips which allow an attacker to access
+websites protected with HTTP basic authentication. Such an exploit bypasses
 the credential check of the configured web server, which uses \texttt{htpasswd}
-for the basic authentication, as described in Section~\ref{sec:httauth}.
+for basic authentication, as described in Section~\ref{sec:httauth}.
 
-For testing, we start \texttt{nginx}, wait for about \SI{100}{\milli\second} for
-the server to go into an initialised state. Then we request a website protected
-with HTTP basic authentication, providing credentials containing the correct
+For testing, we start \texttt{nginx}, wait for the server to go into an
+initialised state. Then we request a website protected with HTTP basic
+authentication, providing credentials containing the correct
 username but a wrong password. If the response contains the content of the
 requested website, we add the flipped bit to the list of exploitable bitflips.
 We do not care if the response is malformed. We rate the response as successful
@@ -620,8 +625,8 @@ as long as the protected site is leaked by it. We tested version $1.10.4$ of
 
 For the authentication bypass in \texttt{nginx} we can report that only bitflips
 in the program\textquotesingle s binary itself were exploitable. We can show
-\SI{298} exploitable bitflips in the executable, where all of them were found in
-the \texttt{.text} section of the ELF file.
+\num{298} exploitable bitflips in the executable, where all of them were found
+in the \texttt{.text} section of the ELF file.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -670,21 +675,20 @@ label=lst:nginxex]
 \end{minipage}
 \end{figure}
 
-\SI{65} bitflips changed the opcode of an instruction \SI{231} changed
-parameters. \SI{2} bitflips changed the context of the executable memory area
-because the instruction length was changed by the flip and therefore the context
-was changed. In Listing~\ref{lst:nginxex} we can see how changing the lenght of
-the \texttt{add} instruction can result in a different outcome for the
-execution.
+\num{65} bitflips changed the opcode of an instruction \SI{231} changed
+parameters. \num{2} bitflips changed the execution context of the executable
+memory area because the instruction length was changed by the flip and
+therefore the context was changed. In Listing~\ref{lst:nginxex} we can see how
+changing the lenght of the \texttt{add} instruction can result in a different
+outcome for the execution.
 
 Testing the \texttt{nginx} ELF files took a total of about \SI{18}{\hour} CPU
-time. The timing is that high, because we had to make sure the server is up and
-ready to reply to our requests for each test. For testing, we used \SI{8}
-parallel testing-\texttt{chroot} instances.
+time. Most of this time was spent during the startup of \texttt{nginx}.
+For testing, we used \num{8} testing-\texttt{chroot} instances.
 
 \section{\texttt{sshd} - Secure Shell Server Login Bypass}
 
-\texttt{sshd} is a secure shell server implementation which runs on Linux-based
+\texttt{sshd} is a secure shell server implementation which runs on GNU/Linux
 operating systems. It is used together with the \texttt{ssh} client, which
 allows to log in on remote hosts via the \texttt{ssh} protocol. According to the
 documentation~\cite{sshman}, not only log in via username and password
@@ -696,22 +700,21 @@ into a remote machine without knowing the correct password of the user. The
 \texttt{ssh} server is configured to allow accesses from users using password
 authentication.
 
-For testing, we start \texttt{sshd}, wait for \SI{100}{\milli\second} for the
-server to start and be ready to accept connections. We then use a \texttt{ssh}
-client to execute commands in the testing environment via the secure shell
-connection. We defined a success state when the output of the client showed a
-successful login. We verified the login by executing \texttt{whoami}, which
-returns the name of the logged in user. We tested version $7.4p1$ of the
-\texttt{ssh} server.
+For testing, we start \texttt{sshd}, wait for the server to start and be ready
+to accept connections. We then use a \texttt{ssh} client to execute commands in
+the testing environment via the secure shell connection. We defined a success
+state when the output of the client showed a successful login. We verified the
+login by executing \texttt{whoami}, which returns the name of the logged in
+user. We tested version $7.4p1$ of the \texttt{ssh} server.
 
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 \subsection{Results}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 For the used \texttt{ssh} server we can only report working bitflips in the
-loaded libraries. Additional, all of the \SI{41} reported exploitable bitflips
+loaded libraries. Additional, all of the \num{41} reported exploitable bitflips
 were found in the \texttt{.text} section of the ELF files. Most bitflips were
-found in the \texttt{libc} library. Also the cryptographic library
+found in the \texttt{libc} library. Also, the cryptographic library
 \texttt{libcrypto.so.1.0.2} and the linker contain exploitable bits.
 
 \begin{table}[!htb]
@@ -724,7 +727,7 @@ ELF File & opcode & parameter & Sum of flips:      \\ \hline
 Sum of flips:                 & $4$ & $37$ & $41$
 \end{tabular}
 \caption{List of bitflips causing a bypass of the credential check in the
-\texttt{ssh} server and what part of the instruction they change.},
+\texttt{ssh} server and what part of the instruction they change.}
 \label{tab:sshflips}
 \end{table}
 
@@ -759,20 +762,19 @@ the libary call in a way ssh will think it is working with correct credentials.
 
 Testing the \texttt{ssh} server took about \SI{12}{\hour} CPU time. A large time
 of the testing was waiting for the startup of the server.  We ran the tests in
-\SI{12} parallel test environments.
+\num{12} parallel test environments.
 
 \section{Local Login Bypass on Linux-based Operating Systems}
 
-When a local login is attempted on a Linux-based operating system, it is done
-via the \texttt{login} program. The program asks provides different login
-methods via PAM modules, as described in Section~\ref{sec:pamgeneral}. The login
-binary is checking credentials via a PAM module and if the given credentials are
-correct the login shell for the given user is started with the logged in
-user\textquotesingle s access rights, as described in the
-documentation~\cite{loginman}.
+When a local login is attempted on GNU/Linux operating systems, can be done
+via the \texttt{login} program. The program provides different authentication
+methods via PAM modules, as described in Section~\ref{sec:pamgeneral}. The
+\texttt{/bin/login} binary is checking credentials via a PAM module and if the
+given credentials are correct the login shell for the given user is started
+with the user as process owner.
 
-We want to find all bitflips which allow a bypassing of the setting where login
-credentials consist of a username and a password. Also, we assume the attacker
+We want to find all bitflips which allow bypassing of a setup where login
+credentials consist of username and password. Also, we assume the attacker
 knows the username but not the password.
 
 For testing, we run the \texttt{login} binary and give credentials containing
@@ -787,7 +789,7 @@ testing. We tested the version $4.4$ of \texttt{shadow-utils}, which provides
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 We show exploitable bitflips in the \texttt{login} binary and loaded libraries.
-All the \SI{178} exploitable bitflips were in the \texttt{.text} section of the
+All the \num{178} exploitable bitflips were in the \texttt{.text} section of the
 ELF files. Most flips were found in libraries related to PAM, which is a major
 part of the user management in Linux-based operating systems.
 
@@ -855,16 +857,16 @@ call of \texttt{test}. These changes provide other values which cause a
 successful login.
 
 The testing of the local login service took about \SI{35}{\hour} of CPU time.
-This long time is due to the long response time by the program itself, which is
-used as a countermeasure against local brute-forcing.
+This long time is due to the longer response time by the program itself, which
+is used as a countermeasure against local brute-forcing.
 
 \section{Summary of the Results}
 
 We report that all tested programs can be exploited by bitflips. We show that
 Rowhammer can be used for privilege escalation and bypasses of security measures
-in applications provided by Linux-based operating systems. Most exploitable
+in applications provided for GNU/Linux operating systems. Most exploitable
 bitflips were in the \texttt{.text} section of ELF files. Also, we show that not
-only the program\textquotesingle s main binary contains exploitable bitflips,
+only the program\textquotesingle s main binaries contain exploitable bitflips,
 but also dynamically loaded libraries are exploitable via bitflips.
 
 \begin{table}[!htb]
@@ -885,15 +887,15 @@ changed by them.}
 As Table~\ref{tab:summaryflips} shows, most of the exploitable bitflips were
 found in the parameters of instructions. From our results, only
 \SI{28.45}{\percent} of the exploitable bitflips were in opcodes. What also can
-be concluded from our research is, that very little bitflips exploit the program
-by changing more of the executable code than a single instruction. From our
-tests only \SI{3} happen to exploit programs in this way.
+be concluded from our research is, that only a few bitflips exploit the
+program by changing more than a single instruction in the ELF file. From
+our tests only \num{3} happen to exploit programs in this way.
 
-For \texttt{sudo}, we show the same exploitable \SI{29} bitflips as
-Gruss~\etal~\cite{flipinthewall} in the \texttt{sudoers} library. Besides the
-\SI{29} bitflips, we show \SI{230} additional exploitable bitflips in the
-library and also can report multiple other bitflips to achieve the same exploit
-as Gruss~\etal~\cite{flipinthewall} with the automated bitflip search.
+For \texttt{sudo}, we found the same exploitable \num{29} bitflips as
+Gruss~\etal~\cite{flipinthewall} in the \texttt{sudoers} library. Besides these
+bitflips, we show \num{230} additional exploitable bitflips in the library and
+also report multiple other bitflips to achieve the same exploit as
+Gruss~\etal~\cite{flipinthewall} with our automated bitflip search.
 
 \begin{table}
 \centering
@@ -913,7 +915,8 @@ applications. For example, many flips in PAM can exploit \texttt{login} and
 \texttt{sudo} as both check against the user management. An attacker, therefore,
 could introduce a flip in the \texttt{libpam.so.0} file, log in as the user and
 gain superuser access if the user is allowed to use \texttt{sudo}.
-Table~\ref{tab:loginsudo} show the shared bitflips between the two applications.
+Table~\ref{tab:loginsudo} show the shared bitflips between these two
+applications.
 
 \begin{figure}
 \begin{minipage}{\linewidth}
@@ -937,10 +940,10 @@ label=lst:sudosshld]
 \end{figure}
 
 Also, for \texttt{sudo} and \texttt{sshd}, there was one shared bitflip found,
-one in the \texttt{ld-linux-x86-64.so.2} file. The change introduced by bitlfip
-is shown in Listing~\ref{lst:sudosshld}. The bitflip changes the behaviour of
-the linker library and because of this change the outcome of the two programs
-lead to a successful state.
+one in the \texttt{ld-linux-x86-64.so.2} file. The change introduced the by
+bitlfip is shown in Listing~\ref{lst:sudosshld}. The bitflip changes the
+behaviour of the linker library and because of this change the outcome of the
+two programs lead to a successful state.
 %}}}
 
 %% vim:foldmethod=expr
