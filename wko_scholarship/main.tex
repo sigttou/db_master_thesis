@@ -1,3 +1,4 @@
+
 \documentclass[a4paper]{article}
 \usepackage[cm]{fullpage}
 \usepackage[utf8]{inputenc}
@@ -14,29 +15,86 @@
 \begin{document}
 \maketitle
 
-Der Einfluss von Computern, Handys und dem Internet auf das Leben wird immer größer. Die Geräte werden für vieles im Alltag verwendet, Banktransaktionen, Einkäufe, E-Mails und mittlerweile können auch Verträge elektronisch signiert werden. Wir müssen daher auf diese Technologien vertrauen können, sowohl sollten sie möglichst immer verfügbar sein, als auch sicher. Persönliche Daten, Passwörter, Fotos und ähnlich vertrauliche Dinge sollten vor dritten Personen geschützt sein. Fehler, welche die Sicherheit betreffen, können erhebliche Folgen haben, wobei nicht nur finanzielle Schäden entstehen können sondern auch Identitätsdiebstahl, oder der Verlust von Firmendaten, sind möglich.
-Benutzer von Handys, Computern und ähnlichen Produkten haben eine gewisse Erwartung, nicht nur was die Sicherheit betrifft, so wünschen sich Kunden unter anderem immer schnellere und bessere Hardware. Um dieses Druck gerecht zu werden müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen nicht immer perfekt sind, haben Veröffentlichungen wie Meltdown~\cite{meltdown} und Spectre~\cite{spectre} von Kocher und Lipp~\etal gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown} berichteten.
+Der Einfluss von Computern, Handys und dem Internet auf das Leben wird immer
+größer und diese Technologien werden für vieles im Alltag verwendet.
+Banktransaktionen, Einkäufe, E-Mails und mittlerweile können auch Verträge
+elektronisch signiert werden. Wir müssen daher auf diese Technologien vertrauen
+können. Sowohl sollten sie immer Funktionieren und das gewünschte Verhalten
+aufweisen, als auch sicher sein. Persönliche Daten, Passwörter, Fotos und
+ähnlich vertrauliche Dinge sollten vor unbefugten Personen geschützt sein.
+Fehler, welche die Sicherheit betreffen, können erhebliche Folgen haben, wobei
+nicht nur finanzielle Schäden entstehen können sondern auch Identitätsdiebstahl,
+oder der Verlust von wertvollen Firmendaten, sind möglich.
 
 \paragraph{}
 
-Wobei diese Fehler von CPU Herstellern, wie Intel, AMD und ARM hervorgerufen wurden und es erlaubten Speicher zu lesen auf welchen man eigentlich keinen Zugriff haben sollte, gab es auch in einer anderen Chip-Design Branche Probleme. DRAM Hersteller wurden durch die steigenden Erwartungen dazu gezwungen immer kleinere und schnellere Chips zu produzieren. Darunter litt jedoch die Qualität. In 2014 zeigte Kim~\etal\cite{rowhammergeneral}, dass es Probleme in DRAM gibt, welche es ermöglichen dass sich Speicherstellen ändern ohne dass auf diese Zugegriffen wird. Dieses Problem wurde Rowhammer genannt.
+Benutzer von Handys, Computern und ähnlichen Produkten haben eine gewisse
+Erwartung, nicht nur was die Sicherheit betrifft. So wünschen sich Kunden unter
+anderem immer schnellere und bessere Hardware. Um diesem Druck gerecht zu werden
+müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder
+überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen
+nicht immer perfekt sind, haben Angriffe wie Meltdown~\cite{meltdown}
+und Spectre~\cite{spectre} gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der 
+britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown} 
+berichteten.
 
 \paragraph{}
 
-Was Anfangs nur als Stabilitätsproblem gesehen wurde, wurde von Google's Project Zero~\cite{projectzerorow} als schwerwiegender Hardwarefehler aufgezeigt. Diese Gruppe zeigte, dass es war möglich ist mit gezielten Speicherzugriffen Administrator-Rechte zu erhalten. Es folgte ein steigendes Interesse an der Forschung in diesem Bereich. Veröffentlichungen wurden gemacht, welche zeigten dass Rowhammer-Angriffe auch über das bloße öffnen einer Webseite möglich sind~\cite{rowhammerjs}, dass nicht nur Computer betroffen sind, sondern auch Handys~\cite{drammer}, und außerdem wurde dieses Jahr bekannt, dass Rowhammer-Angriffe auch durch das bloße Senden von Netzwerkpaketen möglich sind, ohne jegliche Interaktion von Benutzern~\cite{nethammer}.
+Diese Angriffe zielten auf Lücken in CPUs von Intel, AMD und ARM ab, welche
+von nahezu allen Computern und Handys verwendet werden. Diese Lücken 
+ermöglichen Datendiebstahl. Sowohl einfache Benutzer können Daten von anderen
+stehlen, als auch Webseiten wird ermöglicht Daten vom PC des Besuchers zu
+stehlen, was schwerwiegende Folgen hat. Neben diesen Angriffen auf die CPU
+von Systemen, haben Forscher in der Vergangenheit auch Probleme in 
+Speicherchips aufgezeigt. 2014 zeigten Kim~\etal\cite{rowhammergeneral} dass 
+die RAM Module in vielen PCs ein Problem haben welches den Speicher von anderen
+Programmen ändert wenn ein Programm gewisse Speicherzugriffe ausführt.
+Normalerweise sollte ein Programm nie den Speicher eines anderen verändern 
+dürfen! Dieses Problem wurde Rowhammer genannt.
 
 \paragraph{}
 
-Daniel Gruss~\etal haben in ihrer Arbeit~\cite{flipinthewall} gezeigt dass die Änderungen eines einzelnen Bits, wie sie bei Rowhammer zu finden sind, verschiedenen Applikationen betreffen können. In der Veröffentlichung zeigen sie wie die Passwort-Abfrage in \texttt{sudo}, ein Programm zur Vergabe von Administrator-Rechten, umgangen werden kann. In meiner Arbeit möchte ich darauf eingehen und diese Herangehensweise verallgemeinern und die Suche von ähnlichen Lücken automatisieren. Ich möchte moderne Testmethoden mit dem bekannten Wissen über Rowhammer kombinieren um so in schneller Zeit mehr Ergebnisse erzielen. Dadurch kann ich auf die Gefahren von Rowhammer und ihren Einfluss auf die Sicherheit von Systemen hinweisen. Diese Tests sollen zeigen dass jede Anwendung und jedes System betroffen ist.
+Was Anfangs nur als Stabilitätsproblem gesehen wurde, wurde von Google's Project
+Zero~\cite{projectzerorow} als schwerwiegendes Sicherheitsproblem identifiziert.
+Mit gezielten Zugriffen und den richtigen Speicheränderungen wird es einem 
+Angreifer ermöglicht Administrator zu werden. Wenn dieser Fall eintrifft hat
+der Angreifer die volle Kontrolle über das System. Angriffe mittels Rowhammer
+können nicht nur von lokalen Benutzer gestartet werden, es ist auch möglich
+Systeme über das Öffnen einer Webseite zu attackieren~\cite{rowhammerjs}.
+Ebenso betrifft das Problem nicht nur Computer, sonder auch
+Handys~\cite{drammer}. Es wurde dieses Jahr bekannt, dass Rowhammer-Angriffe 
+über das bloße Senden von Netzwerkpaketen möglich sind, ohne jegliche
+Interaktion von Benutzern~\cite{nethammer}. 
 
 \paragraph{}
 
-Die Arbeit soll auch dazu dienen Herstellern von Hardware klar zumachen dass sie mehr auf Sicherheit Rücksicht nehmen müssen. Nur durch bessere Sicherheitsmaßnahmen lassen sich Attacken wie Meltdown, Spectre und Rowhammer vermeiden. Neben verschiedenen Rowhammer-Zielen in Anwendungen will ich in meiner Arbeit auch mögliche Gegenmaßnahmen präsentieren, wobei diese nicht nur gegen Rowhammer sind, sondern auch andere Attacken betreffen. Eine umsetzung solcher Schritte kann man besser durch Aufmerksamkeit in der Öffentlichkeit bewirken. Durch Verbesserungen der Hardware und Berichtigungen von solchen Fehlern werden Computer und dadurch die Daten von Nutzern sicherer.
+In meiner Arbeit finde ich weitere mögliche Angriffe und automatisiere die Suche
+nach möglichen Angriffszielen. So ist bereits bekannt, dass die Änderung
+eines einzigen Bits in der Systemadministratorverwaltung von Computersystemen
+einem Angreifer ermöglicht Administrator zu werden, ohne das
+richtige Passwort zu kennen~\cite{flipinthewall}. Diese Suche wurde manuell
+durchgeführt. Ich zeige, dass das Finden solcher Lücken schnell und 
+automatisch möglich ist. Hierbei, greife ich nicht nur die
+Administratorverwaltung an, sondern auch Mechanismen zum Einloggen an Systemen
+und zur Identifikation. Zusätzlich untersuche ich Mögliche Auswirkungen von 
+Rowhammer auf  Verschlüsselungen, welche dadurch gebrochen werden und geheime
+Daten preisgeben können.
 
 \paragraph{}
 
-Meine bisherigen Ergebnisse zeigen dass sich die Suche von Rowhammer Fehlern automatisieren lässt, auch kann ich die Angriffe von Gruss~\etal\cite{flipinthewall} reproduzieren und sogar mehr Speicherbereiche finden als sie aufgezeigt haben. Zusätzlich wurden Sicherheitsmechanismen in modernen Webservern, wie \texttt{nginx}, umgangen. Auch konnten zielführende Flips in der sicheren Computer Kommunikationssoftware \texttt{ssh} gefunden werden, welche Logins über das Netzwerk ohne Passwort ermöglichten.
-
+Die Arbeit soll auf diese Sicherheitslücken hinweisen und neben neuen Angriffen
+werden auch mögliche Gegenmaßnahmen diskutiert, welche Betriebssystemhersteller
+und Hardwareproduzenten einbauen können um diesen Angriffen vorzubeugen.
+Meine bisherigen Ergebnisse zeigen, dass sich die Suche von Rowhammer Fehlern
+automatisieren lässt, auch kann ich bekannte Angriffe reproduzieren. Zusätzlich
+kann ich viele zusätzliche, ausnutzbare Rowhammer Ziele in der 
+Administratorverwaltung \texttt{sudo} zeigen. Auch ist es mir möglich einen 
+Webserver so zu verändern dass Seiten ausliefert auf welche man eigentlich
+keinen Zugriff haben sollte. Angriffe auf das System zum einloggen auf Systemen
+funktionieren ebenso, so wurden Ziele in der Software gefunden welche für lokale
+Anmeldefunktionen zuständig ist, als auch im System für Anmeldungen über das
+Netzwerk. Es ist daher für einen Angreifer möglich sich an einem angegriffenen 
+System einzuloggen und Administrator zu werden ohne Zugangsdaten zu haben.
 
 \pagebreak
 
