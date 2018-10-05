@@ -1,4 +1,3 @@
-
 \documentclass[a4paper]{article}
 \usepackage[cm]{fullpage}
 \usepackage[utf8]{inputenc}
@@ -19,12 +18,12 @@ Der Einfluss von Computern, Handys und dem Internet auf das Leben wird immer
 größer und diese Technologien werden für vieles im Alltag verwendet.
 Banktransaktionen, Einkäufe, E-Mails und mittlerweile können auch Verträge
 elektronisch signiert werden. Wir müssen daher auf diese Technologien vertrauen
-können. Sowohl sollten sie immer Funktionieren und das gewünschte Verhalten
+können. Sowohl sollten sie immer funktionieren und das gewünschte Verhalten
 aufweisen, als auch sicher sein. Persönliche Daten, Passwörter, Fotos und
 ähnlich vertrauliche Dinge sollten vor unbefugten Personen geschützt sein.
 Fehler, welche die Sicherheit betreffen, können erhebliche Folgen haben, wobei
-nicht nur finanzielle Schäden entstehen können sondern auch Identitätsdiebstahl,
-oder der Verlust von wertvollen Firmendaten, sind möglich.
+nicht nur finanzielle Schäden entstehen können, sondern auch
+Identitätsdiebstahl, oder der Verlust von wertvollen Firmendaten, sind möglich.
 
 \paragraph{}
 
@@ -34,37 +33,37 @@ anderem immer schnellere und bessere Hardware. Um diesem Druck gerecht zu werden
 müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder
 überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen
 nicht immer perfekt sind, haben Angriffe wie Meltdown~\cite{meltdown}
-und Spectre~\cite{spectre} gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der 
-britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown} 
+und Spectre~\cite{spectre} gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der
+britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown}
 berichteten.
 
 \paragraph{}
 
 Diese Angriffe zielten auf Lücken in CPUs von Intel, AMD und ARM ab, welche
-von nahezu allen Computern und Handys verwendet werden. Diese Lücken 
+von nahezu allen Computern und Handys verwendet werden. Diese Lücken
 ermöglichen Datendiebstahl. Sowohl einfache Benutzer können Daten von anderen
 stehlen, als auch Webseiten wird ermöglicht Daten vom PC des Besuchers zu
 stehlen, was schwerwiegende Folgen hat. Neben diesen Angriffen auf die CPU
-von Systemen, haben Forscher in der Vergangenheit auch Probleme in 
-Speicherchips aufgezeigt. 2014 zeigten Kim~\etal\cite{rowhammergeneral} dass 
-die RAM Module in vielen PCs ein Problem haben welches den Speicher von anderen
+von Systemen, haben Forscher in der Vergangenheit auch Probleme in
+Speicherchips aufgezeigt. 2014 zeigten Kim~\etal\cite{rowhammergeneral} dass
+die RAM Module in vielen PCs ein Problem haben, welches den Speicher von anderen
 Programmen ändert wenn ein Programm gewisse Speicherzugriffe ausführt.
-Normalerweise sollte ein Programm nie den Speicher eines anderen verändern 
+Normalerweise sollte ein Programm nie den Speicher eines anderen verändern
 dürfen! Dieses Problem wurde Rowhammer genannt.
 
 \paragraph{}
 
 Was Anfangs nur als Stabilitätsproblem gesehen wurde, wurde von Google's Project
 Zero~\cite{projectzerorow} als schwerwiegendes Sicherheitsproblem identifiziert.
-Mit gezielten Zugriffen und den richtigen Speicheränderungen wird es einem 
+Mit gezielten Zugriffen und den richtigen Speicheränderungen wird es einem
 Angreifer ermöglicht Administrator zu werden. Wenn dieser Fall eintrifft hat
 der Angreifer die volle Kontrolle über das System. Angriffe mittels Rowhammer
 können nicht nur von lokalen Benutzer gestartet werden, es ist auch möglich
 Systeme über das Öffnen einer Webseite zu attackieren~\cite{rowhammerjs}.
 Ebenso betrifft das Problem nicht nur Computer, sonder auch
-Handys~\cite{drammer}. Es wurde dieses Jahr bekannt, dass Rowhammer-Angriffe 
-über das bloße Senden von Netzwerkpaketen möglich sind, ohne jegliche
-Interaktion von Benutzern~\cite{nethammer}. 
+Handys~\cite{drammer}. Es wurde dieses Jahr bekannt, dass Rowhammer-Angriffe
+auch über das bloße Senden von Netzwerkpaketen möglich sind, ohne jegliche
+Interaktion von Benutzern~\cite{nethammer}.
 
 \paragraph{}
 
@@ -73,11 +72,11 @@ nach möglichen Angriffszielen. So ist bereits bekannt, dass die Änderung
 eines einzigen Bits in der Systemadministratorverwaltung von Computersystemen
 einem Angreifer ermöglicht Administrator zu werden, ohne das
 richtige Passwort zu kennen~\cite{flipinthewall}. Diese Suche wurde manuell
-durchgeführt. Ich zeige, dass das Finden solcher Lücken schnell und 
-automatisch möglich ist. Hierbei, greife ich nicht nur die
+durchgeführt. Ich zeige, dass das Finden solcher Lücken schnell und
+automatisiert möglich ist. Hierbei greife ich nicht nur die
 Administratorverwaltung an, sondern auch Mechanismen zum Einloggen an Systemen
-und zur Identifikation. Zusätzlich untersuche ich Mögliche Auswirkungen von 
-Rowhammer auf  Verschlüsselungen, welche dadurch gebrochen werden und geheime
+und zur Identifikation. Zusätzlich untersuche ich mögliche Auswirkungen von
+Rowhammer auf Verschlüsselungen, welche dadurch gebrochen werden und geheime
 Daten preisgeben können.
 
 \paragraph{}
@@ -86,15 +85,15 @@ Die Arbeit soll auf diese Sicherheitslücken hinweisen und neben neuen Angriffen
 werden auch mögliche Gegenmaßnahmen diskutiert, welche Betriebssystemhersteller
 und Hardwareproduzenten einbauen können um diesen Angriffen vorzubeugen.
 Meine bisherigen Ergebnisse zeigen, dass sich die Suche von Rowhammer Fehlern
-automatisieren lässt, auch kann ich bekannte Angriffe reproduzieren. Zusätzlich
-kann ich viele zusätzliche, ausnutzbare Rowhammer Ziele in der 
-Administratorverwaltung \texttt{sudo} zeigen. Auch ist es mir möglich einen 
-Webserver so zu verändern dass Seiten ausliefert auf welche man eigentlich
-keinen Zugriff haben sollte. Angriffe auf das System zum einloggen auf Systemen
+automatisieren lässt, auch kann ich bekannte Angriffe reproduzieren.
+Ich kann einige zusätzliche, ausnutzbare Rowhammer Ziele in der
+Administratorverwaltung zeigen. Auch ist es mir möglich einen
+Webserver so zu verändern, dass Seiten ausliefert auf welche man eigentlich
+keinen Zugriff haben sollte. Angriffe auf das Anmeldesystem von Computern
 funktionieren ebenso, so wurden Ziele in der Software gefunden welche für lokale
-Anmeldefunktionen zuständig ist, als auch im System für Anmeldungen über das
-Netzwerk. Es ist daher für einen Angreifer möglich sich an einem angegriffenen 
-System einzuloggen und Administrator zu werden ohne Zugangsdaten zu haben.
+Logins zuständig ist, als auch im System für Anmeldungen über das Netzwerk.
+Es ist daher für einen Angreifer möglich, sich an einem angegriffenen System
+einzuloggen und Administrator zu werden ohne die richtigen Zugangsdaten zu haben.
 
 \pagebreak
 
