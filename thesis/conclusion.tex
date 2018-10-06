@@ -1,7 +1,7 @@
 %%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{{{
 \chapter{Conclusion}\label{sec:conclusion}
 
-In conclusion, we have shown that the Rowhammer bug is still relevant to system
+We have shown that the Rowhammer bug is still relevant to system
 engineers and that users and vendors need to be aware of this issue.
 
 We present a framework to test any binary to find bitflips which change the
@@ -17,7 +17,7 @@ used by the program. We show that our framework finds over \num{10} times more
 bitflips gaining the same outcome in a few hours of testing time.
 
 Besides searching for exploitable bitflips in ELF files, we also look at the
-consequences of bitflips applied to memory generated and used at the runtime  of
+consequences of bitflips applied to memory generated and used at the runtime of
 programs. As an example, we show how bitflips can introduce nonce reuse in the
 AES-GCM implementation of OpenSSL.
 
@@ -26,13 +26,11 @@ Rowhammer and how developers need to extend them. Also, we discuss measures
 which make systems more secure by checking the ELF files before
 execution, or check the memory of the process during the runtime.
 
-We want to close with a recommendation for vendors of hardware parts, such as
-CPUs or DRAM chips, that besides looking at increasing performance and space
-reductions, they should not neglect the quality of their hardware. Not only to
-have reliable components in a manner of stability, but also to provide
-reliability in the sense of security. So that exploits like Meltdown and Spectre
-are not possible anymore and that issues like Rowhammer do not occur anymore
-because of the higher quality of chips.
+We close with a recommendation for vendors of hardware, such as CPUs or DRAM
+chips, that besides increasing performance and space reduction, also the
+security of products should be improved. Hardware vendors and researchers should
+work together more often to find new microarchitectural flaws in hardware, and
+thereby improve the security for users.
 %}}}
 
 %% vim:foldmethod=expr
