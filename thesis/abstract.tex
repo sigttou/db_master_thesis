@@ -25,20 +25,20 @@ behaviour can change. With such changes, it is possible for an attacker to abuse
 programs for privilege escalation, or to bypass authentication-checks.
 
 In this thesis, we present a way of testing binaries for possible execution-path
-changes by bitflips. In our work, we pre-define an outcome for a program and
-then search for all single bitflips which cause the program to behave in the
-desired way. We scan the entire address space of the program, including all
-dynamically loaded libraries. We show results for searched bitflips in programs
-used for authentication on Linux-based systems. We bypass user privilege checks,
-which lead to privilege escalation, or make login possible without knowing the
-user\textquotesingle s password. We also show a bypass of HTTP basic
-authentication, allowing an attacker to download files which unauthenticated
-users are not allowed to access. In addition to searching for bitflips in
-executable files, we also look at possible other attack vectors for Rowhammer.
-We show that bitflips applied to the runtime of cryptographic calculations can
-break assumptions made by the communicating parties and can even allow key
-leakage. We apply bitflips to the implementation of AES-GCM in OpenSSL and show
-how Rowhammer can be used to cause reusing of nonces.
+changes introduced by bitflips. In our work, we pre-define an outcome for a
+program and then search for all single bitflips which cause the program to
+behave in the desired way. We scan the entire address space of the program,
+including all dynamically loaded libraries. We show results for searched
+bitflips in programs used for authentication on Linux-based systems. We bypass
+user privilege checks, which lead to privilege escalation, or make login
+possible without knowing the user\textquotesingle s password. We also show a
+bypass of HTTP basic authentication, allowing an attacker to download files
+which unauthenticated users are not allowed to access. In addition to searching
+for bitflips in executable files, we also look at possible other attack vectors
+for Rowhammer. We show that bitflips applied to the runtime of cryptographic
+calculations can break assumptions made by the communicating parties and can
+even allow key leakage. We apply bitflips to the implementation of AES-GCM in
+OpenSSL and show how Rowhammer can be used to cause reusing of nonces.
 
 With our work, we want to increase the awareness of Rowhammer and show how
 software security is affected by bitflips. We call on to all vendors of hardware

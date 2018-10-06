@@ -412,7 +412,7 @@ s possibilities, where the binary is loaded, a bitflip is applied, and a single
 run is made which is then checked if it ends up in the defined success state.
 Changing inputs or arguments will not be tested. \texttt{angr} could be used to
 test bitflips, but the time needed would be about \num{10} to \num{15} times
-longer than our approach, because of the time it takes \texttt{angr} to load and
+longer than our approach, because of the time it takes \texttt{angr} to load
 the program and its libraries.
 
 \subsubsection{Using AFL}
@@ -424,9 +424,9 @@ program\textquotesingle s control flow and adapt its test cases based on changes
 of it. AFL offers source code based instrumentation, which might not be suitable
 for testing bitflips in binaries as with that approach, the tested executables
 would change. According to their documentation~\cite{aflreadme}, AFL also offers
-instrumentation of binary-only application. Here they use the QEMU processor
+instrumentation of binary-only applications. Here they use the QEMU processor
 emulator~\cite{qemuweb} as a userland virtual machine. They state in Section 4
-of the documentation~\cite{aflreadme} that in this mode execution is 2-5 times
+of the documentation~\cite{aflreadme}, that in this mode execution is 2-5 times
 slower than for the compile-time instrumentation approach.
 
 For testing bitflips, the adaption of test cases can be ignored, as we always
@@ -766,12 +766,12 @@ of the testing was waiting for the startup of the server.  We ran the tests in
 
 \section{Local Login Bypass}
 
-When a local login is attempted on GNU/Linux operating systems, can be done
-via the \texttt{login} program. The program provides different authentication
-methods via PAM modules, as described in Section~\ref{sec:pamgeneral}. The
-\texttt{/bin/login} binary is checking credentials via a PAM module and if the
-given credentials are correct the login shell for the given user is started
-with the user as process owner.
+When a local login is attempted on GNU/Linux operating systems, it can be
+handled via the \texttt{login} program. The program provides different
+authentication methods via PAM modules, as described in
+Section~\ref{sec:pamgeneral}. The \texttt{/bin/login} binary is checking
+credentials via a PAM module and if the given credentials are correct, the login
+shell for the given user is started with the user as process owner.
 
 We want to find all bitflips which allow bypassing of a setup where login
 credentials consist of username and password. Also, we assume the attacker
@@ -862,7 +862,7 @@ is used as a countermeasure against local brute-forcing.
 
 \section{Summary of the Results}
 
-We report that all tested programs can be exploited by bitflips. We show that
+We report that all tested programs can be exploited via bitflips. We show that
 Rowhammer can be used for privilege escalation and bypasses of security measures
 in applications provided for GNU/Linux operating systems. Most exploitable
 bitflips were in the \texttt{.text} section of ELF files. Also, we show that not
