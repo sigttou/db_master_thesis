@@ -1,6 +1,7 @@
 \documentclass[a4paper]{article}
 \usepackage[cm]{fullpage}
 \usepackage[utf8]{inputenc}
+\pagenumbering{gobble}
 
 \newcommand{\etal}{et~al. }
 
@@ -16,99 +17,89 @@
 
 Der Einfluss von Computern, Handys und dem Internet auf das Leben wird immer
 größer und diese Technologien werden für vieles im Alltag verwendet. So benutzen
-wir unsere Telefone schon lange nicht mehr um zu Telefonieren oder zum Versenden
-von SMS. Das Handy ist ein Alltagsgegenstand wie Wohnungsschlüssel und die
-Brieftasche, man hat seines immer dabei. Computer und Handys werden auch immer
+wir unsere Telefone schon lange nicht mehr nur um zu Telefonieren oder zum
+Versenden von SMS. Das Handy ist ein Alltagsgegenstand wie Wohnungsschlüssel und
+die Brieftasche, man hat es immer dabei. Computer und Handys werden auch immer
 öfter für Einkäufe verwendet, hierbei werden vertrauliche Daten, wie die
 Kreditkartennummer an den Verkäufer gesendet. Auch firmeninterne Daten befinden
-sich oft auf Computern, oder werden mittels E-Mail auch ans Smartphone gesendet.
-Mittlerweile können diese Geräte auch dazu verwendet werden Verträge mittels
-Bürgerkarte oder Handysignatur zu unterzeichnen.
-
-\paragraph{}
+sich oft auf Computern, oder werden mittels E-Mail auch an das Smartphone
+gesendet.
 
 Die Sicherheit von Handys und Computern ist sehr wichtig. Persönliche
-Daten, wie Passwörter, Telefonnummern, E-Mails, private Fotos und ähnlich
-vertrauliche Daten müssen geschützt sein. Angreifer die Zugriff auf den
-Computeraccount oder das Handy haben, können sehr leicht solche Daten auslesen
-und damit erheblichen Schaden anrichten. Wobei hier finanzieller Schaden durch
-das Abhandenkommen von Kreditkartendatendaten enstehen kann. Als auch ein
-persönlicher Schaden, wenn z.B. E-Mail Konten übernommen werden, kann es zu
-Identitätsdiebstahl kommen. Ein Angreifer kann sich dann als das Opfer ausgeben
-um zum Beispiel Zugang zu weiteren Accounts bekommen welche auf das E-Mail Konto
-registriert sind.
+Daten, Passwörter, Telefonnummern, E-Mails, private Fotos und ähnlich
+vertrauliche Daten müssen geschützt sein. Angreifer die Zugriff auf die
+Geräte haben, können sehr leicht Daten auslesen und damit erheblichen
+Schaden anrichten. Wobei es zu finanziellem, durch zum Beispiel das
+Abhandenkommen von Kreditkartendaten, als auch zu persönlichem Schaden,
+wenn z.B. E-Mail Konten übernommen werden, kommen kann.
 
 \paragraph{}
 
+Es wird regelmäßig neue Hardware gekauft, jedoch wird bei einem Neukauf selten
+auf höhere Sicherheit geachtet. So muss ein neues Handy besser sein als das
+alte. Ein schnellerer Prozessor, mehr Speicher, eine höhere Bildschirmauflösung
+sind oft die Anforderungen.
+Diese Forderungen üben einen gewissen Druck auf die Hersteller aus. Sie müssen
+Optimierungen entwerfen, Chips immer kleiner bauen und dabei noch eine gewisse
+Qualität einhalten. Dass dies nicht immer gut geht, hat
+Kim~\etal~\cite{rowhammergeneral} in 2014 gezeigt. Es wurden Hardwaremodule für
+Arbeitsspeicher gezeigt, welche bei gewissen Abfolgen von Speicherzugriffen auf
+Speicherzellen, andere Speicherstellen ändern, was normalerweise niemals möglich
+sein sollte! Es hat sich gezeigt, dass an diesem Fehler die steigenden
+Geschwindigkeiten und kleiner werdenden Speicherchips Schuld sind.
 
-
-Benutzer von Handys, Computern und ähnlichen Produkten haben eine gewisse
-Erwartung, nicht nur was die Sicherheit betrifft. So wünschen sich Kunden unter
-anderem immer schnellere und bessere Hardware. Um diesem Druck gerecht zu werden
-müssen Hersteller von Hardware immer besser werden und ihre Designs immer wieder
-überarbeiten und sich neue Optimierungen ausdenken. Dass diese Optimierungen
-nicht immer perfekt sind, haben Angriffe wie Meltdown~\cite{meltdown}
-und Spectre~\cite{spectre} gezeigt, wobei auch der ORF~\cite{orfmeltdown}, der
-britische BBC~\cite{bbcmeltdown} und die amerikanische NBC~\cite{nbcmeltdown}
-berichteten.
-
-\paragraph{}
-
-Diese Angriffe zielten auf Lücken in CPUs von Intel, AMD und ARM ab, welche
-von nahezu allen Computern und Handys verwendet werden. Diese Lücken
-ermöglichen Datendiebstahl. Sowohl einfache Benutzer können Daten von anderen
-stehlen, als auch Webseiten wird ermöglicht Daten vom PC des Besuchers zu
-stehlen, was schwerwiegende Folgen hat. Neben diesen Angriffen auf die CPU
-von Systemen, haben Forscher in der Vergangenheit auch Probleme in
-Speicherchips aufgezeigt. 2014 zeigten Kim~\etal\cite{rowhammergeneral} dass
-die RAM Module in vielen PCs ein Problem haben, welches den Speicher von anderen
-Programmen ändert wenn ein Programm gewisse Speicherzugriffe ausführt.
-Normalerweise sollte ein Programm nie den Speicher eines anderen verändern
-dürfen! Dieses Problem wurde Rowhammer genannt.
-
-\paragraph{}
-
-Was Anfangs nur als Stabilitätsproblem gesehen wurde, wurde von Google's Project
-Zero~\cite{projectzerorow} als schwerwiegendes Sicherheitsproblem identifiziert.
-Mit gezielten Zugriffen und den richtigen Speicheränderungen wird es einem
-Angreifer ermöglicht Administrator zu werden. Wenn dieser Fall eintrifft hat
-der Angreifer die volle Kontrolle über das System. Angriffe mittels Rowhammer
-können nicht nur von lokalen Benutzer gestartet werden, es ist auch möglich
-Systeme über das Öffnen einer Webseite zu attackieren~\cite{rowhammerjs}.
-Ebenso betrifft das Problem nicht nur Computer, sonder auch
-Handys~\cite{drammer}. Es wurde dieses Jahr bekannt, dass Rowhammer-Angriffe
-auch über das bloße Senden von Netzwerkpaketen möglich sind, ohne jegliche
-Interaktion von Benutzern~\cite{nethammer}.
+Was am Anfang nur als Stabilitätsproblem gesehen wurde, wurde von Google's
+Project Zero~\cite{projectzerorow} als schwerwiegendes Sicherheitsproblem
+identifiziert. Es wurde gezeigt, dass es gezielt möglich ist Speicherstellen so
+zu ändern, dass sie für einen potentiellen Angreifer nützlich werden. Die
+Methode fremden Speicher mittels speziellen Zugriffen zu ändern wurde
+``Rowhammer'' genannt. Es wurde gezeigt, dass durch Rowhammer-Angriffe ein
+normaler Nutzer Administrator werden kann, ohne das Passwort zu
+wissen~\cite{projectzerorow}. Später wurde auch bekannt, dass Rowhammer
+ebenfalls mittels Webseiten funktioniert. Hier reicht es aus, dass der Angreifer
+ein Opfer dazu bringt seine Webseite aufzumachen, danach kann der Angreifer
+über das Internet Administrator am Computer des Opfers
+werden~\cite{rowhammerjs}. Neben Arbeitsspeicherchips in Computern, sind auch
+die Speicherchips von Mobiltelefonen betroffen~\cite{drammer}.
 
 \paragraph{}
 
-In meiner Arbeit finde ich weitere mögliche Angriffe und automatisiere die Suche
-nach möglichen Angriffszielen. So ist bereits bekannt, dass die Änderung
-eines einzigen Bits in der Systemadministratorverwaltung von Computersystemen
-einem Angreifer ermöglicht Administrator zu werden, ohne das
-richtige Passwort zu kennen~\cite{flipinthewall}. Diese Suche wurde manuell
-durchgeführt. Ich zeige, dass das Finden solcher Lücken schnell und
-automatisiert möglich ist. Hierbei greife ich nicht nur die
-Administratorverwaltung an, sondern auch Mechanismen zum Einloggen an Systemen
-und zur Identifikation. Zusätzlich untersuche ich mögliche Auswirkungen von
-Rowhammer auf Verschlüsselungen, welche dadurch gebrochen werden und geheime
-Daten preisgeben können.
+Aktuelle, bekannte Angriffe sind aufwendig, daher beschäftige ich mich in
+meiner Arbeit mit weiteren Zielen für Speicheränderungen. Ich automatisiere die
+Suche nach diesen Zielen. So ist bereits bekannt, wie in der
+Administratorverwaltung eine einzelne Speicherzelle geändert werden muss um
+einen einfachen Benutzer zum Administrator zu machen. Jedoch wurde für diese
+Anwendung nur eine kleine Anzahl an möglichen Zielen
+präsentiert und die Suche hat sich als sehr zeitaufwendig
+herausgestellt~\cite{flipinthewall}. Ich zeige, dass das Finden solcher Ziele
+viel schneller und automatisch funktioniert. Zusätzlich zur
+Administratorverwaltung, präsentiere ich auch mögliche Angriffe auf die
+Anmeldesysteme von Computern oder auf Webserver. Neben Angriffen auf Programme
+zeige ich auch mögliche Auswirkungen von Rowhammer auf Verschlüsselungen, welche
+dadurch gebrochen werden und geheime Daten preisgeben.
+
+Meine Arbeit zeigt Angriffe, die mittels dem Ändern einer einzigen
+Speicherstelle einem Angreifer ermöglichen, dass dieser sich an Systemen
+anmelden kann ohne das Passwort zu kennen. Diese Angriffe funktionieren sowohl
+lokal als auch über das Internet. Zusätzlich zeige ich über zehn mal mehr Ziele
+in der Administratorverwaltung, welche es ermöglichen einem einfachen Nutzer
+Administratorrechte zu bekommen, erneut ohne das richtige Passwort zu kennen.
+Ich finde ebenfalls Ziele in einem der populärsten Webserver, Angriffe auf
+diesen ermöglichen das Zugreifen auf Seiten die nur für einen authentifizierten
+Benutzer zugänglich sind. Mit solchen Angriffen und dem Wissen über
+Speicherstellen welche zu ändern sind, ist es einem Angreifer möglich sich an
+Systemen anzumelden, Administrator zu werden und damit Zugriff auf das komplette
+System zu haben. Daten- und Identitätsdiebstahl sind damit ein leichtes
+Vorgehen. Die Ziele im Webserver ermöglichen dem Angreifer auf Daten von anderen
+zuzugreifen oder Daten von Firmen zu stehlen, die nicht für die Öffentlichkeit
+bestimmt sind.
 
 \paragraph{}
 
-Die Arbeit soll auf diese Sicherheitslücken hinweisen und neben neuen Angriffen
-werden auch mögliche Gegenmaßnahmen diskutiert, welche Betriebssystemhersteller
-und Hardwareproduzenten einbauen können um diesen Angriffen vorzubeugen.
-Meine bisherigen Ergebnisse zeigen, dass sich die Suche von Rowhammer Fehlern
-automatisieren lässt, auch kann ich bekannte Angriffe reproduzieren.
-Ich kann einige zusätzliche, ausnutzbare Rowhammer Ziele in der
-Administratorverwaltung zeigen. Auch ist es mir möglich einen
-Webserver so zu verändern, dass Seiten ausliefert auf welche man eigentlich
-keinen Zugriff haben sollte. Angriffe auf das Anmeldesystem von Computern
-funktionieren ebenso, so wurden Ziele in der Software gefunden welche für lokale
-Logins zuständig ist, als auch im System für Anmeldungen über das Netzwerk.
-Es ist daher für einen Angreifer möglich, sich an einem angegriffenen System
-einzuloggen und Administrator zu werden ohne die richtigen Zugangsdaten zu haben.
+Die Arbeit soll auf diese Sicherheitslücken und Angriffe hinweisen und neben
+der Suche von neuen Rowhammer-Zielen werden auch Gegenmaßnahmen diskutiert,
+welche Hersteller von Betriebssystemen, Arbeitsspeichern und Handys einbauen
+sollen um diesen Angriffen vorzubeugen.
 
 \pagebreak
 
